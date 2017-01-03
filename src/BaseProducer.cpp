@@ -1,3 +1,4 @@
+#include "BaseProducer.hpp"
 Seer::BaseProducer::BaseProducer()
 {
 }
