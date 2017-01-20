@@ -1,1 +1,1 @@
-#include "catch.hpp"
+#include <3rdParty\catch\catch.hpp>

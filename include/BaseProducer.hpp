@@ -1,6 +1,5 @@
 #ifndef BASEPRODUCER_HPP
 #define BASEPRODUCER_HPP
-
 namespace Seer {
 	class BaseProducer
 	{
