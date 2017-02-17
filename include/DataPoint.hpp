@@ -1,0 +1,120 @@
+#ifndef DATAPOINT_HPP
+#define DATAPOINT_HPP
+
+#include <thread> //thread::id
+#include <functional> //std::hash
+#include <chrono> //steady_clock::time_point
+#include <string>
+#include <exception>
+#include <stdio.h> //sscanf
+#include <3rdParty\json\json.hpp> //nlohmann::json
+namespace Seer {
+	namespace DataPoint {
+		
+		struct BaseTimePoint
+		{	
+			/**
+			* \brief: Allow this to be created from json, will throw if json object is incorrect for this TimePoint
+			* \return this
+			*/
+			virtual BaseTimePoint& operator=(const nlohmann::json& other) // copy assignment
+			{				
+				return *this;
+			}
+			/**
+			* \brief: Get the type for this data point
+			* \return string of the type
+			*/
+			virtual const std::string getType() const
+			{
+				return "base";
+			}
+			/**
+			* \brief: Get the json data struct for this data point
+			* \return json to send over network
+			*/
+			virtual nlohmann::json get_json() const
+			{
+				return {};
+			}
+		};
+
+		struct TimePoint : BaseTimePoint
+		{	
+			/**
+			* \brief: Create a datapoint specialised around timers
+			* \param name of the timepoint, this will be decide how it is sorted and grouped, 
+			* aka all timepoints with name "draw" will put in to the draw graph
+			* \param thread_id is thread this time point should be attached to
+			* again this is used for sorting and grouping the timepoint correctly
+			* \param start where or not this is the start of the time point
+			* \param time_point to store
+			*/
+			TimePoint(std::string name,
+				std::thread::id thread_id, 
+				bool start, 
+				std::chrono::steady_clock::time_point time_point) :
+				name(name),
+				thread_id(std::hash<std::thread::id>()(thread_id)),
+				start(start),
+				time_point(time_point)
+			{}
+
+			const std::string type = { "tp" };
+			std::string name;
+			std::size_t thread_id;
+			bool start = { true };
+			std::chrono::steady_clock::time_point time_point;
+
+			/**
+			* \brief: Allow this to be created from json, will throw if json object is incorrect for this TimePoint
+			* \return this
+			*/
+			virtual TimePoint& operator=(const nlohmann::json& json) override
+			{
+				if (json["#"].is_string() &&
+					json["n"].is_string() &&
+					json["t_id"].is_string() &&
+					json["s"].is_boolean() &&
+					json["t"].is_string())
+				{					
+					name = json["n"].get<decltype(name)>();
+					const auto thread_id_string = json["t_id"].get<std::string>();
+					sscanf(thread_id_string.c_str(), "%zu", &thread_id);
+					start = json["s"].get<decltype(start)>();
+					//time_point = json["t"].get<int>();
+				}
+				else {
+					throw std::invalid_argument("must be ");
+				}
+
+				return *this;
+			}
+
+			/**
+			* \brief: Get the type for this data point
+			* \return string of the type
+			*/
+			const std::string getType() const override
+			{
+				return type;
+			}
+
+			/**
+			* \brief: Get the json data struct for this data point
+			* \return json to send over network
+			*/
+			nlohmann::json get_json() const override
+			{
+				return { {
+					{ "#", type },
+					{ "n", name },
+					{ "t_id", thread_id },
+					{ "s", start },
+					{ "t", time_point.time_since_epoch().count() },
+				} };
+			}
+		};
+	}
+}
+#endif
