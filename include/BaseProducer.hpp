@@ -6,6 +6,7 @@ namespace Seer {
 	public:
 		BaseProducer();
 		~BaseProducer();
+		int hello;
 	private:
 		//Send data to network
 		void send();
