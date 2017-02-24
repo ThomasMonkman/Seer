@@ -10,6 +10,7 @@
 #include <exception> //std::exception_ptr
 #include <algorithm> //std::remove_if
 #include <chrono> //std::chrono_literals
+#include <atomic> //std::atomic
 
 namespace Seer {
 	class Network
@@ -36,6 +37,7 @@ namespace Seer {
 		std::vector<std::exception_ptr> _exceptions_caught;
 		std::mutex _send_mutex;
 		std::mutex _exception_mutex;
+		std::atomic<bool> _exception_has_been_raised = { false };
 	};
 }
 #endif
