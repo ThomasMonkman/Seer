@@ -1,14 +1,41 @@
 #ifndef NETWORK_HPP
 #define NETWORK_HPP
+#include "DataPoint.hpp"
+#include <memory> //std::unique_ptr
+#include <vector> //std::vector
+#include <thread> //std::thread
+#include <mutex> //std::mutex, std::lock_guard
+#include <utility> //std::move
+#include <future> //std::future
+#include <exception> //std::exception_ptr
+#include <algorithm> //std::remove_if
+#include <chrono> //std::chrono_literals
+
 namespace Seer {
 	class Network
 	{
 	public:
-		Network();
-		~Network();
+		static Network& instance()
+		{
+			static Network network;
+			return network;
+		}
+		void send(std::unique_ptr<DataPoint::BaseDataPoint> time_point);
 	private:
-		//Send data to network
-		void send();
+		Network()
+		{
+			
+		}
+		~Network();
+
+		void heartbeat();
+		bool task_complete(std::future<void>& task);
+
+		std::vector<std::unique_ptr<DataPoint::BaseDataPoint>> _time_points;
+		std::vector<std::future<void>> _tasks;
+		std::vector<std::exception_ptr> _exceptions_caught;
+		std::mutex _send_mutex;
+		std::mutex _exception_mutex;
 	};
 }
 #endif

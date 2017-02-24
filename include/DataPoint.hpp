@@ -1,5 +1,6 @@
 #ifndef DATAPOINT_HPP
 #define DATAPOINT_HPP
+#include "json\json.hpp"
 
 #include <thread> //thread::id
 #include <functional> //std::hash
@@ -7,17 +8,16 @@
 #include <string>
 #include <exception>
 #include <stdio.h> //sscanf
-#include <3rdParty\json\json.hpp> //nlohmann::json
 namespace Seer {
 	namespace DataPoint {
 		
-		struct BaseTimePoint
+		struct BaseDataPoint
 		{	
 			/**
 			* \brief: Allow this to be created from json, will throw if json object is incorrect for this TimePoint
 			* \return this
 			*/
-			virtual BaseTimePoint& operator=(const nlohmann::json& other) // copy assignment
+			virtual BaseDataPoint& operator=(const nlohmann::json& other) // copy assignment
 			{				
 				return *this;
 			}
@@ -39,7 +39,7 @@ namespace Seer {
 			}
 		};
 
-		struct TimePoint : BaseTimePoint
+		struct TimePoint : BaseDataPoint
 		{	
 			/**
 			* \brief: Create a datapoint specialised around timers
