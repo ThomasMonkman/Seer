@@ -25,7 +25,7 @@ namespace Seer {
 			* \brief: Get the type for this data point
 			* \return string of the type
 			*/
-			virtual const std::string getType() const
+			virtual const std::string get_type() const
 			{
 				return "base";
 			}
@@ -95,7 +95,7 @@ namespace Seer {
 			* \brief: Get the type for this data point
 			* \return string of the type
 			*/
-			const std::string getType() const override
+			const std::string get_type() const override
 			{
 				return type;
 			}
