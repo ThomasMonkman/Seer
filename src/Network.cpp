@@ -4,6 +4,8 @@ using namespace std::chrono_literals;
 
 Seer::Network::~Network()
 {
+	_destory = true;
+	_hearbeat.join();
 	try
 	{
 		//wait for all futures	
@@ -37,44 +39,47 @@ void Seer::Network::send(std::unique_ptr<DataPoint::BaseDataPoint> time_point)
 
 void Seer::Network::heartbeat()
 {
-	try
+	while (_destory == false)
 	{
-		//remove any tasks that have completed, or thrown errors
-		_tasks.erase(std::remove_if(_tasks.begin(), _tasks.end(), task_complete), _tasks.end());
-
-		//swap out the mutexed vector to a local one so we don't block it for long
-		std::vector<std::unique_ptr<DataPoint::BaseDataPoint>> data_points_to_send;
+		try
 		{
-			std::lock_guard<std::mutex> guard(_data_point_mutex);
-			std::swap(data_points_to_send, _data_points);
+			auto start_of_heartbeat = std::chrono::steady_clock::now();
+			//remove any tasks that have completed, or thrown errors
+			_tasks.erase(
+				std::remove_if(_tasks.begin(), _tasks.end(), [this](auto& task) {return task_complete(task); })
+				, _tasks.end());
+
+			//swap out the mutexed vector to a local one so we don't block it for long
+			std::vector<std::unique_ptr<DataPoint::BaseDataPoint>> data_points_to_send;
+			{
+				std::lock_guard<std::mutex> guard(_data_point_mutex);
+				std::swap(data_points_to_send, _data_points);
+			}
+			if (data_points_to_send.size() > 0)
+			{
+				//transform all the data points to json
+
+				//std::string json_string;
+				//std::stringstream json("[");
+
+				nlohmann::json json = nlohmann::json::array();
+				//json.flatten
+				//json_to_send.reserve(data_points_to_send.size());
+				for (const auto& data_point : data_points_to_send)
+				{
+					json.push_back(data_point->get_json());
+					//json << ',' << data_point->get_json();
+				}
+				std::cout << json;
+			}
+			//json << ']';
+			//Convert json to string
+			std::this_thread::sleep_until(start_of_heartbeat + network_heartbeat{ 1 });
 		}
-
-		//transform all the data points to json
-		
-		//std::string json_string;
-		//std::stringstream json("[");
-
-		nlohmann::json json = nlohmann::json::array();
-		//json.flatten
-		//json_to_send.reserve(data_points_to_send.size());
-		for (const auto& data_point : data_points_to_send)
+		catch (const std::exception&)
 		{
-			//json << ',' << data_point->get_json();
+			consume_exception(std::current_exception());
 		}
-		//json << ']';
-		//Convert json to string
-
-
-
-
-
-
-	}
-	catch (const std::exception&)
-	{
-		std::lock_guard<std::mutex> guard(_exception_mutex);
-		_exceptions_caught.push_back(std::current_exception());
-		_exception_has_been_raised = true;
 	}
 }
 
@@ -91,13 +96,19 @@ bool Seer::Network::task_complete(std::future<void>& task)
 				return true;
 			}
 		}
-		catch (const std::exception& e)
+		catch (const std::exception&)
 		{
-			std::lock_guard<std::mutex> guard(_exception_mutex);
-			_exceptions_caught.push_back(std::current_exception());
-			_exception_has_been_raised = true;
+			consume_exception(std::current_exception());
 			return true;
 		}
 	}
 	return false;
+}
+
+
+void Seer::Network::consume_exception(std::exception_ptr&& exception)
+{
+	std::lock_guard<std::mutex> guard(_exception_mutex);
+	_exceptions_caught.push_back(exception);
+	_exception_has_been_raised = true;
 }
