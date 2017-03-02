@@ -106,13 +106,13 @@ namespace Seer {
 			*/
 			nlohmann::json get_json() const override
 			{
-				return { {
+				return { 
 					{ "#", type },
 					{ "n", name },
 					{ "t_id", thread_id },
 					{ "s", start },
-					{ "t", time_point.time_since_epoch().count() },
-				} };
+					{ "t", time_point.time_since_epoch().count() }
+				 };
 			}
 		};
 	}

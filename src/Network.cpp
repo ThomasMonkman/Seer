@@ -24,17 +24,6 @@ void Seer::Network::send(std::unique_ptr<DataPoint::BaseDataPoint> time_point)
 {
 	std::lock_guard<std::mutex> guard(_data_point_mutex);
 	_data_points.push_back(std::move(time_point));
-	if (_exception_has_been_raised)
-	{
-		std::lock_guard<std::mutex> guard(_exception_mutex);
-		if (_exceptions_caught.size() > 0) {
-			std::exception_ptr exception = std::move(_exceptions_caught.back());
-			_exceptions_caught.erase(_exceptions_caught.end() - 1);
-			//keep the flag raised if there are more exceptions to throw
-			_exception_has_been_raised = (_exceptions_caught.size() > 0);
-			std::rethrow_exception(exception);
-		}
-	}
 }
 
 void Seer::Network::heartbeat()
@@ -58,21 +47,15 @@ void Seer::Network::heartbeat()
 			if (data_points_to_send.size() > 0)
 			{
 				//transform all the data points to json
-
-				//std::string json_string;
-				//std::stringstream json("[");
-
 				nlohmann::json json = nlohmann::json::array();
-				//json.flatten
-				//json_to_send.reserve(data_points_to_send.size());
+				std::vector<nlohmann::json> jsonV;
+				jsonV.reserve(data_points_to_send.size());
 				for (const auto& data_point : data_points_to_send)
 				{
-					json.push_back(data_point->get_json());
-					//json << ',' << data_point->get_json();
+					jsonV.push_back(data_point->get_json());
 				}
-				std::cout << json;
+				std::cout << jsonV;
 			}
-			//json << ']';
 			//Convert json to string
 			std::this_thread::sleep_until(start_of_heartbeat + network_heartbeat{ 1 });
 		}
