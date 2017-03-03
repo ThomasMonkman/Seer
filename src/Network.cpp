@@ -66,6 +66,19 @@ void Seer::Network::heartbeat()
 	}
 }
 
+void Seer::Network::start_server()
+{
+	_server.set_message_handler([this](auto handle, auto message) {
+		std::cout << message->get_payload() << std::endl;
+	});
+
+	_server.init_asio();
+	_server.listen(9002);
+	_server.start_accept();
+
+	_server.run();
+}
+
 bool Seer::Network::task_complete(std::future<void>& task)
 {
 	auto task_status = task.wait_for(0s);
