@@ -23,6 +23,10 @@
 #include <chrono> //std::chrono_literals, std::chrono::steady_clock::now()
 #include <atomic> //std::atomic
 #include <ratio> //std::ratio
+#include <queue> //std::queue
+#include <string> //std::string
+#include <set> //std::set
+#include <condition_variable> //std::condition_variable
 
 namespace Seer {
 	//network heartbeat at 16.66ms
@@ -42,23 +46,34 @@ namespace Seer {
 		{
 			start_server();	
 			_hearbeat = std::thread([this]() { heartbeat(); });
+			_message_process_thread = std::thread([this]() { process_received_messages(); });
 		}
 		~Network();
 
 		void heartbeat();
 		void start_server();
+		void send_to_clients(nlohmann::json& json);
+		void process_received_messages();
 
 		bool task_complete(std::future<void>& task);
 		void consume_exception(std::exception_ptr&& exception);
 
 		std::thread _hearbeat;
-
+		std::thread _server_thread;
+		std::thread _message_process_thread;
 		websocket_server _server;
-		
+		std::set<websocketpp::connection_hdl, std::owner_less<websocketpp::connection_hdl>> _connections;
+		std::mutex _connection_mutex;
+
 		std::vector<std::unique_ptr<DataPoint::BaseDataPoint>> _data_points;
+		std::mutex _data_point_mutex;
+
+		std::queue<std::string> _received_messages;
+		std::mutex _received_messages_mutex;
+		std::condition_variable _received_messages_condition;
+
 		std::vector<std::future<void>> _tasks;
 		std::vector<std::exception_ptr> _exceptions_caught;
-		std::mutex _data_point_mutex;
 		std::mutex _exception_mutex;
 		std::atomic<bool> _exception_has_been_raised = { false };
 		std::atomic<bool> _destory = { false };

@@ -13,6 +13,7 @@ namespace Seer {
 		
 		struct BaseDataPoint
 		{	
+			virtual ~BaseDataPoint() {}
 			/**
 			* \brief: Allow this to be created from json, will throw if json object is incorrect for this TimePoint
 			* \return this
@@ -59,6 +60,10 @@ namespace Seer {
 				start(start),
 				time_point(time_point)
 			{}
+
+			~TimePoint() override
+			{
+			}
 
 			const std::string type = { "tp" };
 			std::string name;
