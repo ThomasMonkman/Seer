@@ -29,7 +29,7 @@ int main() {
 			//std::cout << dist(rand_eng) << '\n';
 			//std::this_thread::sleep_for(std::chrono::milliseconds{ dist(rand_eng) });		
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds{ 5000 });
+		std::this_thread::sleep_for(std::chrono::milliseconds{ 1000 });
 	}
 	std::cin.clear();
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
