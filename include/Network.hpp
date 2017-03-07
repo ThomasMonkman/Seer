@@ -52,7 +52,7 @@ namespace Seer {
 
 		void heartbeat();
 		void start_server();
-		void send_to_clients(nlohmann::json& json);
+		void send_to_clients(const std::string& message);
 		void process_received_messages();
 
 		bool task_complete(std::future<void>& task);

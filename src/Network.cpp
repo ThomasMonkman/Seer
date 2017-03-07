@@ -49,19 +49,25 @@ void Seer::Network::heartbeat()
 			if (data_points_to_send.size() > 0)
 			{
 				//transform all the data points to json
-				nlohmann::json json = nlohmann::json::array();
+				//nlohmann::json json = nlohmann::json::array();
 				//std::vector<nlohmann::json> jsonV;
 				//jsonV.reserve(data_points_to_send.size());
+				//std::string json_string = "";
+				//json_string.reserve(data_points_to_send.size() * 90);
+				std::stringstream json_stream;//(json_string);
 				for (const auto& data_point : data_points_to_send)
 				{
-					json.push_back(data_point->get_json());
+					//json_string.append(data_point->get_json_string());
+					//json.push_back(data_point->get_json());
+					json_stream << *data_point;
 				}
 				//std::cout << data_points_to_send.size() << '\n';
 				auto prep_time = std::chrono::steady_clock::now();
-				send_to_clients(json);
+				send_to_clients(json_stream.str());
 				auto send_time = std::chrono::steady_clock::now();
-				std::cout << "prep: " << std::chrono::duration_cast<std::chrono::milliseconds>(prep_time - start_of_heartbeat).count() << "ms \n";
-				std::cout << "send: " << std::chrono::duration_cast<std::chrono::milliseconds>(send_time - prep_time).count() << "ms \n";
+				std::cout << "Time to send [" << data_points_to_send.size() << "] datapoints\n";
+				std::cout << "Prep: " << std::chrono::duration_cast<std::chrono::milliseconds>(prep_time - start_of_heartbeat).count() << "ms \n";
+				std::cout << "Send: " << std::chrono::duration_cast<std::chrono::milliseconds>(send_time - prep_time).count() << "ms \n";
 			}
 			std::this_thread::sleep_until(start_of_heartbeat + network_heartbeat{ 1 });
 		}
@@ -109,13 +115,13 @@ void Seer::Network::start_server()
 	//_server.run();
 }
 
-void Seer::Network::send_to_clients(nlohmann::json& json)
+void Seer::Network::send_to_clients(const std::string& message)
 {
 	std::lock_guard<std::mutex> guard(_connection_mutex);
 	for (auto& connection : _connections) 
 	{
-		std::cout << json.dump().size() / 1'000'000.0 << "MB\n";
-		_server.send(connection, json.dump(), websocketpp::frame::opcode::text);
+		std::cout << "Message is " << message.size() / 1'000'000.0 << "MB\n";
+		_server.send(connection, message, websocketpp::frame::opcode::text);
 	}	
 }
 
