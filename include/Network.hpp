@@ -1,6 +1,7 @@
 #ifndef NETWORK_HPP
 #define NETWORK_HPP
 #include "DataPoint.hpp"
+#include "BaseProducer.hpp"
 
 #include "json\json.hpp"
 
@@ -46,14 +47,15 @@ namespace Seer {
 		{
 			start_server();	
 			_hearbeat = std::thread([this]() { heartbeat(); });
-			_message_process_thread = std::thread([this]() { process_received_messages(); });
+			_message_process_thread = std::thread([this]() { received_messages_worker(); });
 		}
 		~Network();
 
 		void heartbeat();
 		void start_server();
 		void send_to_clients(const std::string& message);
-		void process_received_messages();
+		void received_messages_worker();
+		void process_received_messages(const std::string& message);
 
 		bool task_complete(std::future<void>& task);
 		void consume_exception(std::exception_ptr&& exception);
@@ -72,6 +74,7 @@ namespace Seer {
 		std::mutex _received_messages_mutex;
 		std::condition_variable _received_messages_condition;
 
+		//std::vector<> _task_listeners;
 		std::vector<std::future<void>> _tasks;
 		std::vector<std::exception_ptr> _exceptions_caught;
 		std::mutex _exception_mutex;

@@ -125,7 +125,7 @@ void Seer::Network::send_to_clients(const std::string& message)
 	}	
 }
 
-void Seer::Network::process_received_messages()
+void Seer::Network::received_messages_worker()
 {
 	while (_destory == false)
 	{
@@ -141,9 +141,16 @@ void Seer::Network::process_received_messages()
 		{
 			auto message = received_messages.front();
 			received_messages.pop();
-			std::cout << message << std::endl;
+			process_received_messages(message);
 		}
 	}
+}
+
+void Seer::Network::process_received_messages(const std::string& message)
+{
+	std::cout << message << std::endl;
+	//check if the message is json
+
 }
 
 bool Seer::Network::task_complete(std::future<void>& task)
