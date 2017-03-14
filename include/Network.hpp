@@ -2,6 +2,7 @@
 #define NETWORK_HPP
 #include "DataPoint.hpp"
 #include "BaseProducer.hpp"
+#include "BaseListener.hpp"
 
 #include "json\json.hpp"
 
@@ -27,6 +28,7 @@
 #include <queue> //std::queue
 #include <string> //std::string
 #include <set> //std::set
+#include <map> //std::map
 #include <condition_variable> //std::condition_variable
 
 namespace Seer {
@@ -42,6 +44,7 @@ namespace Seer {
 			return network;
 		}
 		void send(std::unique_ptr<DataPoint::BaseDataPoint> time_point);
+		void send(std::unique_ptr<Listener::BaseListener> listener);
 	private:
 		Network()
 		{
@@ -74,8 +77,8 @@ namespace Seer {
 		std::mutex _received_messages_mutex;
 		std::condition_variable _received_messages_condition;
 
-		//std::vector<> _task_listeners;
-		std::vector<std::future<void>> _tasks;
+		std::map<std::string, std::unique_ptr<Listener::BaseListener>> _task_listeners;
+		std::vector<std::future<void>> _running_tasks;
 		std::vector<std::exception_ptr> _exceptions_caught;
 		std::mutex _exception_mutex;
 		std::atomic<bool> _exception_has_been_raised = { false };

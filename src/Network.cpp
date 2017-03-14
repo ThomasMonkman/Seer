@@ -11,7 +11,7 @@ Seer::Network::~Network()
 	try
 	{
 		//wait for all futures	
-		for (auto& task : _tasks)
+		for (auto& task : _running_tasks)
 		{
 			task.wait();
 		}
@@ -36,9 +36,9 @@ void Seer::Network::heartbeat()
 		{
 			auto start_of_heartbeat = std::chrono::steady_clock::now();
 			//remove any tasks that have completed, or thrown errors
-			_tasks.erase(
-				std::remove_if(_tasks.begin(), _tasks.end(), [this](auto& task) {return task_complete(task); })
-				, _tasks.end());
+			_running_tasks.erase(
+				std::remove_if(_running_tasks.begin(), _running_tasks.end(), [this](auto& task) {return task_complete(task); })
+				, _running_tasks.end());
 
 			//swap out the mutexed vector to a local one so we don't block it for long
 			std::vector<std::unique_ptr<DataPoint::BaseDataPoint>> data_points_to_send;
@@ -150,7 +150,16 @@ void Seer::Network::process_received_messages(const std::string& message)
 {
 	std::cout << message << std::endl;
 	//check if the message is json
-
+	try
+	{
+		auto json = nlohmann::json::parse(message.begin(), message.end());
+		std::cout << json << std::endl;		
+	}
+	catch (const std::exception&)
+	{
+		consume_exception(std::current_exception());		
+	}
+	
 }
 
 bool Seer::Network::task_complete(std::future<void>& task)
