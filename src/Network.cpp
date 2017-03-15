@@ -28,6 +28,13 @@ void Seer::Network::send(std::unique_ptr<DataPoint::BaseDataPoint> time_point)
 	_data_points.push_back(std::move(time_point));
 }
 
+void Seer::Network::add_listener(std::unique_ptr<Listener::BaseListener> listener)
+{
+	std::lock_guard<std::mutex> guard(_task_mutex);
+	listener->
+	_task_listeners[listener->get_name()] = std::move(listener);
+}
+
 void Seer::Network::heartbeat()
 {
 	while (_destory == false)
@@ -36,9 +43,12 @@ void Seer::Network::heartbeat()
 		{
 			auto start_of_heartbeat = std::chrono::steady_clock::now();
 			//remove any tasks that have completed, or thrown errors
-			_running_tasks.erase(
-				std::remove_if(_running_tasks.begin(), _running_tasks.end(), [this](auto& task) {return task_complete(task); })
-				, _running_tasks.end());
+			{
+				std::lock_guard<std::mutex> guard(_task_mutex);
+				_running_tasks.erase(
+					std::remove_if(_running_tasks.begin(), _running_tasks.end(), [this](auto& task) {return task_complete(task); })
+					, _running_tasks.end());
+			}
 
 			//swap out the mutexed vector to a local one so we don't block it for long
 			std::vector<std::unique_ptr<DataPoint::BaseDataPoint>> data_points_to_send;
@@ -48,20 +58,11 @@ void Seer::Network::heartbeat()
 			}
 			if (data_points_to_send.size() > 0)
 			{
-				//transform all the data points to json
-				//nlohmann::json json = nlohmann::json::array();
-				//std::vector<nlohmann::json> jsonV;
-				//jsonV.reserve(data_points_to_send.size());
-				//std::string json_string = "";
-				//json_string.reserve(data_points_to_send.size() * 90);
-				std::stringstream json_stream;//(json_string);
+				std::stringstream json_stream;
 				for (const auto& data_point : data_points_to_send)
 				{
-					//json_string.append(data_point->get_json_string());
-					//json.push_back(data_point->get_json());
 					json_stream << *data_point;
 				}
-				//std::cout << data_points_to_send.size() << '\n';
 				auto prep_time = std::chrono::steady_clock::now();
 				send_to_clients(json_stream.str());
 				auto send_time = std::chrono::steady_clock::now();
@@ -153,7 +154,17 @@ void Seer::Network::process_received_messages(const std::string& message)
 	try
 	{
 		auto json = nlohmann::json::parse(message.begin(), message.end());
-		std::cout << json << std::endl;		
+		std::cout << json << std::endl;
+		{
+			std::lock_guard<std::mutex> guard(_task_mutex);
+			auto listener = _task_listeners.find(json["n"]);
+			if (listener != _task_listeners.end())
+			{
+				std::packaged_task<void()> task(listener->second->get_callback());
+				_running_tasks.push_back(task.get_future());
+				std::thread(std::move(task)).detach();
+			}
+		}
 	}
 	catch (const std::exception&)
 	{
