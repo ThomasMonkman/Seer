@@ -28,11 +28,10 @@ void Seer::Network::send(std::unique_ptr<DataPoint::BaseDataPoint> time_point)
 	_data_points.push_back(std::move(time_point));
 }
 
-void Seer::Network::add_listener(std::unique_ptr<Listener::BaseListener> listener)
+std::size_t Seer::Network::add_listener(std::string name, std::function<void(nlohmann::json)> callback)
 {
 	std::lock_guard<std::mutex> guard(_task_mutex);
-	listener->
-	_task_listeners[listener->get_name()] = std::move(listener);
+	_task_listeners[_task_count++] = std::move(Task(name, callback));
 }
 
 void Seer::Network::heartbeat()
@@ -160,7 +159,7 @@ void Seer::Network::process_received_messages(const std::string& message)
 			auto listener = _task_listeners.find(json["n"]);
 			if (listener != _task_listeners.end())
 			{
-				std::packaged_task<void()> task(listener->second->get_callback());
+				std::packaged_task<void()> task(listener->second.callback);
 				_running_tasks.push_back(task.get_future());
 				std::thread(std::move(task)).detach();
 			}

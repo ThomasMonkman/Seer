@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.6)
 #Project name
 project( Seer VERSION 0.0.1 LANGUAGES CXX )
 
+# Add debug flags
 if(MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zi")
 else()

@@ -2,7 +2,6 @@
 #define NETWORK_HPP
 #include "DataPoint.hpp"
 #include "BaseProducer.hpp"
-#include "BaseListener.hpp"
 
 #include "json\json.hpp"
 
@@ -30,6 +29,7 @@
 #include <set> //std::set
 #include <map> //std::map
 #include <condition_variable> //std::condition_variable
+#include <atomic> //std::atomic
 
 namespace Seer {
 	//network heartbeat at 16.66ms
@@ -43,8 +43,8 @@ namespace Seer {
 			static Network network;
 			return network;
 		}
-		void send(std::unique_ptr<DataPoint::BaseDataPoint> time_point);
-		void add_listener(std::unique_ptr<Listener::BaseListener> listener);
+		void send(std::unique_ptr<DataPoint::BaseDataPoint> time_point);		
+		std::size_t Seer::Network::add_listener(std::string name, std::function<void(nlohmann::json)> callback);
 	private:
 		Network()
 		{
@@ -59,6 +59,7 @@ namespace Seer {
 		void send_to_clients(const std::string& message);
 		void received_messages_worker();
 		void process_received_messages(const std::string& message);
+
 
 		bool task_complete(std::future<void>& task);
 		void consume_exception(std::exception_ptr&& exception);
@@ -77,9 +78,19 @@ namespace Seer {
 		std::mutex _received_messages_mutex;
 		std::condition_variable _received_messages_condition;
 
-		std::map<std::string, std::unique_ptr<Listener::BaseListener>> _task_listeners;
+		struct Task
+		{
+			Task(std::string name, std::function<void(nlohmann::json)> callback) :
+				name(name),
+				callback(callback)
+			{ }
+			std::string name;
+			std::function<void(nlohmann::json)> callback;
+		};
+		std::map<std::size_t, Task> _task_listeners;
 		std::vector<std::future<void>> _running_tasks;
 		std::mutex _task_mutex;
+		std::atomic<std::size_t> _task_count = { 0 };
 
 		std::vector<std::exception_ptr> _exceptions_caught;
 		std::mutex _exception_mutex;
