@@ -55,7 +55,13 @@ void Seer::Network::heartbeat()
 				std::lock_guard<std::mutex> guard(_data_point_mutex);
 				std::swap(data_points_to_send, _data_points);
 			}
-			if (data_points_to_send.size() > 0)
+			auto connected_clients = false;
+			{
+				std::lock_guard<std::mutex> guard(_connection_mutex);
+				connected_clients = _connections.size > 0;
+			}
+			//Parse the data points in to json
+			if (connected_clients && data_points_to_send.size() > 0)
 			{
 				std::stringstream json_stream;
 				for (const auto& data_point : data_points_to_send)
