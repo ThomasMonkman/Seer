@@ -2,7 +2,7 @@
 #define SCOPETIMER_HPP
 
 #include "DataPoint.hpp"
-#include "Network.hpp"
+#include "Pipe.hpp"
 
 #include <chrono>
 #include <string>

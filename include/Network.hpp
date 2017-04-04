@@ -44,7 +44,7 @@ namespace Seer {
 			return network;
 		}
 		void send(std::unique_ptr<DataPoint::BaseDataPoint> time_point);		
-		std::size_t Seer::Network::add_listener(std::string name, std::function<void(nlohmann::json)> callback);
+		std::size_t Seer::Network::add_listener(std::string event_name, std::function<void(nlohmann::json)> callback);
 	private:
 		Network()
 		{
@@ -80,11 +80,11 @@ namespace Seer {
 
 		struct Task
 		{
-			Task(std::string name, std::function<void(nlohmann::json)> callback) :
-				name(name),
+			Task(std::string event_name, std::function<void(nlohmann::json)> callback) :
+				event_name(event_name),
 				callback(callback)
 			{ }
-			std::string name;
+			std::string event_name;
 			std::function<void(nlohmann::json)> callback;
 		};
 		std::map<std::size_t, Task> _task_listeners;
@@ -97,5 +97,20 @@ namespace Seer {
 		std::atomic<bool> _exception_has_been_raised = { false };
 		std::atomic<bool> _destory = { false };
 	};
+	//class NetworkListener
+	//{
+	//public:
+	//	NetworkListener(std::string event_name, std::function<void(nlohmann::json)> callback) : 
+	//		event_name(event_name),
+	//		callback(callback)
+	//	{
+	//	}
+	//	~NetworkListener()
+	//	{}
+	//private:
+	//		std::string event_name;
+	//		std::function<void(nlohmann::json)> callback;
+
+	//};
 }
 #endif

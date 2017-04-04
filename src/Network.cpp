@@ -58,7 +58,7 @@ void Seer::Network::heartbeat()
 			auto connected_clients = false;
 			{
 				std::lock_guard<std::mutex> guard(_connection_mutex);
-				connected_clients = _connections.size > 0;
+				connected_clients = _connections.size() > 0;
 			}
 			//Parse the data points in to json
 			if (connected_clients && data_points_to_send.size() > 0)
@@ -165,9 +165,9 @@ void Seer::Network::process_received_messages(const std::string& message)
 			auto listener = _task_listeners.find(json["n"]);
 			if (listener != _task_listeners.end())
 			{
-				std::packaged_task<void()> task(listener->second.callback);
+				std::packaged_task<void(nlohmann::json)> task(listener->second.callback);				
 				_running_tasks.push_back(task.get_future());
-				std::thread(std::move(task)).detach();
+				std::thread(task, std::move(json)).detach();
 			}
 		}
 	}
