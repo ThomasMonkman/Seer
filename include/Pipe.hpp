@@ -3,9 +3,11 @@
 // Seer
 #include "DataPoint.hpp"
 #include "Sink.hpp"
+#include "WebSocket.hpp"
+
 //#include "json\json.hpp"
 
-#include <memory> //std::unique_ptr
+#include <memory> //std::unique_ptr, std::make_unique
 #include <vector> //std::vector
 #include <thread> //std::thread, std::this_thread::sleep_until
 #include <mutex> //std::mutex, std::lock_guard
@@ -29,10 +31,7 @@ namespace Seer {
 	protected:
 		void Seer::Pipe::add_sink(std::unique_ptr<Sink> sink);
 	private:
-		Pipe() 
-		{
-			_hearbeat = std::thread([this]() { heartbeat(); });			
-		}
+		Pipe();		
 		~Pipe();
 
 		void heartbeat();

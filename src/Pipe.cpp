@@ -2,9 +2,18 @@
 
 using namespace std::chrono_literals;
 
+Seer::Pipe::Pipe()
+{	
+	_hearbeat = std::thread([this]() { heartbeat(); });
+	std::pair<unsigned short, unsigned short> port_range(9000, 9020);
+	//auto websocket = std::make_unique<WebSocket>(port_range);
+	//std::unique_ptr<Sink> sink = websocket;
+	add_sink(std::make_unique<WebSocket>(port_range));
+}
+
 Seer::Pipe::~Pipe()
 {
-	_destory = true;
+	_destory = true;	
 	//_received_messages_condition.notify_one();
 	//_hearbeat.join();
 	//_message_process_thread.join();
@@ -22,10 +31,6 @@ Seer::Pipe::~Pipe()
 	//}
 }
 
-//Seer::Pipe::Pipe()
-//{
-//	_hearbeat = std::thread([this]() { heartbeat(); });
-//}
 
 void Seer::Pipe::send(std::unique_ptr<DataPoint::BaseDataPoint> time_point)
 {

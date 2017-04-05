@@ -24,8 +24,9 @@ namespace Seer {
 		//Send data
 		virtual void send(const std::string& data)
 		{}
-	private:
+	protected:
 		std::atomic<bool> _active = { false };
+	private:
 	};
 }
 #endif

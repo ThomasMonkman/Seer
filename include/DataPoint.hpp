@@ -60,7 +60,7 @@ namespace Seer {
 
 		
 
-		struct TimePoint : BaseDataPoint
+		struct TimePoint : public BaseDataPoint
 		{	
 			/**
 			* \brief: Create a datapoint specialised around timers

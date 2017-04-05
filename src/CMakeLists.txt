@@ -3,7 +3,7 @@
 set(SEER_LIB_SRC
   Pipe.cpp
   BaseProducer.cpp
-  Network.cpp
+  WebSocket.cpp
   ScopeTimer.cpp
 )
 add_library(seer ${SEER_LIB_SRC})
