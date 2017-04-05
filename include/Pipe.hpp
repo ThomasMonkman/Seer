@@ -11,6 +11,7 @@
 #include <mutex> //std::mutex, std::lock_guard
 #include <atomic> //std::atomic
 #include <algorithm> //std::any_of
+#include <utility> //std::move
 
 namespace Seer {
 	//network heartbeat at 16.66ms
@@ -25,14 +26,20 @@ namespace Seer {
 		}
 		//Send data
 		void send(std::unique_ptr<DataPoint::BaseDataPoint> time_point);
+	protected:
+		void Seer::Pipe::add_sink(std::unique_ptr<Sink> sink);
 	private:
-		Pipe();
+		Pipe() 
+		{
+			_hearbeat = std::thread([this]() { heartbeat(); });			
+		}
 		~Pipe();
 
 		void heartbeat();
 
 		// places to put the DataPoints
-		std::vector<Sink> _sinks;
+		std::vector<std::unique_ptr<Sink>> _sinks;
+		std::mutex _sink_mutex;
 
 		std::vector<std::unique_ptr<DataPoint::BaseDataPoint>> _data_points;
 		std::mutex _data_point_mutex;

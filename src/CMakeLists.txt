@@ -1,6 +1,7 @@
 # Do not use file globing because then CMake is not able to tell whether a file
 # has been deleted or added when rebuilding the project.
 set(SEER_LIB_SRC
+  Pipe.cpp
   BaseProducer.cpp
   Network.cpp
   ScopeTimer.cpp

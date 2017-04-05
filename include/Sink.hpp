@@ -9,12 +9,17 @@ namespace Seer {
 	class Sink
 	{
 	public:
-		Sink();
-		virtual ~Sink();
-
-		virtual bool active()
+		Sink()
 		{
-			return _active;
+		}
+		virtual ~Sink()
+		{
+		}
+
+		virtual const bool active() const
+		{
+			bool active = _active;
+			return active;
 		}
 		//Send data
 		virtual void send(const std::string& data)

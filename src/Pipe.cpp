@@ -22,10 +22,10 @@ Seer::Pipe::~Pipe()
 	//}
 }
 
-Seer::Pipe::Pipe()
-{
-	_hearbeat = std::thread([this]() { heartbeat(); });
-}
+//Seer::Pipe::Pipe()
+//{
+//	_hearbeat = std::thread([this]() { heartbeat(); });
+//}
 
 void Seer::Pipe::send(std::unique_ptr<DataPoint::BaseDataPoint> time_point)
 {
@@ -46,7 +46,11 @@ void Seer::Pipe::heartbeat()
 				std::lock_guard<std::mutex> guard(_data_point_mutex);
 				std::swap(data_points_to_send, _data_points);
 			}
-			const auto sinks_active = std::any_of(_sinks.begin(), _sinks.end(), [](auto sink) { return sink.active(); });
+			const auto sinks_active = [this]() {
+				std::lock_guard<std::mutex> guard(_sink_mutex);
+				return std::any_of(_sinks.begin(), _sinks.end(), [](auto& sink) { return sink->active(); });
+			}();
+			
 			//Parse the data points in to json
 			if (sinks_active && data_points_to_send.size() > 0)
 			{
@@ -57,9 +61,12 @@ void Seer::Pipe::heartbeat()
 				}
 				const auto prep_time = std::chrono::steady_clock::now();
 				const auto json_string = json_stream.str();
-				for (auto& sink : _sinks)
 				{
-					sink.send(json_string);
+					std::lock_guard<std::mutex> guard(_sink_mutex);
+					for (auto& sink : _sinks)
+					{
+						sink->send(json_string);
+					}
 				}
 				//send_to_clients(json_stream.str());
 				const auto send_time = std::chrono::steady_clock::now();
@@ -74,4 +81,10 @@ void Seer::Pipe::heartbeat()
 
 		}
 	}
+}
+
+void Seer::Pipe::add_sink(std::unique_ptr<Sink> sink)
+{
+	std::lock_guard<std::mutex> guard(_sink_mutex);
+	_sinks.push_back(std::move(sink));
 }
