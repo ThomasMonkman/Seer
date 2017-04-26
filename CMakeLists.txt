@@ -1,6 +1,4 @@
-
-
-###################################
+####################################################################################
 
 cmake_minimum_required(VERSION 3.6)
 
@@ -16,11 +14,6 @@ if(MSVC)
 else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 endif()
-
-#set the out folder
-#set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
-#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
-#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 
 include_directories(
   ${PROJECT_SOURCE_DIR}/include

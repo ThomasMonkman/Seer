@@ -8,7 +8,7 @@ set(SEER_LIB_SRC
 )
 add_library(seer ${SEER_LIB_SRC})
 
-install(TARGETS seer DESTINATION ${PROJECT_BINARY_DIR})
+install(TARGETS seer DESTINATION ${PROJECT_BINARY_DIR}/bin)
 
 set(MAIN_SRC
   main.cpp
@@ -16,4 +16,4 @@ set(MAIN_SRC
 add_executable(seer_bin ${MAIN_SRC})
 target_link_libraries(seer_bin seer)
 
-install(TARGETS seer_bin DESTINATION ${PROJECT_BINARY_DIR})
+install(TARGETS seer_bin DESTINATION ${PROJECT_BINARY_DIR}/bin)
