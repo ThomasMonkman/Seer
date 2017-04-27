@@ -15,7 +15,7 @@ Seer::Pipe::~Pipe()
 {
 	_destory = true;	
 	//_received_messages_condition.notify_one();
-	//_hearbeat.join();
+	_hearbeat.join();
 	//_message_process_thread.join();
 	//try
 	//{

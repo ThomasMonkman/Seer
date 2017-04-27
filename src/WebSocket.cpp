@@ -56,7 +56,10 @@ Seer::WebSocket::WebSocket(std::pair<unsigned short, unsigned short> port_range)
 		throw std::exception("Could not open on ports");
 	}
 
-	_server_thread = std::thread([this]() { _server.run(); });
+	_server_thread = std::thread([this]() { 
+		_server.run(); 
+		std::cout << "end";
+	});
 	_active = true;
 }
 
@@ -71,6 +74,8 @@ Seer::WebSocket::~WebSocket()
 			_server.close(weak_connection, websocketpp::close::status::going_away, "", ec);
 		}
 	}
+	_server.stop();
+	_server_thread.join();
 }
 
 inline void Seer::WebSocket::send(const std::string & data)

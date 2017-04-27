@@ -9,6 +9,7 @@ add_executable(${SEER_UNIT_TEST_TARGET_NAME}
 	${PROJECT_SOURCE_DIR}/tests/src/TestMain.cpp)
 	
 target_link_libraries(${SEER_UNIT_TEST_TARGET_NAME}
+	seer
 	Catch)
 
 add_test(NAME "${SEER_UNIT_TEST_TARGET_NAME}_default"
