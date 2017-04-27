@@ -88,7 +88,7 @@ void Seer::Pipe::heartbeat()
 	}
 }
 
-void Seer::Pipe::add_sink(std::unique_ptr<Sink> sink)
+void Seer::Pipe::add_sink(std::unique_ptr<BaseSink> sink)
 {
 	std::lock_guard<std::mutex> guard(_sink_mutex);
 	_sinks.push_back(std::move(sink));

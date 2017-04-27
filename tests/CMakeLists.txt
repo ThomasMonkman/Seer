@@ -6,7 +6,8 @@ target_include_directories(Catch INTERFACE ${PROJECT_SOURCE_DIR}/3rdParty/catch/
 set(SEER_UNIT_TEST_TARGET_NAME "seer_unit")
 add_executable(${SEER_UNIT_TEST_TARGET_NAME}
 	${PROJECT_SOURCE_DIR}/tests/src/CatchMain.cpp
-	${PROJECT_SOURCE_DIR}/tests/src/TestMain.cpp)
+	${PROJECT_SOURCE_DIR}/tests/src/TestMain.cpp
+	${PROJECT_SOURCE_DIR}/tests/src/Pipe.spec.cpp)
 	
 target_link_libraries(${SEER_UNIT_TEST_TARGET_NAME}
 	seer

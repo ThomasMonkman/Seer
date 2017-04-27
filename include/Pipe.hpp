@@ -20,6 +20,8 @@ namespace Seer {
 	using pipe_heartbeat = std::chrono::duration<float, std::ratio<1, 60>>;
 	class Pipe
 	{
+		template<typename CustomSink, typename... Args>
+		friend Seer::Sink;
 	public:
 		static Pipe& instance()
 		{
@@ -29,7 +31,7 @@ namespace Seer {
 		//Send data
 		void send(std::unique_ptr<DataPoint::BaseDataPoint> time_point);
 	protected:
-		void Seer::Pipe::add_sink(std::unique_ptr<Sink> sink);
+		void Seer::Pipe::add_sink(std::unique_ptr<BaseSink> sink);
 	private:
 		Pipe();		
 		~Pipe();
@@ -37,7 +39,7 @@ namespace Seer {
 		void heartbeat();
 
 		// places to put the DataPoints
-		std::vector<std::unique_ptr<Sink>> _sinks;
+		std::vector<std::unique_ptr<BaseSink>> _sinks;
 		std::mutex _sink_mutex;
 
 		std::vector<std::unique_ptr<DataPoint::BaseDataPoint>> _data_points;

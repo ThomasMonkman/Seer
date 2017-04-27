@@ -33,7 +33,7 @@
 #include <mutex> //std::mutex, std::lock_guard
 
 namespace Seer {
-	class WebSocket : public Sink
+	class WebSocket : public BaseSink
 	{
 	public:
 		WebSocket(std::pair<unsigned short, unsigned short> port_range);
