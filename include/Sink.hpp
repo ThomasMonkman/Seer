@@ -1,6 +1,7 @@
 #ifndef SINK_HPP
 #define SINK_HPP
 // Seer
+//#include "Pipe.hpp"
 // std
 #include <atomic> //std::atomic
 #include <string> //std::string
@@ -36,6 +37,8 @@ namespace Seer {
 			// This sink will auto register, and auto un-register when destructed
 	///		auto file_sink = Sink<FileSink>("file.log");
 	/// @endcode
+	//Seer::Pipe;
+
 	template<typename CustomSink, typename... Args>
 	class Sink
 	{
@@ -43,15 +46,17 @@ namespace Seer {
 	public:
 		Sink(Args&&... args)
 		{
-			CustomSink(std::forward<Args>(args)...));
+			/*Seer::Pipe::instance().add_sink(
+				std::make_unique<CustomSink>(std::forward<Args>(args)...)
+			);*/
 		}
 		~Sink() 
 		{
-
+			//Seer::Pipe::instance().remove_sink(sink_id);
 		}
 
 	private:
-
+		std::size_t sink_id;
 	};
 }
 #endif

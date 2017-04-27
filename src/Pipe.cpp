@@ -53,7 +53,7 @@ void Seer::Pipe::heartbeat()
 			}
 			const auto sinks_active = [this]() {
 				std::lock_guard<std::mutex> guard(_sink_mutex);
-				return std::any_of(_sinks.begin(), _sinks.end(), [](auto& sink) { return sink->active(); });
+				return std::any_of(_sinks.begin(), _sinks.end(), [](auto& sink) { return sink.second->active(); });
 			}();
 			
 			//Parse the data points in to json
@@ -70,7 +70,7 @@ void Seer::Pipe::heartbeat()
 					std::lock_guard<std::mutex> guard(_sink_mutex);
 					for (auto& sink : _sinks)
 					{
-						sink->send(json_string);
+						sink.second->send(json_string);
 					}
 				}
 				//send_to_clients(json_stream.str());
@@ -88,8 +88,19 @@ void Seer::Pipe::heartbeat()
 	}
 }
 
-void Seer::Pipe::add_sink(std::unique_ptr<BaseSink> sink)
+std::size_t Seer::Pipe::add_sink(std::unique_ptr<BaseSink> sink)
 {
 	std::lock_guard<std::mutex> guard(_sink_mutex);
-	_sinks.push_back(std::move(sink));
+	_sinks[++_current_sink_id] = std::move(sink);
+	return _current_sink_id;
+}
+
+void Seer::Pipe::remove_sink(std::size_t sink_id)
+{
+	std::lock_guard<std::mutex> guard(_sink_mutex);
+	auto sink = _sinks.find(sink_id);
+	if (sink != _sinks.end())
+	{
+		_sinks.erase(sink);
+	}
 }

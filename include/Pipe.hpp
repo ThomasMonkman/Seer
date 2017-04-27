@@ -13,15 +13,15 @@
 #include <mutex> //std::mutex, std::lock_guard
 #include <atomic> //std::atomic
 #include <algorithm> //std::any_of
-#include <utility> //std::move
+#include <utility> //std::move, std::size_t
 
 namespace Seer {
 	//network heartbeat at 16.66ms
 	using pipe_heartbeat = std::chrono::duration<float, std::ratio<1, 60>>;
 	class Pipe
 	{
-		template<typename CustomSink, typename... Args>
-		friend Seer::Sink;
+		/*template<typename CustomSink, typename... Args>
+		friend Seer::Sink;*/
 	public:
 		static Pipe& instance()
 		{
@@ -31,15 +31,17 @@ namespace Seer {
 		//Send data
 		void send(std::unique_ptr<DataPoint::BaseDataPoint> time_point);
 	protected:
-		void Seer::Pipe::add_sink(std::unique_ptr<BaseSink> sink);
+		std::size_t Seer::Pipe::add_sink(std::unique_ptr<Seer::BaseSink> sink);
+		void Seer::Pipe::remove_sink(std::size_t sink_id);
 	private:
-		Pipe();		
+		Pipe();
 		~Pipe();
 
 		void heartbeat();
 
 		// places to put the DataPoints
-		std::vector<std::unique_ptr<BaseSink>> _sinks;
+		std::map<std::size_t, std::unique_ptr<Seer::BaseSink>> _sinks;
+		std::size_t _current_sink_id = { 0 };
 		std::mutex _sink_mutex;
 
 		std::vector<std::unique_ptr<DataPoint::BaseDataPoint>> _data_points;
