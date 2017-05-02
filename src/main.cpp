@@ -14,14 +14,14 @@
 #include <chrono>
 #include <random>
 
-class DummySink : Seer::BaseSink
+class DummySinkA : Seer::BaseSink
 {
 public:
-	DummySink() {
-		std::cout << "DummySink Created";
+	DummySinkA() {
+		std::cout << "DummySinkA Created";
 	}
-	~DummySink() {
-		std::cout << "DummySink Destroyed";
+	~DummySinkA() override {
+		std::cout << "DummySinkA Destroyed";
 	}
 	void send(const std::string& data) override
 	{}
@@ -37,7 +37,7 @@ int main() {
 	//Seer::BaseProducer base = Seer::BaseProducer();
 	std::mt19937_64 rand_eng{ std::random_device{}() };  // or seed however you want
 	std::uniform_int_distribution<> dist{ 1000, 5000 };
-	Seer::Sink<DummySink> dummy_sink;
+	Seer::Sink<DummySinkA> dummy_sink;
 	while (true)
 	{
 		for (auto i = 0; i < 1; i++)
