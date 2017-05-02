@@ -32,7 +32,7 @@ namespace Seer {
 		std::atomic<bool> _active = { false };
 	private:
 	};
-	
+
 	/// @brief Will contruct and register a custom sink to Seer
 	/// @code
 			// A custom sink has been made (FileSink), that will dump to file
@@ -64,7 +64,7 @@ namespace Seer {
 	template<class CustomSink, class... Args>
 	class Sink
 	{
-		static_assert(std::is_base_of<BaseSink, CustomSink>::value, "CustomSink must derive from BaseSink");
+		static_assert(std::is_base_of<BaseSink, CustomSink>::value, "CustomSink must derive from BaseSink");		
 	public:
 		/*Sink()
 		{
@@ -76,15 +76,18 @@ namespace Seer {
 		Sink(Args&&... args)
 		{
 			std::cout << "Sink Created";
-			//_sink_id = Seer::Pipe::instance().add_sink(
-			auto prt = std::make_unique<CustomSink>(std::forward<Args>(args)...);
+			//auto ptr = std::make_unique<CustomSink>(std::forward<Args>(args)...);
+			//std::unique_ptr<Seer::BaseSink> base = std::move(ptr);
+			//base->send("hello");
 
-			//);
+			_sink_id = Seer::Pipe::instance().add_sink(std::move(
+				std::make_unique<CustomSink>(std::forward<Args>(args)...)
+			));
 		}
 		~Sink()
 		{
 			std::cout << "Sink Destoryed";
-			//Seer::Pipe::instance().remove_sink(_sink_id);
+			Seer::Pipe::instance().remove_sink(_sink_id);
 		}
 
 	private:

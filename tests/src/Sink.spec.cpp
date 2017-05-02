@@ -3,7 +3,7 @@
 #include "Sink.hpp"
 
 
-class DummySink : Seer::BaseSink
+class DummySink : public Seer::BaseSink
 {
 public:
 	DummySink() {
@@ -13,7 +13,9 @@ public:
 		std::cout << "DummySink Destroyed";
 	}
 	void send(const std::string& data) override
-	{}
+	{
+		std::cout << data;
+	}
 private:
 
 };
