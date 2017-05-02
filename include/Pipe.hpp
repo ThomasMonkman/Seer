@@ -16,12 +16,15 @@
 #include <utility> //std::move, std::size_t
 
 namespace Seer {
+	class BaseSink;
+
 	//network heartbeat at 16.66ms
 	using pipe_heartbeat = std::chrono::duration<float, std::ratio<1, 60>>;
 	class Pipe
 	{
-		/*template<typename CustomSink, typename... Args>
-		friend Seer::Sink;*/
+		template<class CustomSink, typename... Args>
+		friend class Sink;
+
 	public:
 		static Pipe& instance()
 		{
@@ -30,6 +33,7 @@ namespace Seer {
 		}
 		//Send data
 		void send(std::unique_ptr<DataPoint::BaseDataPoint> time_point);
+		std::size_t number_of_sinks_attached();
 	protected:
 		std::size_t Seer::Pipe::add_sink(std::unique_ptr<Seer::BaseSink> sink);
 		void Seer::Pipe::remove_sink(std::size_t sink_id);

@@ -5,6 +5,7 @@
 //#include <include\BaseProducer.hpp>
 //#include "../include/BaseProducer.hpp"
 #include "ScopeTimer.hpp"
+#include "Sink.hpp"
 
 #include <limits>
 #include <BaseProducer.hpp>
@@ -12,6 +13,22 @@
 #include <thread>
 #include <chrono>
 #include <random>
+
+class DummySink : Seer::BaseSink
+{
+public:
+	DummySink() {
+		std::cout << "DummySink Created";
+	}
+	~DummySink() {
+		std::cout << "DummySink Destroyed";
+	}
+	void send(const std::string& data) override
+	{}
+private:
+
+};
+
 //#include <>
 int main() {
 	/*nlohmann::json json = {
@@ -20,7 +37,7 @@ int main() {
 	//Seer::BaseProducer base = Seer::BaseProducer();
 	std::mt19937_64 rand_eng{ std::random_device{}() };  // or seed however you want
 	std::uniform_int_distribution<> dist{ 1000, 5000 };
-
+	Seer::Sink<DummySink> dummy_sink;
 	while (true)
 	{
 		for (auto i = 0; i < 1; i++)

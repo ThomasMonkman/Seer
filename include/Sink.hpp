@@ -1,11 +1,13 @@
 #ifndef SINK_HPP
 #define SINK_HPP
 // Seer
-//#include "Pipe.hpp"
+#include "Pipe.hpp"
 // std
 #include <atomic> //std::atomic
 #include <string> //std::string
 #include <type_traits> //std::is_base_of
+
+class Pipe;
 
 namespace Seer {
 	class BaseSink
@@ -37,26 +39,100 @@ namespace Seer {
 			// This sink will auto register, and auto un-register when destructed
 	///		auto file_sink = Sink<FileSink>("file.log");
 	/// @endcode
-	//Seer::Pipe;
+	//template<class CustomSink>
+	//class Sink
+	//{
+	//	static_assert(std::is_base_of<BaseSink, CustomSink>::value, "CustomSink must derive from BaseSink");
+	//public:
+	//	Sink()
+	//	{
+	//		std::cout << "Sink Created";
+	//		_sink_id = Seer::Pipe::instance().add_sink(
+	//			std::make_unique<CustomSink>()
+	//		);
+	//	}
+	//	~Sink() 
+	//	{
+	//		std::cout << "Sink Destoryed";
+	//		Seer::Pipe::instance().remove_sink(_sink_id);			
+	//	}
 
-	template<typename CustomSink, typename... Args>
+	//private:
+	//	std::size_t _sink_id;
+	//};
+
+	template<class CustomSink, class... Args>
 	class Sink
 	{
 		static_assert(std::is_base_of<BaseSink, CustomSink>::value, "CustomSink must derive from BaseSink");
 	public:
+		/*Sink()
+		{
+			std::cout << "Sink Created";
+			_sink_id = Seer::Pipe::instance().add_sink(
+			std::make_unique<Args>()
+			);
+		}*/
 		Sink(Args&&... args)
 		{
-			/*Seer::Pipe::instance().add_sink(
-				std::make_unique<CustomSink>(std::forward<Args>(args)...)
-			);*/
+			std::cout << "Sink Created";
+			//_sink_id = Seer::Pipe::instance().add_sink(
+			auto prt = std::make_unique<CustomSink>(std::forward<Args>(args)...);
+
+			//);
 		}
-		~Sink() 
+		~Sink()
 		{
-			//Seer::Pipe::instance().remove_sink(sink_id);
+			std::cout << "Sink Destoryed";
+			//Seer::Pipe::instance().remove_sink(_sink_id);
 		}
 
 	private:
-		std::size_t sink_id;
+		std::size_t _sink_id;
 	};
+
+	//template<class CustomSink>
+	//class Sink
+	//{
+	//	//static_assert(std::is_base_of<BaseSink, CustomSink>::value, "CustomSink must derive from BaseSink");
+	//public:
+	//	Sink()
+	//	{
+	//		std::cout << "Sink Created";
+	//		_sink_id = Seer::Pipe::instance().add_sink(
+	//			std::make_unique<CustomSink>()
+	//		);
+	//	}
+	//	~Sink()
+	//	{
+	//		std::cout << "Sink Destoryed";
+	//		//Seer::Pipe::instance().remove_sink(_sink_id);
+	//	}
+
+	//private:
+	//	std::size_t _sink_id;
+	//};
+
+	//template<class Args>
+	//class Sink
+	//{
+	//	//static_assert(std::is_base_of<BaseSink, CustomSink>::value, "CustomSink must derive from BaseSink");
+	//public:
+	//	Sink()
+	//	{
+	//		std::cout << "Sink Created";
+	//		/*_sink_id = Seer::Pipe::instance().add_sink(
+	//		std::make_unique<Args>(std::forward<Args>(args)...)
+	//		);*/
+	//	}
+	//	~Sink()
+	//	{
+	//		std::cout << "Sink Destoryed";
+	//		//Seer::Pipe::instance().remove_sink(_sink_id);
+	//	}
+
+	//private:
+	//	std::size_t _sink_id;
+	//};
 }
 #endif

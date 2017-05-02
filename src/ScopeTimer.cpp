@@ -6,6 +6,7 @@ Seer::ScopeTimer::ScopeTimer(const std::string name) :
 	//Send start time
 	Pipe::instance().send(std::make_unique<DataPoint::TimePoint>
 		(DataPoint::TimePoint(_name, std::this_thread::get_id(), true, _creation)));
+	//DataPoint::TimePoint inside make_unique not needed!!!
 }
 
 Seer::ScopeTimer::~ScopeTimer()

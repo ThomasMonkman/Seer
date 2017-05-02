@@ -16,6 +16,7 @@ Seer::Pipe::~Pipe()
 	_destory = true;	
 	//_received_messages_condition.notify_one();
 	_hearbeat.join();
+
 	//_message_process_thread.join();
 	//try
 	//{
@@ -103,4 +104,10 @@ void Seer::Pipe::remove_sink(std::size_t sink_id)
 	{
 		_sinks.erase(sink);
 	}
+}
+
+std::size_t Seer::Pipe::number_of_sinks_attached() 
+{
+	std::lock_guard<std::mutex> guard(_sink_mutex);
+	return _sinks.size();
 }
