@@ -22,7 +22,7 @@ namespace Seer {
 	using pipe_heartbeat = std::chrono::duration<float, std::ratio<1, 60>>;
 	class Pipe
 	{
-		template<class CustomSink, typename... Args>
+		template<class CustomSink>
 		friend class Sink;
 
 	public:

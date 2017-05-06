@@ -79,6 +79,6 @@ TEST_CASE("Custom sinks can be created", "[sink]") {
 	SECTION("Sink can be constructed with arguments") {
 		Seer::Sink<ArgumentWithInt> argument_with_int(1);
 		Seer::Sink<ArgumentWithMultipleInts> argument_with_multiple_int(1, 2);
-		Seer::Sink<ArgumentWithClass> argument_with_int(std::string("aa"));
+		Seer::Sink<ArgumentWithClass> argument_with_class(std::string("aa"));
 	}
 }
