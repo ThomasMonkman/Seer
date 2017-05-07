@@ -1,6 +1,8 @@
 #include "catch\catch.hpp"
-#include "Pipe.hpp"
-#include "Sink.hpp"
+
+#include "Seer.hpp"
+//#include "Pipe.hpp"
+//#include "Sink.hpp"
 
 #include <string>
 

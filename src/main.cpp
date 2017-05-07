@@ -4,11 +4,13 @@
 
 //#include <include\BaseProducer.hpp>
 //#include "../include/BaseProducer.hpp"
-#include "ScopeTimer.hpp"
-#include "Sink.hpp"
+
+#include "Seer.hpp"
+
+//#include "ScopeTimer.hpp"
+//#include "Sink.hpp"
 
 #include <limits>
-#include <BaseProducer.hpp>
 #include <string>
 #include <thread>
 #include <chrono>
@@ -37,7 +39,7 @@ int main() {
 	//Seer::BaseProducer base = Seer::BaseProducer();
 	std::mt19937_64 rand_eng{ std::random_device{}() };  // or seed however you want
 	std::uniform_int_distribution<> dist{ 1000, 5000 };
-	//Seer::Sink<DummySinkA> dummy_sink;
+	Seer::Sink<DummySinkA> dummy_sink;
 	while (true)
 	{
 		for (auto i = 0; i < 1; i++)
