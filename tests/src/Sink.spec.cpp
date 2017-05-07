@@ -10,14 +10,14 @@ class DummySink : public Seer::BaseSink
 {
 public:
 	DummySink() {
-		std::cout << "DummySink Created";
+		//std::cout << "DummySink Created";
 	}
 	~DummySink() override {
-		std::cout << "DummySink Destroyed";
+		//std::cout << "DummySink Destroyed";
 	}
 	void send(const std::string& data) override
 	{
-		std::cout << data;
+		//std::cout << data;
 	}
 };
 
@@ -25,14 +25,14 @@ class ArgumentWithInt : public Seer::BaseSink
 {
 public:
 	ArgumentWithInt(int a) {
-		std::cout << a;
+		//std::cout << a;
 	}
 	~ArgumentWithInt() override {
-		std::cout << "DummySink Destroyed";
+		//std::cout << "DummySink Destroyed";
 	}
 	void send(const std::string& data) override
 	{
-		std::cout << data;
+		//std::cout << data;
 	}
 };
 
@@ -41,11 +41,11 @@ class ArgumentWithMultipleInts : public Seer::BaseSink
 public:
 	ArgumentWithMultipleInts(int a, int b) {}
 	~ArgumentWithMultipleInts() override {
-		std::cout << "DummySink Destroyed";
+		//std::cout << "DummySink Destroyed";
 	}
 	void send(const std::string& data) override
 	{
-		std::cout << data;
+		//std::cout << data;
 	}
 };
 
@@ -56,11 +56,11 @@ public:
 
 	}
 	~ArgumentWithClass() override {
-		std::cout << "DummySink Destroyed";
+		//std::cout << "DummySink Destroyed";
 	}
 	void send(const std::string& data) override
 	{
-		std::cout << data;
+		//std::cout << data;
 	}
 };
 

@@ -47,7 +47,7 @@ namespace Seer {
 		template<class... Args>
 		Sink(Args&&... args)
 		{
-			std::cout << "Sink Created";
+			//std::cout << "Sink Created";
 			//auto ptr = std::make_unique<CustomSink>(std::forward<Args>(args)...);
 			//std::unique_ptr<Seer::BaseSink> base = std::move(ptr);
 			//base->send("hello");
@@ -57,7 +57,7 @@ namespace Seer {
 		}
 		~Sink()
 		{
-			std::cout << "Sink Destoryed";
+			//std::cout << "Sink Destoryed";
 			Seer::Pipe::instance().remove_sink(_sink_id);
 		}
 	private:
