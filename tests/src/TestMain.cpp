@@ -1,10 +1,10 @@
 //#include <3rdParty\catch\catch.hpp>
 #include "catch\catch.hpp"
-#include "ScopeTimer.hpp"
+//#include "ScopeTimer.hpp"
 
 unsigned int Factorial(unsigned int number) {
 
-	Seer::ScopeTimer timer("hello");
+	//Seer::ScopeTimer timer("hello");
 	return number > 1 ? Factorial(number - 1)*number : 1;
 }
 

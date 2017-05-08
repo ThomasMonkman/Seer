@@ -42,7 +42,7 @@ namespace Seer {
 	template<class CustomSink>
 	class Sink
 	{
-		static_assert(std::is_base_of<BaseSink, CustomSink>::value, "CustomSink must derive from BaseSink");		
+		static_assert(std::is_base_of<Seer::BaseSink, CustomSink>::value, "CustomSink must derive from BaseSink");		
 	public:
 		template<class... Args>
 		Sink(Args&&... args)
@@ -51,6 +51,11 @@ namespace Seer {
 			//auto ptr = std::make_unique<CustomSink>(std::forward<Args>(args)...);
 			//std::unique_ptr<Seer::BaseSink> base = std::move(ptr);
 			//base->send("hello");
+			/*std::unique_ptr<BaseSink> custom_sink = std::make_unique<CustomSink>(std::forward<Args>(args)...);
+			_sink_id = Seer::Pipe::instance().add_sink(std::move(
+				custom_sink
+			));*/
+
 			_sink_id = Seer::Pipe::instance().add_sink(std::move(
 				std::make_unique<CustomSink>(std::forward<Args>(args)...)
 			));
