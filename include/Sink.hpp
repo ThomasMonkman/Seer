@@ -20,12 +20,16 @@ namespace Seer {
 		{
 		}
 
+		/// @brief Check for if this sink is active, inactive sinks will be skipped by the pipe, as such they will not receive data
+		/// @returns whether this sink is active
 		virtual const bool active() const
 		{
 			bool active = _active;
 			return active;
 		}
-		//Send data
+
+		/// @brief Will receive any message that comes through the pipe
+		/// @param data Message received from pipe
 		virtual void send(const std::string& data)
 		{}
 	protected:
@@ -47,22 +51,12 @@ namespace Seer {
 		template<class... Args>
 		Sink(Args&&... args)
 		{
-			//std::cout << "Sink Created";
-			//auto ptr = std::make_unique<CustomSink>(std::forward<Args>(args)...);
-			//std::unique_ptr<Seer::BaseSink> base = std::move(ptr);
-			//base->send("hello");
-			/*std::unique_ptr<BaseSink> custom_sink = std::make_unique<CustomSink>(std::forward<Args>(args)...);
-			_sink_id = Seer::Pipe::instance().add_sink(std::move(
-				custom_sink
-			));*/
-
 			_sink_id = Seer::Pipe::instance().add_sink(std::move(
 				std::make_unique<CustomSink>(std::forward<Args>(args)...)
 			));
 		}
 		~Sink()
 		{
-			//std::cout << "Sink Destoryed";
 			Seer::Pipe::instance().remove_sink(_sink_id);
 		}
 	private:

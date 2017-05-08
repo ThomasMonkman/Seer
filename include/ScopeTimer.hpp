@@ -13,9 +13,8 @@ namespace Seer {
 	public:
 		ScopeTimer(const std::string name);
 		~ScopeTimer();
-
 	private:
-		std::chrono::steady_clock::time_point _creation;
+		const std::chrono::steady_clock::time_point _creation;
 		std::chrono::steady_clock::time_point _destruction;
 		const std::string _name;
 	};
