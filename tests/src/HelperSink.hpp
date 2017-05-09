@@ -8,6 +8,7 @@
 #include <future>
 #include <string>
 #include <utility>
+#include <map>
 
 class TestHelperSink : Seer::BaseSink
 {
