@@ -47,7 +47,6 @@ namespace Seer {
 			std::shared_ptr<Seer::BaseSink>,
 			std::owner_less<std::weak_ptr<Seer::BaseSink>>> _sinks;
 
-		//std::size_t _current_sink_id = { 0 };
 		std::mutex _sink_mutex;
 
 		std::vector<std::unique_ptr<DataPoint::BaseDataPoint>> _data_points;
