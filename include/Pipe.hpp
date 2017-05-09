@@ -7,7 +7,7 @@
 
 //#include "json\json.hpp"
 
-#include <memory> //std::unique_ptr, std::make_unique
+#include <memory> //std::unique_ptr, std::make_unique, std::weak_ptr, std::make_shared
 #include <vector> //std::vector
 #include <thread> //std::thread, std::this_thread::sleep_until
 #include <mutex> //std::mutex, std::lock_guard
@@ -35,17 +35,19 @@ namespace Seer {
 		void send(std::unique_ptr<DataPoint::BaseDataPoint> time_point);
 		std::size_t number_of_sinks_attached();
 	protected:
-		std::size_t Seer::Pipe::add_sink(std::unique_ptr<Seer::BaseSink> sink);
-		void Seer::Pipe::remove_sink(std::size_t sink_id);
+		std::weak_ptr<Seer::BaseSink> Seer::Pipe::add_sink(std::shared_ptr<Seer::BaseSink> sink);
+		void Seer::Pipe::remove_sink(std::weak_ptr<Seer::BaseSink> sink);
 	private:
 		Pipe();
 		~Pipe();
 
 		void heartbeat();
+				
+		std::map<std::weak_ptr<Seer::BaseSink>,
+			std::shared_ptr<Seer::BaseSink>,
+			std::owner_less<std::weak_ptr<Seer::BaseSink>>> _sinks;
 
-		// places to put the DataPoints
-		std::map<std::size_t, std::unique_ptr<Seer::BaseSink>> _sinks;
-		std::size_t _current_sink_id = { 0 };
+		//std::size_t _current_sink_id = { 0 };
 		std::mutex _sink_mutex;
 
 		std::vector<std::unique_ptr<DataPoint::BaseDataPoint>> _data_points;

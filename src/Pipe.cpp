@@ -6,9 +6,7 @@ Seer::Pipe::Pipe()
 {	
 	_hearbeat = std::thread([this]() { heartbeat(); });
 	std::pair<unsigned short, unsigned short> port_range(9000, 9020);
-	//auto websocket = std::make_unique<WebSocket>(port_range);
-	//std::unique_ptr<Sink> sink = websocket;
-	add_sink(std::make_unique<WebSocket>(port_range));
+	add_sink(std::make_shared<WebSocket>(port_range));
 }
 
 Seer::Pipe::~Pipe()
@@ -31,7 +29,6 @@ Seer::Pipe::~Pipe()
 
 	//}
 }
-
 
 void Seer::Pipe::send(std::unique_ptr<DataPoint::BaseDataPoint> time_point)
 {
@@ -89,20 +86,20 @@ void Seer::Pipe::heartbeat()
 	}
 }
 
-std::size_t Seer::Pipe::add_sink(std::unique_ptr<BaseSink> sink)
+std::weak_ptr<Seer::BaseSink> Seer::Pipe::add_sink(std::shared_ptr<BaseSink> sink)
 {
-	std::lock_guard<std::mutex> guard(_sink_mutex);
-	_sinks[++_current_sink_id] = std::move(sink);
-	return _current_sink_id;
+	std::lock_guard<std::mutex> guard(_sink_mutex);	
+	_sinks[sink] = sink;
+	return sink;
 }
 
-void Seer::Pipe::remove_sink(std::size_t sink_id)
+void Seer::Pipe::remove_sink(std::weak_ptr<Seer::BaseSink> sink)
 {
 	std::lock_guard<std::mutex> guard(_sink_mutex);
-	auto sink = _sinks.find(sink_id);
-	if (sink != _sinks.end())
+	auto found = _sinks.find(sink);
+	if (found != _sinks.end())
 	{
-		_sinks.erase(sink);
+		_sinks.erase(found);
 	}
 }
 

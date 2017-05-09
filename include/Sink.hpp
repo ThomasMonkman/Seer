@@ -4,6 +4,8 @@
 #include "Pipe.hpp"
 // std
 #include <atomic> //std::atomic
+#include <utility> //std::forward
+#include <memory> //std::weak_ptr, std::make_shared
 #include <string> //std::string
 #include <type_traits> //std::is_base_of
 
@@ -19,7 +21,6 @@ namespace Seer {
 		virtual ~BaseSink()
 		{
 		}
-
 		/// @brief Check for if this sink is active, inactive sinks will be skipped by the pipe, as such they will not receive data
 		/// @returns whether this sink is active
 		virtual const bool active() const
@@ -27,7 +28,6 @@ namespace Seer {
 			bool active = _active;
 			return active;
 		}
-
 		/// @brief Will receive any message that comes through the pipe
 		/// @param data Message received from pipe
 		virtual void send(const std::string& data)
@@ -51,16 +51,19 @@ namespace Seer {
 		template<class... Args>
 		Sink(Args&&... args)
 		{
-			_sink_id = Seer::Pipe::instance().add_sink(std::move(
-				std::make_unique<CustomSink>(std::forward<Args>(args)...)
-			));
+			_sink = Seer::Pipe::instance().add_sink(
+				std::make_shared<CustomSink>(std::forward<Args>(args)...)
+			);
 		}
 		~Sink()
 		{
-			Seer::Pipe::instance().remove_sink(_sink_id);
+			Seer::Pipe::instance().remove_sink(_sink);
+		}
+		std::weak_ptr<Seer::BaseSink> get_sink() {
+			return _sink;
 		}
 	private:
-		std::size_t _sink_id;
+		std::weak_ptr<Seer::BaseSink> _sink;
 	};
 }
 #endif
