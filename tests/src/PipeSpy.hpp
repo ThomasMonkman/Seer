@@ -1,5 +1,5 @@
-#ifndef TESTHELPERSINK_HPP
-#define TESTHELPERSINK_HPP
+#ifndef PIPESPY_HPP
+#define PIPESPY_HPP
 
 #include "../../include/Seer.hpp"
 
@@ -10,14 +10,14 @@
 #include <utility>
 #include <map>
 
-class TestHelperSink : Seer::BaseSink
+class PipeSpy : Seer::BaseSink
 {
 public:
-	TestHelperSink()
+	PipeSpy()
 	{
 
 	};
-	~TestHelperSink() override {};
+	~PipeSpy() override {};
 
 	void send(const std::string& data) override
 	{		

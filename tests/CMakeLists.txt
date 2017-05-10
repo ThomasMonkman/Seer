@@ -8,7 +8,8 @@ add_executable(${SEER_UNIT_TEST_TARGET_NAME}
 	${PROJECT_SOURCE_DIR}/tests/src/CatchMain.cpp
 	${PROJECT_SOURCE_DIR}/tests/src/TestMain.cpp
 	${PROJECT_SOURCE_DIR}/tests/src/Pipe.spec.cpp
-	${PROJECT_SOURCE_DIR}/tests/src/Sink.spec.cpp)
+	${PROJECT_SOURCE_DIR}/tests/src/Sink.spec.cpp
+	${PROJECT_SOURCE_DIR}/tests/src/ScopeTimer.spec.cpp)
 	
 target_link_libraries(${SEER_UNIT_TEST_TARGET_NAME}
 	seer

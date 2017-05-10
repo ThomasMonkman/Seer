@@ -68,7 +68,10 @@ void Seer::Pipe::heartbeat()
 					std::lock_guard<std::mutex> guard(_sink_mutex);
 					for (auto& sink : _sinks)
 					{
-						sink.second->send(json_string);
+						if (sink.second->active()) 
+						{
+							sink.second->send(json_string);
+						}
 					}
 				}
 				//send_to_clients(json_stream.str());

@@ -33,7 +33,7 @@ namespace Seer {
 		virtual void send(const std::string& data)
 		{}
 	protected:
-		std::atomic<bool> _active = { false };
+		std::atomic<bool> _active = { true };
 	private:
 	};
 
@@ -59,11 +59,11 @@ namespace Seer {
 		{
 			Seer::Pipe::instance().remove_sink(_sink);
 		}
-		std::weak_ptr<Seer::BaseSink> get_sink() {
+		std::weak_ptr<CustomSink> get_sink() {
 			return _sink;
 		}
 	private:
-		std::weak_ptr<Seer::BaseSink> _sink;
+		std::weak_ptr<CustomSink> _sink;
 	};
 }
 #endif
