@@ -46,7 +46,8 @@ namespace Seer {
 	template<class CustomSink>
 	class Sink
 	{
-		static_assert(std::is_base_of<Seer::BaseSink, CustomSink>::value, "CustomSink must derive from BaseSink");		
+		static_assert(std::is_base_of<Seer::BaseSink, CustomSink>::value, "CustomSink must derive from BaseSink");
+		//static_assert(std::is_convertible<CustomSink, Seer::BaseSink>::value, "Seer::BaseSink inheritance must be public");
 	public:
 		template<class... Args>
 		Sink(Args&&... args)
@@ -59,11 +60,11 @@ namespace Seer {
 		{
 			Seer::Pipe::instance().remove_sink(_sink);
 		}
-		std::weak_ptr<CustomSink> get_sink() {
-			return _sink;
+		std::shared_ptr<CustomSink> get_sink() {
+			return std::static_pointer_cast<CustomSink>(std::shared_ptr<Seer::BaseSink>(_sink));
 		}
 	private:
-		std::weak_ptr<CustomSink> _sink;
+		std::weak_ptr<Seer::BaseSink> _sink;
 	};
 }
 #endif
