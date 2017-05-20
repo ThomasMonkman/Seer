@@ -24,28 +24,37 @@ public:
 
 	void send(const std::string& data) override
 	{
-		std::lock_guard<std::mutex> lock(_matches_mutex);
+		std::lock_guard<std::mutex> lock(_callbacks_mutex);
 		auto json = nlohmann::json::parse(data);
-		auto match = _matches.find(json["#"]);
-		if (match != _matches.end()) {
-			for (auto& promise : match->second)
+		for (const auto& data_point : json)
+		{
+			for (auto& promise : _callbacks)
 			{
-				promise.set_value(json);
+				if (promise.predicate(data_point)) {
+					promise.promise.set_value(data_point);
+				}
 			}
-			_matches.erase(match);
 		}
 	}
 
-	std::future<nlohmann::json> get_match(std::string message_type) {
-		std::lock_guard<std::mutex> lock(_matches_mutex);
-		auto promise = std::promise<nlohmann::json>();
-		auto future = promise.get_future();
-		_matches[message_type].push_back(std::move(promise));
+	std::future<nlohmann::json> get_match(std::function<bool(const nlohmann::json&)> predicate) {
+		std::lock_guard<std::mutex> lock(_callbacks_mutex);
+		ConditionalPromise<nlohmann::json> conditional_promise(predicate);
+		auto future = conditional_promise.promise.get_future();
+		_callbacks.push_back(std::move(conditional_promise));
 		return future;
 	}
 private:
-	std::map<std::string, std::vector<std::promise<nlohmann::json>>> _matches;
-	std::mutex _matches_mutex;
+	template<typename T>
+	struct ConditionalPromise
+	{
+		ConditionalPromise(std::function<bool(const T&)> predicate)
+			: predicate(predicate), promise() {}
+		std::function<bool(T)> predicate;
+		std::promise<T> promise;
+	};
+	std::vector<ConditionalPromise<nlohmann::json>> _callbacks;
+	std::mutex _callbacks_mutex;
 };
 
 #endif

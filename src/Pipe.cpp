@@ -58,10 +58,13 @@ void Seer::Pipe::heartbeat()
 			if (sinks_active && data_points_to_send.size() > 0)
 			{
 				std::stringstream json_stream;
+				auto separator = '[';
 				for (const auto& data_point : data_points_to_send)
 				{
-					json_stream << *data_point;
+					json_stream << separator << *data_point;
+					separator = ',';
 				}
+				json_stream << ']';
 				const auto prep_time = std::chrono::steady_clock::now();
 				const auto json_string = json_stream.str();
 				{
@@ -84,7 +87,8 @@ void Seer::Pipe::heartbeat()
 		}
 		catch (const std::exception&)
 		{
-
+			//TODO: handle error here, bubble up to web
+			//Perhapes add try catch round sinks so one sink can not stop the others from getting data
 		}
 	}
 }
