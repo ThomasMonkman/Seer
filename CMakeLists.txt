@@ -1,6 +1,6 @@
 ####################################################################################
 
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.0)
 
 #Project name
 project( Seer VERSION 0.0.1 LANGUAGES CXX )

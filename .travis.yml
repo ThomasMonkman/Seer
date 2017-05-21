@@ -20,5 +20,8 @@ script:
   - export CC=/usr/bin/gcc-6
   - export CXX=/usr/bin/g++-6
   # Check versions of gcc, g++ and cmake
-  - gcc -v && g++ -v && cmake --version
+  #- gcc -v && g++ -v && cmake --version
   # Run your build commands next
+  - cmake
+  - make
+  - make test
