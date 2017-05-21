@@ -11,23 +11,8 @@ Seer::Pipe::Pipe()
 
 Seer::Pipe::~Pipe()
 {
-	_destory = true;	
-	//_received_messages_condition.notify_one();
+	_destory = true;
 	_hearbeat.join();
-
-	//_message_process_thread.join();
-	//try
-	//{
-	//	//wait for all futures	
-	//	for (auto& task : _running_tasks)
-	//	{
-	//		task.wait();
-	//	}
-	//}
-	//catch (const std::exception&)
-	//{
-
-	//}
 }
 
 void Seer::Pipe::send(std::unique_ptr<DataPoint::BaseDataPoint> time_point)
@@ -77,11 +62,6 @@ void Seer::Pipe::heartbeat()
 						}
 					}
 				}
-				//send_to_clients(json_stream.str());
-				const auto send_time = std::chrono::steady_clock::now();
-				/*std::cout << "Time to send [" << data_points_to_send.size() << "] datapoints\n";
-				std::cout << "Prep: " << std::chrono::duration_cast<std::chrono::milliseconds>(prep_time - start_of_heartbeat).count() << "ms \n";
-				std::cout << "Send: " << std::chrono::duration_cast<std::chrono::milliseconds>(send_time - prep_time).count() << "ms \n";*/
 			}
 			std::this_thread::sleep_until(start_of_heartbeat + pipe_heartbeat{ 1 });
 		}

@@ -28,10 +28,10 @@ public:
 		auto json = nlohmann::json::parse(data);
 		for (const auto& data_point : json)
 		{
-			for (auto& promise : _callbacks)
+			for (auto& conditional_promise : _callbacks)
 			{
-				if (promise.predicate(data_point)) {
-					promise.promise.set_value(data_point);
+				if (conditional_promise.predicate(data_point)) {
+					conditional_promise.promise.set_value(data_point);
 				}
 			}
 		}
