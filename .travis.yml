@@ -13,3 +13,7 @@ addons:
     - gcc-4.8
     - g++-4.8
     - clang
+script: 
+  - cmake CMakeLists.txt
+  - make
+  - make test
