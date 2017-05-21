@@ -1,12 +1,23 @@
-#cmake_minimum_required(VERSION 3.6)
+#include catch
+add_library(Catch INTERFACE)
+target_include_directories(Catch INTERFACE ${PROJECT_SOURCE_DIR}/3rdParty/catch/catch.hpp)
 
-#Project name
-#project( Seer VERSION 0.0.1 LANGUAGES CXX)
+#add tests
+set(SEER_UNIT_TEST_TARGET_NAME "seer_unit")
+add_executable(${SEER_UNIT_TEST_TARGET_NAME}
+	${PROJECT_SOURCE_DIR}/tests/src/CatchMain.cpp
+	${PROJECT_SOURCE_DIR}/tests/src/TestMain.cpp
+	${PROJECT_SOURCE_DIR}/tests/src/Pipe.spec.cpp
+	${PROJECT_SOURCE_DIR}/tests/src/Sink.spec.cpp
+	${PROJECT_SOURCE_DIR}/tests/src/ScopeTimer.spec.cpp)
+	
+target_link_libraries(${SEER_UNIT_TEST_TARGET_NAME}
+	seer
+	Catch)
 
-#add_library(Catch INTERFACE)
-#target_include_directories(Catch INTERFACE 3rdParty/catch/catch.hpp)
+add_test(NAME "${SEER_UNIT_TEST_TARGET_NAME}_default"
+	COMMAND ${SEER_UNIT_TEST_TARGET_NAME}
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)
 
-
-
-#enable_testing()
-#add_test(Seer_Test MyAwesomeTest COMMAND my_test)
+install(TARGETS ${SEER_UNIT_TEST_TARGET_NAME} DESTINATION ${PROJECT_BINARY_DIR}/bin)
