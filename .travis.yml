@@ -14,6 +14,6 @@ addons:
     - g++-4.8
     - clang
 script: 
-  - cmake
+  - cmake ./CMakeLists.txt
   - make
   - make test
