@@ -28,6 +28,7 @@ include_directories(
   ${PROJECT_SOURCE_DIR}/3rdParty/asio/include
   ${PROJECT_SOURCE_DIR}/3rdParty
   ${PROJECT_SOURCE_DIR}/3rdParty/catch
+  ${PROJECT_SOURCE_DIR}/3rdParty/json
 )
 
 add_subdirectory(src)
