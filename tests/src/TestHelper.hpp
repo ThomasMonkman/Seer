@@ -1,6 +1,6 @@
 #ifndef TESTHELPER_HPP
 #define TESTHELPER_HPP
-#include "..\..\3rdParty\catch\catch.hpp"
+#include "../../3rdParty/catch/catch.hpp"
 #include <chrono>
 #include <ratio>
 #include <future>

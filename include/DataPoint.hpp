@@ -1,6 +1,6 @@
 #ifndef DATAPOINT_HPP
 #define DATAPOINT_HPP
-#include "json\json.hpp"
+#include "json/json.hpp"
 
 #include <thread> //thread::id
 #include <functional> //std::hash

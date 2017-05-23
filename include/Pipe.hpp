@@ -5,7 +5,7 @@
 #include "Sink.hpp"
 #include "WebSocket.hpp"
 
-#include "json\json.hpp"
+#include "json/json.hpp"
 
 #include <memory> //std::unique_ptr, std::make_unique, std::weak_ptr, std::make_shared
 #include <vector> //std::vector
