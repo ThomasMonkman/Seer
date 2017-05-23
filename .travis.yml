@@ -22,6 +22,6 @@ script:
   # Check versions of gcc, g++ and cmake
   #- gcc -v && g++ -v && cmake --version
   # Run your build commands next
-  - cmake CMakeLists.txt
+  - cmake ./CMakeLists.txt
   - make
   - make test
