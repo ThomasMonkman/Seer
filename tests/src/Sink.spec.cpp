@@ -1,67 +1,39 @@
 #include "catch\catch.hpp"
 
 #include "Seer.hpp"
-//#include "Pipe.hpp"
-//#include "Sink.hpp"
 
 #include <string>
 
 class DummySink : public Seer::BaseSink
 {
 public:
-	DummySink() {
-		//std::cout << "DummySink Created";
-	}
-	~DummySink() override {
-		//std::cout << "DummySink Destroyed";
-	}
-	void send(const std::string& data) override
-	{
-		//std::cout << data;
-	}
+	DummySink() {}
+	~DummySink() override {}
+	void send(const std::string& data) override	{}
 };
 
 class ArgumentWithInt : public Seer::BaseSink
 {
 public:
-	ArgumentWithInt(int a) {
-		//std::cout << a;
-	}
-	~ArgumentWithInt() override {
-		//std::cout << "DummySink Destroyed";
-	}
-	void send(const std::string& data) override
-	{
-		//std::cout << data;
-	}
+	ArgumentWithInt(int a) {}
+	~ArgumentWithInt() override {}
+	void send(const std::string& data) override	{}
 };
 
 class ArgumentWithMultipleInts : public Seer::BaseSink
 {
 public:
 	ArgumentWithMultipleInts(int a, int b) {}
-	~ArgumentWithMultipleInts() override {
-		//std::cout << "DummySink Destroyed";
-	}
-	void send(const std::string& data) override
-	{
-		//std::cout << data;
-	}
+	~ArgumentWithMultipleInts() override {}
+	void send(const std::string& data) override	{}
 };
 
 class ArgumentWithClass : public Seer::BaseSink
 {
 public:
-	ArgumentWithClass(std::string a) {
-
-	}
-	~ArgumentWithClass() override {
-		//std::cout << "DummySink Destroyed";
-	}
-	void send(const std::string& data) override
-	{
-		//std::cout << data;
-	}
+	ArgumentWithClass(std::string a) {}
+	~ArgumentWithClass() override {}
+	void send(const std::string& data) override	{}
 };
 
 TEST_CASE("Custom sinks can be created", "[sink]") {

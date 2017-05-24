@@ -47,7 +47,7 @@ namespace Seer {
 	class Sink
 	{
 		static_assert(std::is_base_of<Seer::BaseSink, CustomSink>::value, "CustomSink must derive from BaseSink");
-		//static_assert(std::is_convertible<CustomSink, Seer::BaseSink>::value, "Seer::BaseSink inheritance must be public");
+		static_assert(std::is_convertible<CustomSink*, Seer::BaseSink*>::value, "Seer::BaseSink inheritance must be public");
 	public:
 		template<class... Args>
 		Sink(Args&&... args)
