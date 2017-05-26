@@ -25,7 +25,8 @@
 //#include <condition_variable> //std::condition_variable
 //#include <atomic> //std::atomic
 
-#include <exception> //std::exception
+//#include <exception> //std::exception
+#include <stdexcept> //std::runtime_error
 #include <string> //std::string
 #include <thread> //std::thread, std::this_thread::sleep_until
 #include <utility> //std::pair

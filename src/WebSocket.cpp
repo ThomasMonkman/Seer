@@ -53,7 +53,7 @@ Seer::WebSocket::WebSocket(std::pair<unsigned short, unsigned short> port_range)
 	}
 	if (server_started == false)
 	{
-		throw std::exception("Could not open on ports");
+		throw std::runtime_error("Could not open on ports");
 	}
 
 	_server_thread = std::thread([this]() { _server.run(); });
