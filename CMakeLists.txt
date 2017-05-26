@@ -9,11 +9,15 @@ MESSAGE( STATUS "LIBRARY_OUTPUT_PATH:     " ${LIBRARY_OUTPUT_PATH} )
 
 cmake_minimum_required(VERSION 3.0)
 
-#Project name
+# Project name
 project( Seer VERSION 0.0.1 LANGUAGES CXX )
 
 option(BuildTests "Build the unit tests" ON)
 enable_testing()
+
+# Enable c++14
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED on)
 
 # Add debug flags
 if(MSVC)
