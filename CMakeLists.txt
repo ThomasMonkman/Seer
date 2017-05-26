@@ -10,7 +10,7 @@ MESSAGE( STATUS "LIBRARY_OUTPUT_PATH:     " ${LIBRARY_OUTPUT_PATH} )
 cmake_minimum_required(VERSION 3.1)
 
 # Project name
-project( Seer VERSION 0.0.1 LANGUAGES CXX )
+project( Seer VERSION 0.0.1 LANGUAGES C CXX)
 
 option(BuildTests "Build the unit tests" ON)
 enable_testing()
