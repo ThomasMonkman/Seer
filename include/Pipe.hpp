@@ -2,7 +2,7 @@
 #define PIPE_HPP
 // Seer
 #include "DataPoint.hpp"
-#include "Sink.hpp"
+#include "BaseSink.hpp"
 #include "WebSocket.hpp"
 
 #include "json/json.hpp"

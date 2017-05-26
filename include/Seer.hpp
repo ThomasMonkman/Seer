@@ -3,3 +3,5 @@
 #include "Pipe.hpp"
 //Timers
 #include "ScopeTimer.hpp"
+//Sink
+#include "Sink.hpp"

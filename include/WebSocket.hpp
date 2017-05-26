@@ -1,6 +1,6 @@
 #ifndef WEBSOCKET_HPP
 #define WEBSOCKET_HPP
-#include "Sink.hpp"
+#include "BaseSink.hpp"
 
 #include "json/json.hpp"
 
