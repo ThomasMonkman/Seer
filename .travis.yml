@@ -24,4 +24,4 @@ script:
   # Run your build commands next
   - cmake ./CMakeLists.txt
   - make
-  - make test
+  - make CTEST_OUTPUT_ON_FAILURE=1 test
