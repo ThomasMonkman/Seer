@@ -43,6 +43,8 @@ namespace Seer {
 			// This sink will auto register, and auto un-register when destructed
 	///		auto file_sink = Sink<FileSink>("file.log");
 	/// @endcode
+	class Pipe;
+
 	template<class CustomSink>
 	class Sink
 	{
