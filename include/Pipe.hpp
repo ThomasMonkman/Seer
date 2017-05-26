@@ -35,17 +35,17 @@ namespace Seer {
 		void send(std::unique_ptr<DataPoint::BaseDataPoint> time_point);
 		std::size_t number_of_sinks_attached();
 	protected:
-		std::weak_ptr<Seer::BaseSink> Seer::Pipe::add_sink(std::shared_ptr<Seer::BaseSink> sink);
-		void Seer::Pipe::remove_sink(std::weak_ptr<Seer::BaseSink> sink);
+		std::weak_ptr<BaseSink> add_sink(std::shared_ptr<BaseSink> sink);
+		void remove_sink(std::weak_ptr<BaseSink> sink);
 	private:
 		Pipe();
 		~Pipe();
 
 		void heartbeat();
 				
-		std::map<std::weak_ptr<Seer::BaseSink>,
-			std::shared_ptr<Seer::BaseSink>,
-			std::owner_less<std::weak_ptr<Seer::BaseSink>>> _sinks;
+		std::map<std::weak_ptr<BaseSink>,
+			std::shared_ptr<BaseSink>,
+			std::owner_less<std::weak_ptr<BaseSink>>> _sinks;
 
 		std::mutex _sink_mutex;
 
