@@ -32,8 +32,8 @@
  
 
 # Use new trusty images, should yield newer compilers and packages
+dist: trusty
 sudo: required
-dist: precise
 language: cpp
 
 matrix:
