@@ -1,16 +1,16 @@
 #ifndef WEBSOCKET_HPP
 #define WEBSOCKET_HPP
-#include "Sink.hpp"
+#include "BaseSink.hpp"
 
-#include "json\json.hpp"
+#include "json/json.hpp"
 
 // Set up websockets with asio and c++11 so I don't need boost
 // https://github.com/zaphoyd/websocketpp
 #define ASIO_STANDALONE
 #define _WEBSOCKETPP_CPP11_INTERNAL_
-#include "websocketpp\config\core.hpp"
-#include "websocketpp\config\asio_no_tls.hpp"
-#include "websocketpp\server.hpp"
+#include "websocketpp/config/core.hpp"
+#include "websocketpp/config/asio_no_tls.hpp"
+#include "websocketpp/server.hpp"
 
 //#include <memory> //std::unique_ptr
 //#include <vector> //std::vector
@@ -25,7 +25,8 @@
 //#include <condition_variable> //std::condition_variable
 //#include <atomic> //std::atomic
 
-#include <exception> //std::exception
+//#include <exception> //std::exception
+#include <stdexcept> //std::runtime_error
 #include <string> //std::string
 #include <thread> //std::thread, std::this_thread::sleep_until
 #include <utility> //std::pair
