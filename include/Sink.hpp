@@ -18,7 +18,7 @@ namespace Seer {
 	class Sink
 	{
 		static_assert(std::is_base_of<BaseSink, CustomSink>::value, "CustomSink must derive from BaseSink");
-		//static_assert(std::is_convertible<CustomSink, Seer::BaseSink>::value, "Seer::BaseSink inheritance must be public");
+		static_assert(std::is_convertible<CustomSink*, Seer::BaseSink*>::value, "Seer::BaseSink inheritance must be public");
 	public:
 		template<class... Args>
 		Sink(Args&&... args)
@@ -31,6 +31,7 @@ namespace Seer {
 		{
 			Pipe::instance().remove_sink(_sink);
 		}
+		/// @brief Returns the created sink, this can be useful if you want access it while its active in the Pipe
 		std::shared_ptr<CustomSink> get_sink() {
 			return std::static_pointer_cast<CustomSink>(std::shared_ptr<BaseSink>(_sink));
 		}
