@@ -1,5 +1,5 @@
 //#include <3rdParty\catch\catch.hpp>
-#include "catch\catch.hpp"
+#include "catch/catch.hpp"
 //#include "ScopeTimer.hpp"
 
 unsigned int Factorial(unsigned int number) {

@@ -2,4 +2,4 @@
 //https://github.com/philsquared/Catch/blob/master/docs/tutorial.md#scaling-up
 #define CATCH_CONFIG_MAIN
 //#include <3rdParty\catch\catch.hpp>
-#include "catch\catch.hpp"
+#include "catch/catch.hpp"

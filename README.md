@@ -1,4 +1,7 @@
 # Seer
+[![Master](https://travis-ci.org/ThomasMonkman/Seer.svg?branch=master)](https://travis-ci.org/ThomasMonkman/Seer)
+[![Develop](https://travis-ci.org/ThomasMonkman/Seer.svg?branch=develop)](https://travis-ci.org/ThomasMonkman/Seer)
+
 A C++ Remote Performance and Logging Libary
 
 ## 3rd Parties Used

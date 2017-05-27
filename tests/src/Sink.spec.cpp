@@ -1,4 +1,4 @@
-#include "catch\catch.hpp"
+#include "catch/catch.hpp"
 
 #include "Seer.hpp"
 //#include "Pipe.hpp"

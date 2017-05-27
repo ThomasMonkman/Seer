@@ -10,10 +10,15 @@ add_executable(${SEER_UNIT_TEST_TARGET_NAME}
 	${PROJECT_SOURCE_DIR}/tests/src/Pipe.spec.cpp
 	${PROJECT_SOURCE_DIR}/tests/src/Sink.spec.cpp
 	${PROJECT_SOURCE_DIR}/tests/src/ScopeTimer.spec.cpp)
+
+#enable pthreads for linux
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
 	
 target_link_libraries(${SEER_UNIT_TEST_TARGET_NAME}
 	seer
-	Catch)
+	Catch
+	Threads::Threads)
 
 add_test(NAME "${SEER_UNIT_TEST_TARGET_NAME}_default"
 	COMMAND ${SEER_UNIT_TEST_TARGET_NAME}
