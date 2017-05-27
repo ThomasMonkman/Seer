@@ -4,6 +4,7 @@
 #include <chrono>
 #include <ratio>
 #include <future>
+#include <stdexcept>
 
 namespace TestHelper {
 	namespace Config {
@@ -18,6 +19,9 @@ namespace TestHelper {
 		REQUIRE(status != std::future_status::timeout);
 		if (status == std::future_status::ready) {
 			return future_to_wait_for.get();
+		}
+		else {
+			throw std::runtime_error("Timeout reached");
 		}
 	};
 }

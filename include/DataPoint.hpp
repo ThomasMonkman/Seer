@@ -158,7 +158,7 @@ namespace Seer {
 				}).dump();
 			}
 
-			void print_data(std::ostream &out_stream) const
+			void print_data(std::ostream &out_stream) const override
 			{
 				out_stream << "{\"#\":\"" << type << "\",\"n\":\"" << name << "\",\"t_id\":" << thread_id << ",\"s\":" << start << ",\"t\":" << time_point.time_since_epoch().count() << "}";
 			};
