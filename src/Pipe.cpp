@@ -56,19 +56,27 @@ void Seer::Pipe::heartbeat()
 					std::lock_guard<std::mutex> guard(_sink_mutex);
 					for (auto& sink : _sinks)
 					{
-						if (sink.second->active()) 
+						try
 						{
-							sink.second->send(json_string);
+							if (sink.second->active()) 
+							{
+								sink.second->send(json_string);
+							}
+						}
+						catch (const std::exception& e)
+						{
+							std::cerr << "Sink Error: " << e.what() << '\n';
 						}
 					}
 				}
 			}
 			std::this_thread::sleep_until(start_of_heartbeat + pipe_heartbeat{ 1 });
 		}
-		catch (const std::exception&)
+		catch (const std::exception& e)
 		{
 			//TODO: handle error here, bubble up to web
 			//Perhapes add try catch round sinks so one sink can not stop the others from getting data
+			std::cerr << "Heartbeat Error: " << e.what() << '\n';
 		}
 	}
 }

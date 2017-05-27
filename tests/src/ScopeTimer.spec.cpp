@@ -1,5 +1,5 @@
-#include "catch\catch.hpp"
-#include "json\json.hpp"
+#include "catch/catch.hpp"
+#include "json/json.hpp"
 
 #include "Seer.hpp"
 
