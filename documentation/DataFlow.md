@@ -7,6 +7,10 @@ I've shortened the names in the json keys to keep bandwidth as low as possible, 
 ---
 ## C++ to Web
 
+1. [Timers](#markdown-header-timers)
+	1.1. [Scope Timer](#markdown-header-scope-timer)
+	1.2. [Timer](#markdown-header-timer)
+
 ## Timers
 
 ### Scope Timer
@@ -20,13 +24,5 @@ I've shortened the names in the json keys to keep bandwidth as low as possible, 
 }
 ```
 ### Timer
-
-
-### Scope Timer
-
-### Scope Timer
-
-### Scope Timer
-
 
 ## Web to C++
