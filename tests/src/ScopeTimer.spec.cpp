@@ -3,18 +3,18 @@
 
 #include "Seer.hpp"
 
-#include "PipeSpy.hpp"
-#include "TestHelper.hpp"
+#include "Util/PipeSpy.hpp"
+#include "Util/TestHelper.hpp"
 
 TEST_CASE("ScopeTimer sends data on to network", "[scope_timer]")
 {
 	Seer::Sink<PipeSpy> spy_sink;
 	auto spy = spy_sink.get_sink();
 	auto construction_promise = spy->get_match([](const nlohmann::json& json) {
-		return json["#"] == "tp" && json["p"] == 1;
+		return json["#"] == "tp" && json["p"] == 0;
 	});
 	auto destruction_promise = spy->get_match([](const nlohmann::json& json) {
-		return json["#"] == "tp" && json["p"] == 0;
+		return json["#"] == "tp" && json["p"] == 1;
 	});
 	SECTION("ScopeTimer sends to network")
 	{
@@ -30,10 +30,10 @@ TEST_CASE("ScopeTimer sends the correct data", "[scope_timer]")
 	Seer::Sink<PipeSpy> spy_sink;
 	auto spy = spy_sink.get_sink();
 	auto construction_promise = spy->get_match([](const nlohmann::json& json) {
-		return json["#"] == "tp" && json["p"] == 1;
+		return json["#"] == "tp" && json["p"] == 0;
 	});
 	auto destruction_promise = spy->get_match([](const nlohmann::json& json) {
-		return json["#"] == "tp" && json["p"] == 0;
+		return json["#"] == "tp" && json["p"] == 1;
 	});
 	nlohmann::json json_construction;
 	SECTION("ScopeTimer sends to network")
@@ -48,7 +48,7 @@ TEST_CASE("ScopeTimer sends the correct data", "[scope_timer]")
 
 	// destruction
 	REQUIRE(json_destruction["n"] == "test");
-	REQUIRE(json_construction["p"] == 1);
+	REQUIRE(json_destruction["p"] == 1);
 
 	// related fields
 	REQUIRE(json_construction["t_id"] == json_destruction["t_id"]);
@@ -58,21 +58,30 @@ TEST_CASE("ScopeTimer is isolated by threads", "[scope_timer]")
 {
 	Seer::Sink<PipeSpy> spy_sink;
 	auto spy = spy_sink.get_sink();
-	auto construction_promise = spy->get_match([](const nlohmann::json& json) {
+	auto time_point_promise = [](const nlohmann::json& json) {
 		return json["#"] == "tp" && json["p"] == 1;
-	});
-	auto destruction_promise = spy->get_match([](const nlohmann::json& json) {
-		return json["#"] == "tp" && json["p"] == 0;
-	});
-	nlohmann::json json_c;
-	SECTION("ScopeTimer sends to network")
+	};
+	SECTION("when both ScopeTimers have the same name")
 	{
-		Seer::ScopeTimer("test");
-		json_c = TestHelper::get_with_timeout<nlohmann::json>(construction_promise);
-		REQUIRE(json_c["n"] == "test");
-	}
-	auto json_d = TestHelper::get_with_timeout<nlohmann::json>(destruction_promise);
-	REQUIRE(json_d["n"] == "test");
+		auto thread_1_promise = spy->get_match(time_point_promise);
+		std::thread([]() { Seer::ScopeTimer("test"); }).join();
+		auto thread_1_json = TestHelper::get_with_timeout<nlohmann::json>(thread_1_promise);
+		auto thread_2_promise = spy->get_match(time_point_promise);
+		std::thread([]() { Seer::ScopeTimer("test"); }).join();
+		auto thread_2_json = TestHelper::get_with_timeout<nlohmann::json>(thread_2_promise);
 
-	REQUIRE(json_c["t_id"] == json_d["t_id"]);
+		REQUIRE(thread_1_json["t_id"] != thread_2_json["t_id"]);
+	}
+
+	SECTION("when both ScopeTimers have different names")
+	{
+		auto thread_1_promise = spy->get_match(time_point_promise);
+		std::thread([]() { Seer::ScopeTimer("test1"); }).join();
+		auto thread_1_json = TestHelper::get_with_timeout<nlohmann::json>(thread_1_promise);
+		auto thread_2_promise = spy->get_match(time_point_promise);
+		std::thread([]() { Seer::ScopeTimer("test2"); }).join();
+		auto thread_2_json = TestHelper::get_with_timeout<nlohmann::json>(thread_2_promise);
+
+		REQUIRE(thread_1_json["t_id"] != thread_2_json["t_id"]);
+	}
 }

@@ -1,7 +1,7 @@
 #ifndef SCOPETIMER_HPP
 #define SCOPETIMER_HPP
 
-#include "DataPoint.hpp"
+#include "DataPoint\TimePoint.hpp"
 #include "Pipe.hpp"
 
 #include <chrono>
