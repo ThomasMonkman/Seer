@@ -8,8 +8,8 @@
 A C++ Remote Performance and Logging Library
 
 # Table of Contents
-1. [Use](#markdown-header-use)
-2. [3rd Parties Used](#markdown-header-3rd-parties-used)
+1. [Use](#use)
+2. [3rd Parties Used](#3rd-parties-used)
 3. [Understanding behind the scenes](./documentation/Internals.md)
 
 ## Use
