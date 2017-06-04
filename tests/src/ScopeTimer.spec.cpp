@@ -59,16 +59,20 @@ TEST_CASE("ScopeTimer is isolated by threads", "[scope_timer]")
 	Seer::Sink<PipeSpy> spy_sink;
 	auto spy = spy_sink.get_sink();
 	auto time_point_promise = [](const nlohmann::json& json) {
-		return json["#"] == "tp" && json["p"] == 1;
+		return json["#"] == "tp" && json["p"] == 0;
 	};
 	SECTION("when both ScopeTimers have the same name")
 	{
 		auto thread_1_promise = spy->get_match(time_point_promise);
-		std::thread([]() { Seer::ScopeTimer("test"); }).join();
+		auto thread_1 = std::thread([]() { Seer::ScopeTimer("test"); });
 		auto thread_1_json = TestHelper::get_with_timeout<nlohmann::json>(thread_1_promise);
+
 		auto thread_2_promise = spy->get_match(time_point_promise);
-		std::thread([]() { Seer::ScopeTimer("test"); }).join();
+		auto thread_2 = std::thread([]() { Seer::ScopeTimer("test"); });
 		auto thread_2_json = TestHelper::get_with_timeout<nlohmann::json>(thread_2_promise);
+
+		thread_1.join();
+		thread_2.join();
 
 		REQUIRE(thread_1_json["t_id"] != thread_2_json["t_id"]);
 	}
