@@ -1,7 +1,7 @@
 #ifndef PIPE_HPP
 #define PIPE_HPP
 // Seer
-#include "DataPoint.hpp"
+#include "DataPoint/DataPoint.hpp"
 #include "BaseSink.hpp"
 #include "WebSocket.hpp"
 

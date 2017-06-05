@@ -32,8 +32,14 @@ public:
 			{
 				if (conditional_promise.predicate(data_point)) {
 					conditional_promise.promise.set_value(data_point);
+					conditional_promise.fired = true;
 				}
 			}
+			//erase found callbacks
+			_callbacks.erase(
+				std::remove_if(_callbacks.begin(), _callbacks.end(),
+					[](const auto& callback) {return callback.fired; }),
+				_callbacks.end());
 		}
 	}
 
@@ -51,6 +57,7 @@ private:
 		ConditionalPromise(std::function<bool(const T&)> predicate)
 			: predicate(predicate), promise() {}
 		std::function<bool(T)> predicate;
+		bool fired = { false };
 		std::promise<T> promise;
 	};
 	std::vector<ConditionalPromise<nlohmann::json>> _callbacks;

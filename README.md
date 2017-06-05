@@ -7,14 +7,16 @@
 
 A C++ Remote Performance and Logging Library
 
+# Table of Contents
+1. [Use](#use)
+2. [3rd Parties Used](#3rd-parties-used)
+3. [Understanding behind the scenes](./documentation/Internals.md)
+
+## Use
+
 ## 3rd Parties Used
 
 * [Websocketpp](https://github.com/zaphoyd/websocketpp)
 * [Aiso](https://github.com/chriskohlhoff/asio) - License (Boost Software License)
 * [Catch](https://github.com/philsquared/Catch) - License (Boost Software License)
 * [Json](https://github.com/nlohmann/json) - License (Boost Software License)
-
-
-## Data Flow
-Spefication of the data flow between c++ to web
-[Data Flow](./documentation/DataFlow.md)
