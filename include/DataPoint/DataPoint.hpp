@@ -16,16 +16,16 @@ namespace Seer {
 		{	
 			virtual ~BaseDataPoint() {}
 			/**
-			* \brief: Get the type for this data point
-			* \return string of the type
+			* \brief: Get the type for this data point.
+			* \return string of the type.
 			*/
 			virtual const std::string get_type() const
 			{
 				return "base";
 			}
 			/**
-			* \brief: Get the json data struct for this data point
-			* \return json to send over network
+			* \brief: Get the json data struct for this data point.
+			* \return json to send over network.
 			*/
 			virtual nlohmann::json get_json() const
 			{
@@ -33,15 +33,13 @@ namespace Seer {
 			}
 
 			/**
-			* \brief: Get the json data struct for this data point
-			* \return json in string form to send over network
+			* \brief: output this DataPoint as json to the supplied ostream.
+			* \param out_stream to write to.
 			*/
-			virtual std::string get_json_string() const
+			virtual void print_data(std::ostream &out_stream) const
 			{
-				return "{}";
+				out_stream << "{}";
 			}
-
-			virtual void print_data(std::ostream &out_stream) const = 0;
 		};
 
 		inline std::ostream& operator<<(std::ostream& out, const BaseDataPoint& base_data_point)

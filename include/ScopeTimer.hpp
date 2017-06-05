@@ -8,6 +8,10 @@
 #include <string>
 #include <thread>
 namespace Seer {
+	/**
+	* \class ScopeTimer
+	* \brief Create a scope based timer, which will logs its creation time and its destruction time.
+	*/
 	class ScopeTimer
 	{
 	public:
