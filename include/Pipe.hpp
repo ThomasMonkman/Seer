@@ -14,6 +14,7 @@
 #include <atomic> //std::atomic
 #include <algorithm> //std::any_of
 #include <utility> //std::move, std::size_t
+#include <chrono> //std::chrono::duration
 
 namespace Seer {
 	class BaseSink;
