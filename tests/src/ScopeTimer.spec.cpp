@@ -45,10 +45,12 @@ TEST_CASE("ScopeTimer sends the correct data", "[scope_timer]")
 	// contrustion
 	REQUIRE(json_construction["n"] == "test");
 	REQUIRE(json_construction["p"] == 0);
+	REQUIRE(json_construction["l"] == false);
 
 	// destruction
 	REQUIRE(json_destruction["n"] == "test");
 	REQUIRE(json_destruction["p"] == 1);
+	REQUIRE(json_destruction["l"] == true);
 
 	// related fields
 	REQUIRE(json_construction["t_id"] == json_destruction["t_id"]);
