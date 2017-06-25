@@ -1,6 +1,8 @@
 #include <Timer.hpp>
 
-Seer::Timer::Timer(const std::string name) : _name(name)
+Seer::Timer::Timer(const std::string name) : 
+	_name(name), 
+	_last_tick(std::chrono::steady_clock::now()) // In case tick is not called, we need a default to send out
 {
 }
 Seer::Timer::~Timer()
