@@ -18,7 +18,7 @@ TEST_CASE("Timer sends data on to network", "[timer]")
 		auto tick_promise = spy->get_match([](const nlohmann::json& json) {
 			return json["#"] == "tp" && json["p"] == 0 && json["n"] == "test1";
 		});
-		auto timer = Seer::Timer("test1");
+		Seer::Timer timer("test1");
 		timer.tick();
 		auto json_tick = TestHelper::get_with_timeout<nlohmann::json>(tick_promise);
 	}
@@ -34,7 +34,7 @@ TEST_CASE("Timer destructs correctly", "[timer]")
 	SECTION("Timer sends final on destruction")
 	{
 		{
-			auto timer = Seer::Timer("test2");
+			Seer::Timer timer("test2");
 			timer.tick();
 		}
 		auto json_destruction = TestHelper::get_with_timeout<nlohmann::json>(destruction_promise);
@@ -43,7 +43,7 @@ TEST_CASE("Timer destructs correctly", "[timer]")
 	SECTION("Timer sends final on destruction even if tick is not called")
 	{
 		{
-			auto timer = Seer::Timer("test3");
+			Seer::Timer timer("test3");
 		}
 		auto json_destruction = TestHelper::get_with_timeout<nlohmann::json>(destruction_promise);
 		REQUIRE(json_destruction["p"] == 0);
@@ -60,7 +60,7 @@ TEST_CASE("Timer sends the correct data", "[timer]")
 	});
 	SECTION("Timer sends to network")
 	{
-		auto timer = Seer::Timer("test4");
+		Seer::Timer timer("test4");
 		timer.tick();
 		auto json_tick = TestHelper::get_with_timeout<nlohmann::json>(tick_promise);
 		REQUIRE(json_tick["n"] == "test4");
@@ -86,7 +86,7 @@ TEST_CASE("Timer can continuously send data", "[timer]")
 	}
 	SECTION("Timer sends to network")
 	{
-		auto timer = Seer::Timer("test5");
+		Seer::Timer timer("test5");
 		for (auto i = 0; i < tick_number; i++)
 		{
 			timer.tick();
