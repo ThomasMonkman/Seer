@@ -4,7 +4,7 @@
 #include "json/json.hpp"
 namespace Seer {
 	namespace DataPoint {
-		/** 
+		/**
 		* \class TimePoint
 		* \brief Create a datapoint specialised around timers.
 		*/
@@ -14,19 +14,19 @@ namespace Seer {
 			* \brief Create a datapoint specialised around timers.
 			* \param name of the timepoint, this will be decide how it is sorted and grouped,
 			* aka all timepoints with name "draw" will put in to the draw graph.
-			* \param thread_id is thread this time point should be attached to
-			* again this is used for sorting and grouping the timepoint correctly.
-			* \param position of this timepoint in reference to other timepoints it should be groups with, for example 0 for start of a time block, 0 for the end of it.
+			* \param position of this timepoint in reference to other timepoints it should be groups with.
 			* \param time_point to store.
+			* \param last is this the last datapoint under this name, in this series.
 			*/
-			TimePoint(std::string name,
-				std::thread::id thread_id,
-				std::size_t position,
-				std::chrono::steady_clock::time_point time_point) :
+			TimePoint(const std::string name,
+				const std::size_t position,
+				const std::chrono::steady_clock::time_point time_point,
+				const bool last = false) :
 				name(name),
-				thread_id(std::hash<std::thread::id>()(thread_id)),
+				thread_id(std::hash<std::thread::id>()(std::this_thread::get_id())),
 				position(position),
-				time_point(time_point)
+				time_point(time_point),
+				last(last)
 			{}
 
 			~TimePoint() override
@@ -38,6 +38,7 @@ namespace Seer {
 			const std::size_t thread_id;
 			const std::size_t position = { true };
 			const std::chrono::steady_clock::time_point time_point;
+			const bool last;
 
 			/**
 			* \brief: Get the type for this data point.
@@ -59,7 +60,8 @@ namespace Seer {
 					{ "n", name },
 					{ "t_id", thread_id },
 					{ "p", position },
-					{ "t", time_point.time_since_epoch().count() }
+					{ "t", time_point.time_since_epoch().count() },
+					{ "l", last }
 				};
 			}
 
@@ -69,7 +71,13 @@ namespace Seer {
 			*/
 			void print_data(std::ostream &out_stream) const override
 			{
-				out_stream << "{\"#\":\"" << type << "\",\"n\":\"" << name << "\",\"t_id\":" << thread_id << ",\"p\":" << position << ",\"t\":" << time_point.time_since_epoch().count() << "}";
+				out_stream << "{\"#\":\"" << type
+					<< "\",\"n\":\"" << name
+					<< "\",\"t_id\":" << thread_id
+					<< ",\"p\":" << position
+					<< ",\"t\":" << time_point.time_since_epoch().count()
+					<< ",\"l\":" << std::boolalpha << last << std::noboolalpha
+					<< "}";
 			};
 		};
 

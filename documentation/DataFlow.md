@@ -19,10 +19,22 @@ I've shortened the names in the json keys to keep bandwidth as low as possible, 
 	"#": "tp", //Type - specifies this data as the timer
 	"n": "", //Name - of the timer
 	"t_id": "", //Thread_id, to islote this timer to the correct thread, also allows prediction of call stack
-	"p" 0|1, //Position - 0 for start of the timer, 1 for the end.
-	"t": "" //Time Point - the time point
+	"p" [0...], //Position - position in the sequence of this time point, belonging to this series.
+	"t": "" //Time Point - the time point.
+	"l": true|false, //Last - is this the last datapoint under this name, in this series.
 }
 ```
+
 ### Timer
+```javascript
+{
+	"#": "tp", //Type - specifies this data as the timer
+	"n": "", //Name - of the timer
+	"t_id": "", //Thread_id, to islote this timer to the correct thread, also allows prediction of call stack
+	"p" [0...], //Position - position in the sequence of this time point, belonging to this series.
+	"t": "" //Time Point - the time point.
+	"l": true|false, //Last - is this the last datapoint under this name, in this series.
+}
+```
 
 ## Web to C++

@@ -5,6 +5,7 @@ set(SEER_LIB_SRC
   BaseProducer.cpp
   WebSocket.cpp
   ScopeTimer.cpp
+  Timer.cpp
 )
 add_library(seer ${SEER_LIB_SRC})
 

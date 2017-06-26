@@ -9,7 +9,7 @@
 TEST_CASE("ScopeTimer sends data on to network", "[scope_timer]")
 {
 	Seer::Sink<PipeSpy> spy_sink;
-	auto spy = spy_sink.get_sink();
+	const auto spy = spy_sink.get_sink();
 	auto construction_promise = spy->get_match([](const nlohmann::json& json) {
 		return json["#"] == "tp" && json["p"] == 0;
 	});
@@ -28,7 +28,7 @@ TEST_CASE("ScopeTimer sends data on to network", "[scope_timer]")
 TEST_CASE("ScopeTimer sends the correct data", "[scope_timer]")
 {
 	Seer::Sink<PipeSpy> spy_sink;
-	auto spy = spy_sink.get_sink();
+	const auto spy = spy_sink.get_sink();
 	auto construction_promise = spy->get_match([](const nlohmann::json& json) {
 		return json["#"] == "tp" && json["p"] == 0;
 	});
@@ -45,10 +45,12 @@ TEST_CASE("ScopeTimer sends the correct data", "[scope_timer]")
 	// contrustion
 	REQUIRE(json_construction["n"] == "test");
 	REQUIRE(json_construction["p"] == 0);
+	REQUIRE(json_construction["l"] == false);
 
 	// destruction
 	REQUIRE(json_destruction["n"] == "test");
 	REQUIRE(json_destruction["p"] == 1);
+	REQUIRE(json_destruction["l"] == true);
 
 	// related fields
 	REQUIRE(json_construction["t_id"] == json_destruction["t_id"]);
@@ -57,7 +59,7 @@ TEST_CASE("ScopeTimer sends the correct data", "[scope_timer]")
 TEST_CASE("ScopeTimer is isolated by threads", "[scope_timer]")
 {
 	Seer::Sink<PipeSpy> spy_sink;
-	auto spy = spy_sink.get_sink();
+	const auto spy = spy_sink.get_sink();
 	auto time_point_promise = [](const nlohmann::json& json) {
 		return json["#"] == "tp" && json["p"] == 0;
 	};

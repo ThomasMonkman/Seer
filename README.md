@@ -14,6 +14,28 @@ A C++ Remote Performance and Logging Library
 
 ## Use
 
+### ScopeTimer
+ScopeTimer will measure the time spent in a block/scope.
+This measure 2 seconds.
+```c++
+{
+    Seer::ScopeTimer("test");
+    std::this_thread::sleep_for(2s);
+}
+```
+
+### Timer
+Timer will measure the time between each tick().
+This measure 2 seconds.
+```c++
+{
+    Seer::Timer timer("test");
+    timer.tick();
+    std::this_thread::sleep_for(2s);
+    timer.tick();
+}
+```
+
 ## 3rd Parties Used
 
 * [Websocketpp](https://github.com/zaphoyd/websocketpp)

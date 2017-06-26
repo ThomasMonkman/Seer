@@ -2,7 +2,7 @@
 #define DATAPOINT_HPP
 #include "json/json.hpp"
 
-#include <thread> //thread::id
+#include <thread> //thread::id, std::this_thread::get_id()
 #include <functional> //std::hash
 #include <chrono> //steady_clock::time_point
 #include <string>
@@ -31,7 +31,6 @@ namespace Seer {
 			{
 				return {};
 			}
-
 			/**
 			* \brief: output this DataPoint as json to the supplied ostream.
 			* \param out_stream to write to.

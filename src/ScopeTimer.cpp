@@ -5,7 +5,7 @@ Seer::ScopeTimer::ScopeTimer(const std::string name) :
 {	
 	//Send start time
 	Pipe::instance().send(
-		std::make_unique<DataPoint::TimePoint>(_name, std::this_thread::get_id(), 0, _creation)
+		std::make_unique<DataPoint::TimePoint>(_name, 0, _creation)
 	);
 }
 
@@ -14,6 +14,6 @@ Seer::ScopeTimer::~ScopeTimer()
 	_destruction = std::chrono::steady_clock::now();
 	//send end time to network
 	Pipe::instance().send(
-		std::make_unique<DataPoint::TimePoint>(_name, std::this_thread::get_id(), 1, _destruction)
+		std::make_unique<DataPoint::TimePoint>(_name, 1, _destruction, true)
 	);
 }
