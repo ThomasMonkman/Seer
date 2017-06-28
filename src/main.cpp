@@ -24,7 +24,7 @@ public:
 	}
 	void send(const std::string& data) override
 	{
-		std::cout << "Dummy Sink got data:\n" << data << '\n';
+		//std::cout << "Dummy Sink got data:\n" << data << '\n';
 	}
 private:
 
@@ -42,7 +42,7 @@ int main()
 	while (true)
 	{
 			Seer::ScopeTimer timer("hello");
-		std::this_thread::sleep_for(std::chrono::milliseconds{ 5000 });
+		std::this_thread::sleep_for(std::chrono::milliseconds{ 1 });
 	}
 	std::cin.clear();
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
