@@ -10,7 +10,7 @@ export class Connection {
         this.url = url;
         this.inputStream = new QueueingSubject<any>();
         this.messages = websocketConnect(this.url, this.inputStream).messages;
-        this.messages = this.messages.retryWhen(errors => errors.delay(1000));
+        // this.messages = this.messages.retryWhen(errors => errors.delay(1000));
     }
 
     public send(message: any): void {
