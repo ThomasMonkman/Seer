@@ -2,7 +2,7 @@
     <md-tab *ngFor="let tab of dynamicTabs">
       <ng-template md-tab-label>
         <span class="noselect">{{tab.label}}</span>
-        <i class="material-icons noselect" (click)="deleteTab(tab)">close</i>
+        <i class="material-icons noselect tabclose" (click)="deleteTab(tab)">close</i>
       </ng-template>
       <div class="tab-content">
         <app-connection></app-connection>
