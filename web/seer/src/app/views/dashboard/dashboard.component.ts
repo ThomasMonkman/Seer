@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { CookieService } from 'angular2-cookie/services/cookies.service';
 import { SeerConnectionService } from "app/services/seer-connection/seer-connection.service";
 import { Observable } from "rxjs/Rx";
+import { Tab } from 'app/views/dashboard/tab';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,30 +13,20 @@ export class DashboardComponent implements OnInit {
 
   protected data: any[] = [];
   private seerObservable: Observable<any>;
-  constructor(private seerConnection: SeerConnectionService) { }
 
   // Dynamic tabs demo
-  activeTabIndex = 0;
-  addTabPosition = 0;
-  gotoNewTabAfterAdding = false;
-  createWithLongContent = false;
-  dynamicTabs = [
-    {
-      label: 'Tab 1',
-      content: 'This is the body of the first tab'
-    }, {
-      label: 'Tab 2',
-      disabled: true,
-      content: 'This is the body of the second tab'
-    }, {
-      label: 'Tab 3',
-      extraContent: true,
-      content: 'This is the body of the third tab'
-    }, {
-      label: 'Tab 4',
-      content: 'This is the body of the fourth tab'
-    },
+  protected activeTabIndex = 0;
+  protected addTabPosition = 0;
+  protected gotoNewTabAfterAdding = false;
+  protected createWithLongContent = false;
+  protected dynamicTabs: Tab[] = [
+    new Tab('Localhost')
   ];
+
+  constructor(private seerConnection: SeerConnectionService, private cookieService: CookieService) { 
+    
+  }
+
 
   public ngOnInit() {
     // this.seerObservable = this.seerConnection.connect('ws://localhost:9000');

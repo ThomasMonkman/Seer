@@ -6,6 +6,8 @@ import { CommonModule } from '@angular/common';
 
 import 'hammerjs';
 
+import { CookieService } from 'angular2-cookie/services/cookies.service';
+
 import { AppComponent } from './app.component';
 import { SeerConnectionService } from './services/seer-connection/seer-connection.service';
 import { DashboardComponent } from './views/dashboard/dashboard.component';
@@ -27,6 +29,7 @@ import { FormsModule } from "@angular/forms";
     SeerMaterialModule
   ],
   providers: [
+    CookieService,
     SeerConnectionService
   ],
   bootstrap: [AppComponent]
