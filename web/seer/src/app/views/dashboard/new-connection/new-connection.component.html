@@ -1,0 +1,25 @@
+<md-card class="connection-card">
+    <md-card-header>
+        <div md-card-avatar>
+            <i class="material-icons">library_add</i>
+        </div>
+        <md-card-title>New Connection</md-card-title>
+        <md-card-subtitle>Enter device ip address</md-card-subtitle>
+    </md-card-header>
+    <md-card-content>
+        <md-input-container class="search">
+            <input mdInput placeholder="Address" [mdAutocomplete]="auto" [formControl]="stateCtrl">
+        </md-input-container>
+
+        <md-autocomplete #auto="mdAutocomplete">
+            <md-option *ngFor="let state of filteredStates | async" [value]="state">
+                {{ state }}
+            </md-option>
+        </md-autocomplete>
+        <br>
+        Past Connections
+    </md-card-content>
+    <md-card-actions>
+    <button md-button>CONNECT</button>
+  </md-card-actions>
+</md-card>

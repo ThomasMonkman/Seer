@@ -13,20 +13,23 @@ import { SeerConnectionService } from './services/seer-connection/seer-connectio
 import { DashboardComponent } from './views/dashboard/dashboard.component';
 import { SeerMaterialModule } from "./modules/seer-material-module/seer-material-module.module";
 import { ConnectionComponent } from './views/dashboard/connection/connection.component';
-import { FormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { NewConnectionComponent } from './views/dashboard/new-connection/new-connection.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DashboardComponent,
-    ConnectionComponent
+    ConnectionComponent,
+    NewConnectionComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     CommonModule,
     FormsModule,
-    SeerMaterialModule
+    SeerMaterialModule,
+    ReactiveFormsModule
   ],
   providers: [
     CookieService,

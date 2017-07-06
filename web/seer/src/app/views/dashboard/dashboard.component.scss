@@ -1,7 +1,13 @@
-.tabclose {
+.tab-close {
     position: absolute;
     top: 24%;
     &:hover {    
         color: red !important;
+    }
+}
+.tab-new {
+    font-size: 38px;
+    &:hover {    
+        color: white !important;
     }
 }
