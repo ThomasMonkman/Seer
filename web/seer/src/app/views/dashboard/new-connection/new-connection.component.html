@@ -6,20 +6,30 @@
         <md-card-title>New Connection</md-card-title>
         <md-card-subtitle>Enter device ip address</md-card-subtitle>
     </md-card-header>
-    <md-card-content>
-        <md-input-container class="search">
-            <input mdInput placeholder="Address" [mdAutocomplete]="auto" [formControl]="stateCtrl">
-        </md-input-container>
-
-        <md-autocomplete #auto="mdAutocomplete">
-            <md-option *ngFor="let state of filteredStates | async" [value]="state">
-                {{ state }}
-            </md-option>
-        </md-autocomplete>
-        <br>
-        Past Connections
-    </md-card-content>
-    <md-card-actions>
-    <button md-button>CONNECT</button>
-  </md-card-actions>
+    <!-- Content -->
+    <form [formGroup]="connectionForm" (ngSubmit)="connect()">
+        <md-card-content>
+            <!-- Inputs -->
+            <md-input-container class="search">
+                <input mdInput placeholder="Address" formControlName="address">
+                <md-error *ngIf="connectionForm.get('address').hasError('required')">
+                    Address is <strong>required</strong>
+                </md-error>
+            </md-input-container>
+            <md-input-container class="search">
+                <input mdInput placeholder="Nick Name" formControlName="name">
+            </md-input-container>
+            <!-- Past connection auto complete -->
+            <br> Past Connections
+            <md-chip-list>
+                <md-chip *ngFor="let connection of pastConnections">
+                    <span>{{connection.name}}</span>
+                </md-chip>
+            </md-chip-list>
+        </md-card-content>
+        <!-- Connect -->
+        <md-card-actions>
+            <button type="submit" md-button>CONNECT</button>
+        </md-card-actions>
+    </form>
 </md-card>

@@ -27,7 +27,6 @@ export class DashboardComponent implements OnInit {
     
   }
 
-
   public ngOnInit() {
     // this.seerObservable = this.seerConnection.connect('ws://localhost:9000');
     // this.seerObservable.subscribe((message: any) => {
