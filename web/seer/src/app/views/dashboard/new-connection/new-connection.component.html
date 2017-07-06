@@ -22,7 +22,7 @@
             <!-- Past connection auto complete -->
             <br> Past Connections
             <md-chip-list>
-                <md-chip *ngFor="let connection of pastConnections">
+                <md-chip *ngFor="let connection of filteredPastConnections">
                     <span>{{connection.name}}</span>
                 </md-chip>
             </md-chip-list>

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ConnectionMeta } from 'app/classes/connnection-meta';
 import { ConnectionHistoryService } from 'app/services/connection-history/connection-history.service';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'app-new-connection',
@@ -13,33 +14,20 @@ export class NewConnectionComponent implements OnInit {
     address: new FormControl('', [Validators.required]),
     name: new FormControl(''),
   });
-  protected filteredStates: any;
 
-  protected pastConnections: ConnectionMeta[];
-  states = [
-    'Alabama',
-    'Alaska',
-    'Arizona',
-    'Arkansas',
-    'Illinois',
-    'Indiana',
-    'Iowa',
-    'Kansas',
-    'Kentucky',
-    'Louisiana',
-    'Maine',
-  ];
+  protected filteredPastConnections: ConnectionMeta[] = [];
 
   constructor(private connectionHistory: ConnectionHistoryService) {
     connectionHistory.store(new ConnectionMeta('localhost', 'localhost'));
-    connectionHistory.get().subscribe((connections) => {
-      this.pastConnections = connections;
-    });
+    // connectionHistory.get().subscribe((connections) => {
+    //   this.pastConnections = connections;
+    // });
 
-    // this.stateCtrl = new FormControl();
-    // this.filteredStates = this.stateCtrl.valueChanges
-    //   .startWith(null)
-    //   .map(name => this.filterStates(name));
+    Observable.combineLatest(
+      this.connectionHistory.get(),
+      this.connectionForm.get('address').valueChanges.startWith(null),
+      this.connectionForm.get('name').valueChanges.startWith(null)
+    ).subscribe(this.filterHistory);
   }
 
   public ngOnInit() {
@@ -51,8 +39,13 @@ export class NewConnectionComponent implements OnInit {
     }
   }
 
-  private filterStates(val: string) {
-    return val ? this.states.filter(s => s.toLowerCase().indexOf(val.toLowerCase()) === 0)
-      : this.states;
+  private filterHistory(val: [ConnectionMeta[], string, string]) {
+    const [pastConnections, address, name] = val;
+    this.filteredPastConnections = pastConnections.filter(connection => {
+      let addressFilter = address ? connection.address.toLowerCase().includes(address.toLowerCase()) : true;
+      let nameFilter = name ? connection.name.toLowerCase().includes(name.toLowerCase()) : true;
+      return addressFilter || nameFilter;
+    });
+    console.log(this.filteredPastConnections);
   }
 }

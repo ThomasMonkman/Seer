@@ -1,8 +1,8 @@
 export class ConnectionMeta {
-    public name: string;
-    public address: string;
+    public readonly name: string;
+    public readonly address: string;
     constructor(name: string, address: string) {
         this.name = name;
-        this.address = address;
+        this.address = address.toLocaleLowerCase();
     }
 }
