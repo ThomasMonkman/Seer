@@ -1,4 +1,5 @@
 @import '~@angular/material/_theming';
+@import '~@angular/material/prebuilt-themes/purple-green.css';
 @include mat-core();
 
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
@@ -12,4 +13,4 @@ $dark-app-theme:   mat-dark-theme($dark-app-primary, $dark-app-accent, $dark-app
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
-@include angular-material-theme($dark-app-theme);
+//@include angular-material-theme($dark-app-theme);

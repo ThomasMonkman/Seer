@@ -38,10 +38,17 @@ export class NewConnectionComponent {
   }
 
   protected historySameAsInput(connection: ConnectionMeta): boolean {
+    console.log('selectCheck');
     return this.connectionForm.get('address').value === connection.address && this.connectionForm.get('name').value === connection.name;
   }
 
+  protected removeHistory(connection: ConnectionMeta) {
+    console.log('removing ', connection.name);
+    this.connectionHistory.remove(connection.name);
+  }
+
   private filterHistory(val: [ConnectionMeta[], string, string]) {
+    console.log('filtering')
     const [pastConnections, address, name] = val;
     //need to add sort as well
     this.filteredPastConnections = pastConnections

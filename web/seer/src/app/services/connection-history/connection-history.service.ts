@@ -42,7 +42,7 @@ export class ConnectionHistoryService {
   }
 
   public remove(name: string) {
-    this.connections = this.connections.filter(connection => connection.name === name);
+    this.connections = this.connections.filter(connection => connection.name !== name);
     this.localStorageService.set(this.storageKey, JSON.stringify(this.connections));
     this.connectionsSubject.next(this.connections);
   }
