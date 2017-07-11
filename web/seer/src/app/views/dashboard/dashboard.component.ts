@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { CookieService } from 'angular2-cookie/services/cookies.service';
 import { SeerConnectionService } from "app/services/seer-connection/seer-connection.service";
 import { Observable } from "rxjs/Rx";
 import { Tab } from 'app/views/dashboard/tab';
@@ -23,7 +22,7 @@ export class DashboardComponent implements OnInit {
     new Tab('Localhost')
   ];
 
-  constructor(private seerConnection: SeerConnectionService, private cookieService: CookieService) { 
+  constructor(private seerConnection: SeerConnectionService) { 
     
   }
 

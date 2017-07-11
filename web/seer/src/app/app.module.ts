@@ -6,8 +6,7 @@ import { CommonModule } from '@angular/common';
 
 import 'hammerjs';
 
-import { CookieService } from 'angular2-cookie/services/cookies.service';
-
+import { LocalStorageModule, LocalStorageService } from 'angular-2-local-storage';
 import { AppComponent } from './app.component';
 import { SeerConnectionService } from './services/seer-connection/seer-connection.service';
 import { DashboardComponent } from './views/dashboard/dashboard.component';
@@ -30,10 +29,14 @@ import { ConnectionHistoryService } from 'app/services/connection-history/connec
     CommonModule,
     FormsModule,
     SeerMaterialModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    LocalStorageModule.withConfig({
+      prefix: 'seer',
+      storageType: 'localStorage'
+    })
   ],
   providers: [
-    CookieService,
+    LocalStorageService,
     SeerConnectionService,
     ConnectionHistoryService
   ],

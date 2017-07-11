@@ -20,9 +20,11 @@ export class NewConnectionComponent {
   constructor(private connectionHistory: ConnectionHistoryService) {
     Observable.combineLatest(
       this.connectionHistory.get(),
-      this.connectionForm.get('address').valueChanges.startWith(null),
-      this.connectionForm.get('name').valueChanges.startWith(null)
-    ).subscribe(val => this.filterHistory(val));
+      this.connectionForm.get('address').valueChanges.startWith(''),
+      this.connectionForm.get('name').valueChanges.startWith('')
+    )
+    .filter((val: [ConnectionMeta[], string, string]) => val[0] !== null)
+    .subscribe(val => this.filterHistory(val));
   }
 
   protected connect() {
@@ -42,10 +44,34 @@ export class NewConnectionComponent {
   private filterHistory(val: [ConnectionMeta[], string, string]) {
     const [pastConnections, address, name] = val;
     //need to add sort as well
-    this.filteredPastConnections = pastConnections.filter(connection => {
-      let addressFilter = address ? connection.address.toLowerCase().includes(address.toLowerCase()) : true;
-      let nameFilter = name ? connection.name.toLowerCase().includes(name.toLowerCase()) : true;
-      return addressFilter || nameFilter;
-    });
+    this.filteredPastConnections = pastConnections
+      // filter by both fields      
+      .filter((connection: ConnectionMeta) => {
+        //if both fields are empty we should show the whole history
+        const emptyFields = (address === '' && name === '');
+        if (emptyFields) {
+          return true;
+        } else {
+          //if either one of the fields contain data, we should filter by them both, exlucing
+          const addressFilter = (address === '') ? false : connection.address.toLowerCase().includes(address.toLowerCase());
+          const nameFilter = (name === '') ? false : connection.name.toLowerCase().includes(name.toLowerCase());
+
+          return addressFilter || nameFilter;
+        }
+      })
+      .map(a => {
+        console.log(a);
+        return a;
+      })
+      .sort((a: ConnectionMeta, b: ConnectionMeta) => {
+        const addressA = a.address.toLowerCase();
+        const addressB = b.address.toLowerCase();
+        return +(addressA > addressB) || +(addressA === addressB) - 1;
+      })
+      .sort((a: ConnectionMeta, b: ConnectionMeta) => {        
+        const nameA = a.name.toLowerCase();
+        const nameB = b.name.toLowerCase();
+        return +(nameA > nameB) || +(nameA === nameB) - 1;
+      });
   }
 }

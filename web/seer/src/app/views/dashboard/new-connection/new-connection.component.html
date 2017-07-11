@@ -23,7 +23,7 @@
             <br> Past Connections
             <md-chip-list>
                 <md-chip *ngFor="let connection of filteredPastConnections" (click)="historySelected(connection)" (selected)="historySameAsInput(connection)">
-                    <span>{{connection.name}}</span>
+                    <span>{{connection.name}} | {{connection.address}}</span>
                 </md-chip>
             </md-chip-list>
         </md-card-content>
