@@ -18,11 +18,16 @@
             </md-input-container>
             <md-input-container class="search">
                 <input mdInput placeholder="Nick Name" formControlName="name">
+                <md-error *ngIf="connectionForm.get('name').hasError('required')">
+                    Name is <strong>required</strong>
+                </md-error>
             </md-input-container>
             <!-- Past connection auto complete -->
             <br> Past Connections
+            <br>
             <md-chip-list>
-                <md-chip *ngFor="let connection of filteredPastConnections" selected="{{historySameAsInput(connection)}}" (select)="historySelected(connection)" (deselect)=historyDeselected(connection)>
+                <md-chip *ngFor="let connection of filteredPastConnections" [selected]="historySameAsInput(connection)" (select)="historySelected(connection)"
+                    (deselect)=historyDeselected(connection)>
                     <span (click)="historySelected(connection)">{{connection.name}} | {{connection.address}}</span>
                     <span (click)="removeHistory(connection)">x</span>
                 </md-chip>
