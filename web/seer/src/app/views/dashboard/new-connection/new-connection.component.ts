@@ -37,8 +37,13 @@ export class NewConnectionComponent {
     this.connectionForm.setValue({ address: connection.address, name: connection.name });
   }
 
+  protected historyDeselected(connection: ConnectionMeta) {
+    console.log('deselected: ', connection.name);
+    this.connectionForm.setValue({ address: '', name: '' });
+  }
+
   protected historySameAsInput(connection: ConnectionMeta): boolean {
-    console.log('selectCheck');
+    console.log('selectCheck: ', connection.name);
     return this.connectionForm.get('address').value === connection.address && this.connectionForm.get('name').value === connection.name;
   }
 
@@ -65,10 +70,6 @@ export class NewConnectionComponent {
 
           return addressFilter || nameFilter;
         }
-      })
-      .map(a => {
-        console.log(a);
-        return a;
       })
       .sort((a: ConnectionMeta, b: ConnectionMeta) => {
         const addressA = a.address.toLowerCase();

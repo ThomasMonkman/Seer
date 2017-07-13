@@ -22,7 +22,7 @@
             <!-- Past connection auto complete -->
             <br> Past Connections
             <md-chip-list>
-                <md-chip *ngFor="let connection of filteredPastConnections" (selected)="historySameAsInput(connection)">
+                <md-chip *ngFor="let connection of filteredPastConnections" selected="{{historySameAsInput(connection)}}" (select)="historySelected(connection)" (deselect)=historyDeselected(connection)>
                     <span (click)="historySelected(connection)">{{connection.name}} | {{connection.address}}</span>
                     <span (click)="removeHistory(connection)">x</span>
                 </md-chip>
