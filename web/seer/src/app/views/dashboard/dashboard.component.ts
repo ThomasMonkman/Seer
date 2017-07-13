@@ -1,40 +1,25 @@
 import { Component, OnInit } from '@angular/core';
-import { SeerConnectionService } from "app/services/seer-connection/seer-connection.service";
-import { Observable } from "rxjs/Rx";
+import { ConnectionMeta } from 'app/classes/connnection-meta';
+import { SeerConnectionService } from 'app/services/seer-connection/seer-connection.service';
 import { Tab } from 'app/views/dashboard/tab';
+import { Observable } from 'rxjs/Rx';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent {
 
-  protected data: any[] = [];
-  private seerObservable: Observable<any>;
+  protected tabs: Tab[] = [new Tab()]; // Default to a new tab
+  protected activeTabIndex: number = 0;
 
-  // Dynamic tabs demo
-  protected activeTabIndex = 0;
-  protected addTabPosition = 0;
-  protected gotoNewTabAfterAdding = false;
-  protected createWithLongContent = false;
-  protected dynamicTabs: Tab[] = [
-    new Tab('Localhost')
-  ];
-
-  constructor(private seerConnection: SeerConnectionService) { 
-    
-  }
-
-  public ngOnInit() {
-    // this.seerObservable = this.seerConnection.connect('ws://localhost:9000');
-    // this.seerObservable.subscribe((message: any) => {
-    //   console.log('received message from server: ', message);
-    //   this.data.push(message);
-    // });
+  protected newConnection(newConnection: ConnectionMeta) {
+    console.log('tab added');
+    this.tabs.splice(this.tabs.length - 1, 0, new Tab(newConnection));
   }
 
   protected deleteTab(tab: any) {
-    this.dynamicTabs.splice(this.dynamicTabs.indexOf(tab), 1);
+    this.tabs.splice(this.tabs.indexOf(tab), 1);
   }
 }

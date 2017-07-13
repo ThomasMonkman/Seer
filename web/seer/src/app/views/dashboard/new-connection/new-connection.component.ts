@@ -33,6 +33,7 @@ export class NewConnectionComponent {
     if (this.connectionForm.status === 'VALID') {
       console.log('connect');
       const newConnection = new ConnectionMeta(this.connectionForm.get('name').value, this.connectionForm.get('address').value)
+      this.clearForm();
       this.connectionHistory.store(newConnection);
       this.connection.emit(newConnection);
     }
@@ -46,7 +47,7 @@ export class NewConnectionComponent {
     console.log('deselected: ', connection.name);
     // Only clear fields if they are the same as the chip, other wise they are being edited by the person
     if (this.historySameAsInput(connection)) {
-      this.connectionForm.setValue({ address: '', name: '' });
+      this.clearForm();
     }
   }
 
@@ -57,8 +58,12 @@ export class NewConnectionComponent {
   protected removeHistory(connection: ConnectionMeta) {
     this.connectionHistory.remove(connection.name);
     if (this.historySameAsInput(connection)) {
-      this.connectionForm.setValue({ address: '', name: '' });
+      this.clearForm();
     }
+  }
+
+  private clearForm() {
+    this.connectionForm.setValue({ address: '', name: '' });
   }
 
   private filterHistory(val: [ConnectionMeta[], string, string]) {

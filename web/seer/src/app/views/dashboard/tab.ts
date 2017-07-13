@@ -1,8 +1,12 @@
+import { ConnectionMeta } from 'app/classes/connnection-meta';
+
 export class Tab {
-    public title: string;
-    public address: string = null;
-    constructor(title: string, address: string = null) {
-        this.title = title;
-        this.address = address;
+    public readonly connectionMeta: ConnectionMeta = null;
+    public readonly newTab: boolean = false;
+    constructor(connectionMeta: ConnectionMeta = null) {
+        if (connectionMeta === null) {
+            this.newTab = true;
+        }
+        this.connectionMeta = connectionMeta;
     }
 }

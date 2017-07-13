@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { ConnectionMeta } from 'app/classes/connnection-meta';
+import { SeerConnectionService } from 'app/services/seer-connection/seer-connection.service';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'app-connection',
@@ -7,9 +10,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ConnectionComponent implements OnInit {
 
-  constructor() { }
+  @Input() public connection: ConnectionMeta;
 
-  ngOnInit() {
+  protected dataPoints: any[] = [];
+  private seerObservable: Observable<any>;
+
+  constructor(private seerConnection: SeerConnectionService) { }
+
+  public ngOnInit() {
+    this.seerObservable = this.seerConnection.connect(`ws://${this.connection.address}:9000`);
+    this.seerObservable.subscribe((message: any[]) => {
+      // console.log('received message from server: ', message);
+      this.dataPoints.push.apply(this.dataPoints, message);
+    });
   }
 
 }

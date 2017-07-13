@@ -1,3 +1,12 @@
-<p>
-  connection works!
-</p>
+<md-toolbar color="primary">
+  <span>{{connection.name}}</span>
+
+  <!-- This fills the remaining space of the current row -->
+  <span class="example-fill-remaining-space"></span>
+
+  <span>{{dataPoints.length}}</span>
+</md-toolbar>
+
+<md-list>
+  <!-- <md-list-item *ngFor="let dataPoint of dataPoints"> {{dataPoint}} </md-list-item> -->
+</md-list>

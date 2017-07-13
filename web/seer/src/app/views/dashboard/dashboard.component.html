@@ -1,19 +1,19 @@
 <md-tab-group class="demo-tab-group noselect" dynamicHeight [(selectedIndex)]="activeTabIndex">
-  <md-tab *ngFor="let tab of dynamicTabs">
+  <md-tab *ngFor="let tab of tabs">
     <ng-template class="noselect" md-tab-label>
       <!-- New Tab -->
-      <div *ngIf="tab.address === null">
+      <div *ngIf="tab.newTab">
         <i class="material-icons tab-new">add</i>
       </div>
       <!-- Existing tab -->
-      <div *ngIf="tab.address !== null">
-        <span>{{tab.title}}</span>
+      <div *ngIf="tab.newTab === false">
+        <span>{{tab.connectionMeta.name}}</span>
         <i class="material-icons tab-close" (click)="deleteTab(tab)">close</i>
       </div>
     </ng-template>
     <div class="tab-content">
-      <app-new-connection *ngIf="tab.address === null"></app-new-connection>
-      <app-connection *ngIf="tab.address !== null"></app-connection>
+      <app-new-connection *ngIf="tab.newTab" (connection)="newConnection($event)"></app-new-connection>
+      <app-connection *ngIf="tab.newTab === false" [connection]="tab.connectionMeta"></app-connection>
     </div>
   </md-tab>
 </md-tab-group>
