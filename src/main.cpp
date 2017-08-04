@@ -30,6 +30,25 @@ private:
 
 };
 
+void paint() 
+{
+	Seer::ScopeTimer timer("paint");
+	std::this_thread::sleep_for(std::chrono::milliseconds{ 500 });
+}
+
+void send()
+{
+	Seer::ScopeTimer timer("send");
+	std::this_thread::sleep_for(std::chrono::milliseconds{ 300 });
+}
+
+void network()
+{
+	Seer::ScopeTimer timer("network");
+	send();
+	std::this_thread::sleep_for(std::chrono::milliseconds{ 100 });
+}
+
 //#include <>
 int main() 
 {
@@ -41,8 +60,10 @@ int main()
 	//std::uniform_int_distribution<> dist{ 1000, 5000 };
 	while (true)
 	{
-			Seer::ScopeTimer timer("hello");
-		std::this_thread::sleep_for(std::chrono::milliseconds{ 1 });
+		Seer::ScopeTimer timer("frame");
+		paint();
+		network();
+		std::this_thread::sleep_for(std::chrono::milliseconds{ 50 });
 	}
 	std::cin.clear();
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');

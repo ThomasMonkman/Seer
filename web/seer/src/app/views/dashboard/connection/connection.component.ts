@@ -23,6 +23,17 @@ export class ConnectionComponent implements OnInit {
       // console.log('received message from server: ', message);
       this.dataPoints.push.apply(this.dataPoints, message);
     });
+
+    // type: [
+
+    // ]
+
+    // threads: [
+
+    // ]
+
+    // this.seerConnection.type(timepoint | );
+
   }
 
 }

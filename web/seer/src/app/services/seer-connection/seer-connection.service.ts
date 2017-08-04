@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs/Rx';
 import { RxWebsocketSubject } from './connection/connection';
-import { Observable } from "rxjs/Rx";
 
 @Injectable()
 export class SeerConnectionService {
   private connections: Map<string, RxWebsocketSubject<object>> = new Map<string, RxWebsocketSubject<object>>();
-  constructor() { }
+  // constructor() { }
 
   public connect(url: string): Observable<any> {
     if (this.connections.has(url)) {
