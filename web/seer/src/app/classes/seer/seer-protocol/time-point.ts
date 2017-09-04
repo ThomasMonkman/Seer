@@ -4,8 +4,10 @@
  * @export
  * @class TimePoint
  */
-export class TimePoint {
-    public static readonly type: string = 'tp';
+import { BasePoint } from 'app/classes/seer/seer-protocol/base-point';
+
+export class TimePoint extends BasePoint {
+    public readonly type: string = 'tp';
     public readonly name: string;
     public readonly thread: string;
     public readonly position: number;
@@ -17,6 +19,7 @@ export class TimePoint {
      * @memberof TimePoint
      */
     constructor(json: any) {
+        super();
         this.name = json.n;
         this.thread = json.t;
         this.position = json.p;

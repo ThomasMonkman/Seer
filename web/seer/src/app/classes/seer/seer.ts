@@ -1,24 +1,25 @@
 import { Observable } from 'rxjs/Rx';
-import { TimePoint } from './seer-protocol';
+import { BasePoint, TimePoint } from './seer-protocol';
 /**
  * Parse and provides access to an seer connection.
  * @export
  * @class Seer
  */
 export class Seer {
-    private readonly source: Observable<any>;
+    private readonly source: Observable<BasePoint>;
     /**
      * Creates an instance of Seer.
-     * @param {Observable<any>} source it should consume and parse.
+     * @param {Observable<BasePoint>} source it should consume and parse.
      * @memberof Seer
      */
-    constructor(source: Observable<any>) {
+    constructor(source: Observable<BasePoint>) {
         this.source = source;
     }
 
     public timePoints(): Observable<TimePoint> {
-
+        return this.source
+            .share()
+            .filter((point: BasePoint, i) => point.type === 'tp')
+            .map(timePoint => <TimePoint> timePoint);
     }
-
-    private parse
 }
