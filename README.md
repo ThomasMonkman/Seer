@@ -5,7 +5,7 @@
 **Develop**  
 [![Develop](https://travis-ci.org/ThomasMonkman/Seer.svg?branch=develop)](https://travis-ci.org/ThomasMonkman/Seer)
 
-A C++ Remote Performance and Logging Library
+A C++ Adapter for chrome tracing
 
 # Table of Contents
 1. [Use](#use)
@@ -38,7 +38,4 @@ This measure 2 seconds.
 
 ## 3rd Parties Used
 
-* [Websocketpp](https://github.com/zaphoyd/websocketpp)
-* [Aiso](https://github.com/chriskohlhoff/asio) - License (Boost Software License)
 * [Catch](https://github.com/philsquared/Catch) - License (Boost Software License)
-* [Json](https://github.com/nlohmann/json) - License (Boost Software License)
