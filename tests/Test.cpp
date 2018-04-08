@@ -4,7 +4,14 @@
 
 #include "Util/TestHelper.hpp"
 
+#include <iostream>
 
 TEST_CASE("dummy", "[dummy]") {
+	{
+		seer::ScopeTimer test("test");
+	}
+	seer::dump_to_file();
+	std::cout << seer::buffer << std::endl;
+	std::string s = seer::buffer.str();
 	REQUIRE(false == true);
 }
