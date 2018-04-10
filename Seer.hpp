@@ -10,7 +10,7 @@
 #include <sstream>
 #include <mutex>
 #include <exception>
-
+#include <algorithm>
 
 
 namespace seer {
@@ -24,42 +24,45 @@ namespace seer {
 		class StringStore
 		{
 		public:
+			static StringStore& i() {
+				static StringStore pipe;
+				return pipe;
+			}
 			StringLookup store(const std::string& string_to_store) {
 				std::lock_guard<std::mutex> lock(_mutex);
-				return { 0, 1 };
-				/*if (string.size() + pos > store.size())
+				if (string_to_store.size() + _head > _store.size())
 				{
-					throw std::expection("string store full");
+					throw std::exception("string store full");
 				}
-				const auto insert_position = store.begin() + head;
-				std::copy(string.begin(), string.end(), insert_position, insert_position + string.size());
+				const auto insert_position = _store.begin() + _head;
+				_head = std::distance(_store.begin(), _store.begin() + _head) + string_to_store.size();
+				std::copy(string_to_store.begin(), string_to_store.end(), insert_position);
 
 				return {
-					insert_position,
-					string.size()
-				};*/
-			}
-			/*StringLookup store(const char* string) {
-				std::lock_guard<std::mutex> lock(mutex);
-				if (string.size() + pos > store.size())
-				{
-					throw std::expection("string store full");
-				}
-				const auto insert_position = store.begin() + head;
-				std::copy(string.begin(), string.end(), insert_position, insert_position + string.size());
-
-				return {
-					insert_position,
-					string.size()
+					static_cast<std::uint32_t>(std::distance(_store.begin(), insert_position)),
+					static_cast<std::uint32_t>(string_to_store.size())
 				};
-			}*/
+			}
 			std::string get_from_store(const StringLookup& lookup) {
-				return "";
+				return {
+					_store.begin() + lookup.pos,
+					_store.begin() + lookup.pos + lookup.length,
+				};
+			}
+
+			std::size_t buffer_size() {
+				return _store.size();
 			}
 		private:
+			std::size_t _size { 1'000'000 }; 
 			std::vector<char> _store;
 			std::mutex _mutex;
-			std::size_t _head;
+			std::size_t _head { 0 };
+
+			StringStore() {
+				_store.resize(_size);
+			}
+			~StringStore() = default;
 		};
 
 		enum class EventType : char {
@@ -99,7 +102,7 @@ namespace seer {
 
 		inline std::ostream& operator<<(std::ostream& out_stream, const DataPoint& event)
 		{
-			out_stream << "{\"name\":\"" << "?" //event.name
+			out_stream << "{\"name\":\"" << StringStore::i().get_from_store(event.name) //event.name
 				<< "\",\"ph\":\"" << static_cast<char>(event.event_type)
 				<< "\",\"pid\":" << 0
 				<< ",\"tid\":" << event.thread_id
@@ -108,7 +111,7 @@ namespace seer {
 			switch (event.event_type)
 			{
 			case EventType::complete:
-				out_stream << ",\"dur\":" << std::chrono::duration_cast<std::chrono::microseconds>(event.extra.end_time.time_since_epoch()).count();
+				out_stream << ",\"dur\":" << std::chrono::duration_cast<std::chrono::microseconds>(event.extra.end_time - event.time_point).count();
 			default:
 				break;
 			}
@@ -149,8 +152,12 @@ namespace seer {
 				}
 				stream << ']';
 			}
+
+			std::size_t buffer_size() {
+				return _events.capacity();
+			}
 		private:
-			std::size_t _buffer_size_in_bytes = 1000000;
+			std::size_t _buffer_size_in_bytes = 10'000'000;
 			std::vector<DataPoint> _events;
 			std::mutex _event_mutex;
 
@@ -168,6 +175,10 @@ namespace seer {
 				Pipe::i().write_to_stream(ss);
 				return ss.str();
 			}
+			std::size_t size_in_bytes()
+			{
+				return internal::StringStore::i().buffer_size() + internal::Pipe::i().buffer_size();
+			}
 		};
 
 		inline std::ostream& operator<<(std::ostream& out_stream, const Buffer& buffer)
@@ -177,23 +188,23 @@ namespace seer {
 		}
 	}
 
+	static internal::Buffer buffer;
+
 	void dump_to_file(const std::string& file_name = "profile.json") {
 		std::ofstream file(file_name);
 		internal::Pipe::i().write_to_stream(file);
 		file << std::flush;
 	}
 
-
-	static internal::Buffer buffer;
-
 	class ScopeTimer
 	{
 	public:
-		ScopeTimer(const std::string name) :
-			//_name(name),
+		ScopeTimer(const std::string& name) :
+			_name(internal::StringStore::i().store(name)),
 			_creation(std::chrono::steady_clock::now())
 		{}
 		~ScopeTimer() {
+
 			//send end time to network
 			internal::DataPointExtra extra = { nullptr };
 			extra.end_time = std::chrono::steady_clock::now();
@@ -207,7 +218,7 @@ namespace seer {
 		}
 	private:
 		const std::chrono::steady_clock::time_point _creation;
-		const internal::StringLookup _name = { 1 , 2 };
+		const internal::StringLookup _name;
 	};
 }
 ////Duration 

@@ -8,10 +8,14 @@
 
 TEST_CASE("dummy", "[dummy]") {
 	{
-		seer::ScopeTimer test("test");
+		seer::ScopeTimer test("Time");
+		for (size_t i = 0; i < 100'000; i++)
+		{
+			seer::ScopeTimer test("+-");
+		}
 	}
 	seer::dump_to_file();
-	std::cout << seer::buffer << std::endl;
-	std::string s = seer::buffer.str();
+	//std::cout << seer::buffer << std::endl;
+	//std::string s = seer::buffer.str();
 	REQUIRE(false == true);
 }
