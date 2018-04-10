@@ -14,12 +14,20 @@
 
 
 namespace seer {
+	enum class BufferOverflowBehaviour {
+		reset,
+		expand,
+		exception
+	};
+	static BufferOverflowBehaviour buffer_overflow_behaviour = BufferOverflowBehaviour::reset;
 	namespace internal {
 		struct StringLookup
 		{
 			std::uint32_t pos;
 			std::uint32_t length;
 		};
+
+		class Pipe;
 
 		class StringStore
 		{
@@ -32,7 +40,15 @@ namespace seer {
 				std::lock_guard<std::mutex> lock(_mutex);
 				if (string_to_store.size() + _head > _store.size())
 				{
-					throw std::exception("string store full");
+					switch (buffer_overflow_behaviour)
+					{
+					case BufferOverflowBehaviour::reset: 
+						Pipe::i().clear();
+						clear();
+						break;
+					case BufferOverflowBehaviour::expand: _store.resize(_store.size() * 1.5); break;
+					case BufferOverflowBehaviour::exception: throw std::overflow_error("string store full");
+					}
 				}
 				const auto insert_position = _store.begin() + _head;
 				_head = std::distance(_store.begin(), _store.begin() + _head) + string_to_store.size();
@@ -50,11 +66,16 @@ namespace seer {
 				};
 			}
 
+			void clear() {
+				_store.clear();
+				_head = 0;
+			}
+
 			std::size_t buffer_size() {
 				return _store.size();
 			}
 		private:
-			std::size_t _size { 1'000'000 }; 
+			std::size_t _size { 1000 }; 
 			std::vector<char> _store;
 			std::mutex _mutex;
 			std::size_t _head { 0 };
@@ -151,6 +172,11 @@ namespace seer {
 					separator = ',';
 				}
 				stream << ']';
+			}
+
+			void clear() {
+				std::lock_guard<std::mutex> lock(_event_mutex);
+				_events.clear();
 			}
 
 			std::size_t buffer_size() {
