@@ -9,7 +9,7 @@
 TEST_CASE("dummy", "[dummy]") {
 	{
 		seer::ScopeTimer test("Time");
-		for (size_t i = 0; i < 100'000; i++)
+		for (size_t i = 0; i < 100000; i++)
 		{
 			seer::ScopeTimer test("+-");
 		}
