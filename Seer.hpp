@@ -249,7 +249,11 @@ namespace seer {
 				_creation,
 				extra
 				});
-		}
+		}		
+		ScopeTimer(const ScopeTimer&) = delete;
+		ScopeTimer& operator=(const ScopeTimer& other) = delete
+		ScopeTimer(ScopeTimer&&) = delete;
+		ScopeTimer& operator=(ScopeTimer&& other) = delete
 	private:
 		const std::chrono::steady_clock::time_point _creation;
 		const internal::StringLookup _name;
