@@ -40,14 +40,17 @@ namespace seer {
 				std::lock_guard<std::mutex> lock(_mutex);
 				if (string_to_store.size() + _head > _store.size())
 				{
+					if (string_to_store.size() > _store.size()) {
+						throw std::length_error("String store not big enough for string");
+					}
 					switch (buffer_overflow_behaviour)
 					{
-					case BufferOverflowBehaviour::reset: 
-						Pipe::i().clear();
-						clear();
+					case BufferOverflowBehaviour::reset:						
+						_head = 0;
+						_clear_callback();
 						break;
 					case BufferOverflowBehaviour::expand: _store.resize(_store.size() * 1.5); break;
-					case BufferOverflowBehaviour::exception: throw std::overflow_error("string store full");
+					case BufferOverflowBehaviour::exception: throw std::overflow_error("String store full");
 					}
 				}
 				const auto insert_position = _store.begin() + _head;
@@ -67,6 +70,7 @@ namespace seer {
 			}
 
 			void clear() {
+				std::lock_guard<std::mutex> lock(_mutex);
 				_store.clear();
 				_head = 0;
 			}
@@ -74,20 +78,25 @@ namespace seer {
 			std::size_t buffer_size() {
 				return _store.size();
 			}
+
+			void set_clear_callback(std::function<void()> callback) {
+				_clear_callback = callback;
+			}
 		private:
-			std::size_t _size { 1000 }; 
+			std::size_t _size { 10000000 }; 
 			std::vector<char> _store;
 			std::mutex _mutex;
 			std::size_t _head { 0 };
+			std::function<void()> _clear_callback;
 
 			StringStore() {
 				_store.resize(_size);
 			}
 			~StringStore() = default;
 			StringStore(const StringStore&) = delete;
-			StringStore& operator=(const StringStore& other) = delete;
+			StringStore& operator=(const StringStore&) = delete;
 			StringStore(StringStore&&) = delete;
-			StringStore& operator=(StringStore&& other) = delete;
+			StringStore& operator=(StringStore&&) = delete;
 		};
 
 		enum class EventType : char {
@@ -125,9 +134,15 @@ namespace seer {
 			DataPointExtra extra; // 8 bytes;
 		};
 
+		inline std::ostream& operator<<(std::ostream& out_stream, const StringLookup& string_store)
+		{
+			out_stream << StringStore::i().get_from_store(string_store);
+			return out_stream;
+		}
+
 		inline std::ostream& operator<<(std::ostream& out_stream, const DataPoint& event)
 		{
-			out_stream << "{\"name\":\"" << StringStore::i().get_from_store(event.name) //event.name
+			out_stream << "{\"name\":\"" << event.name
 				<< "\",\"ph\":\"" << static_cast<char>(event.event_type)
 				<< "\",\"pid\":" << 0
 				<< ",\"tid\":" << event.thread_id
@@ -145,27 +160,29 @@ namespace seer {
 			return out_stream;
 		}
 
-		class Pipe
+		class EventStore
 		{
 		public:
-			static Pipe& i() {
-				static Pipe pipe;
+			static EventStore& i() {
+				static EventStore pipe;
 				return pipe;
 			}
 			void send(DataPoint&& event) {
 				std::lock_guard<std::mutex> lock(_event_mutex);
 				if (_events.size() >= _events.capacity()) {
-					_events.clear();
+					switch (buffer_overflow_behaviour)
+					{
+					case BufferOverflowBehaviour::reset:
+						_events.clear();
+						_clear_callback();
+						break;
+					case BufferOverflowBehaviour::expand: break; //let the vector use its own growth functions
+					case BufferOverflowBehaviour::exception: throw std::overflow_error("Event store full");
+					}
 				}
 				_events.emplace_back(event);
 			}
-			/*void send(std::unique_ptr<event::BaseEvent> event) {
-				std::lock_guard<std::mutex> lock(_event_mutex);
-				if (_events.size() < 10000000) {
-					_events.clear();
-				}
-				_events.push_back(std::move(event));
-			}*/
+
 			void write_to_stream(std::ostream& stream) {
 				std::lock_guard<std::mutex> lock(_event_mutex);
 				//std::stringstream json;
@@ -186,19 +203,24 @@ namespace seer {
 			std::size_t buffer_size() {
 				return _events.capacity();
 			}
+
+			void set_clear_callback(std::function<void()> callback) {
+				_clear_callback = callback;
+			}
 		private:
 			std::size_t _buffer_size_in_bytes = 10000000;
 			std::vector<DataPoint> _events;
 			std::mutex _event_mutex;
+			std::function<void()> _clear_callback;
 
-			Pipe() {
+			EventStore() {
 				_events.reserve(_buffer_size_in_bytes / sizeof(DataPoint));
 			}			
-			~Pipe() = default;
-			Pipe(const Pipe&) = delete;
-			Pipe& operator=(const Pipe& other) = delete;
-			Pipe(Pipe&&) = delete;
-			Pipe& operator=(Pipe&& other) = delete;
+			~EventStore() = default;
+			EventStore(const EventStore&) = delete;
+			EventStore& operator=(const EventStore&) = delete;
+			EventStore(EventStore&&) = delete;
+			EventStore& operator=(EventStore&&) = delete;
 		};
 
 		// Allows internal buffer to be streamed by just calling "<< seer::buffer"
@@ -206,27 +228,42 @@ namespace seer {
 		{
 			std::string str() {
 				std::stringstream ss;
-				Pipe::i().write_to_stream(ss);
+				EventStore::i().write_to_stream(ss);
 				return ss.str();
 			}
 			std::size_t size_in_bytes()
 			{
-				return internal::StringStore::i().buffer_size() + internal::Pipe::i().buffer_size();
+				return internal::StringStore::i().buffer_size() + internal::EventStore::i().buffer_size();
 			}
 		};
 
 		inline std::ostream& operator<<(std::ostream& out_stream, const Buffer& buffer)
 		{
-			Pipe::i().write_to_stream(out_stream);
+			EventStore::i().write_to_stream(out_stream);
 			return out_stream;
 		}
+
+		class Coordinator {
+		public:
+			Coordinator() {
+				StringStore::i().set_clear_callback([] { EventStore::i().clear(); });
+				EventStore::i().set_clear_callback([] { StringStore::i().clear(); });
+			}
+			~Coordinator() = default;
+			Coordinator(const Coordinator&) = delete;
+			Coordinator& operator=(const Coordinator&) = delete;
+			Coordinator(Coordinator&&) = delete;
+			Coordinator& operator=(Coordinator&&) = delete;
+		};
+
+		static Coordinator coordinator;
 	}
 
 	static internal::Buffer buffer;
 
 	void dump_to_file(const std::string& file_name = "profile.json") {
 		std::ofstream file(file_name);
-		internal::Pipe::i().write_to_stream(file);
+		internal::EventStore::i().write_to_stream(file);
 		file << std::flush;
 	}
 
@@ -242,7 +279,7 @@ namespace seer {
 			//send end time to network
 			internal::DataPointExtra extra = { nullptr };
 			extra.end_time = std::chrono::steady_clock::now();
-			internal::Pipe::i().send({
+			internal::EventStore::i().send({
 				_name,
 				internal::EventType::complete,
 				std::this_thread::get_id(),
