@@ -85,9 +85,9 @@ namespace seer {
 			}
 			~StringStore() = default;
 			StringStore(const StringStore&) = delete;
-			StringStore& operator=(const StringStore& other) = delete
+			StringStore& operator=(const StringStore& other) = delete;
 			StringStore(StringStore&&) = delete;
-			StringStore& operator=(StringStore&& other) = delete
+			StringStore& operator=(StringStore&& other) = delete;
 		};
 
 		enum class EventType : char {
@@ -196,9 +196,9 @@ namespace seer {
 			}			
 			~Pipe() = default;
 			Pipe(const Pipe&) = delete;
-			Pipe& operator=(const Pipe& other) = delete
+			Pipe& operator=(const Pipe& other) = delete;
 			Pipe(Pipe&&) = delete;
-			Pipe& operator=(Pipe&& other) = delete
+			Pipe& operator=(Pipe&& other) = delete;
 		};
 
 		// Allows internal buffer to be streamed by just calling "<< seer::buffer"
@@ -251,9 +251,9 @@ namespace seer {
 				});
 		}		
 		ScopeTimer(const ScopeTimer&) = delete;
-		ScopeTimer& operator=(const ScopeTimer& other) = delete
+		ScopeTimer& operator=(const ScopeTimer& other) = delete;
 		ScopeTimer(ScopeTimer&&) = delete;
-		ScopeTimer& operator=(ScopeTimer&& other) = delete
+		ScopeTimer& operator=(ScopeTimer&& other) = delete;
 	private:
 		const std::chrono::steady_clock::time_point _creation;
 		const internal::StringLookup _name;
