@@ -84,6 +84,10 @@ namespace seer {
 				_store.resize(_size);
 			}
 			~StringStore() = default;
+			StringStore(const StringStore&) = delete;
+			StringStore& operator=(const StringStore& other) = delete
+			StringStore(StringStore&&) = delete;
+			StringStore& operator=(StringStore&& other) = delete
 		};
 
 		enum class EventType : char {
@@ -189,8 +193,12 @@ namespace seer {
 
 			Pipe() {
 				_events.reserve(_buffer_size_in_bytes / sizeof(DataPoint));
-			}
-			~Pipe() {}
+			}			
+			~Pipe() = default;
+			Pipe(const Pipe&) = delete;
+			Pipe& operator=(const Pipe& other) = delete
+			Pipe(Pipe&&) = delete;
+			Pipe& operator=(Pipe&& other) = delete
 		};
 
 		// Allows internal buffer to be streamed by just calling "<< seer::buffer"
