@@ -23,6 +23,6 @@ namespace TestHelper {
 		else {
 			throw std::runtime_error("Timeout reached");
 		}
-	};
+	}
 }
 #endif
