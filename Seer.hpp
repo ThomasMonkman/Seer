@@ -234,8 +234,8 @@ namespace seer {
 	{
 	public:
 		ScopeTimer(const std::string& name) :
-			_name(internal::StringStore::i().store(name)),
-			_creation(std::chrono::steady_clock::now())
+			_creation(std::chrono::steady_clock::now()),
+			_name(internal::StringStore::i().store(name))
 		{}
 		~ScopeTimer() {
 
