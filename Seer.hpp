@@ -11,6 +11,7 @@
 #include <mutex>
 #include <exception>
 #include <algorithm>
+#include <functional>
 
 
 namespace seer {
@@ -45,7 +46,7 @@ namespace seer {
 					}
 					switch (buffer_overflow_behaviour)
 					{
-					case BufferOverflowBehaviour::reset:						
+					case BufferOverflowBehaviour::reset:
 						_head = 0;
 						_clear_callback();
 						break;
@@ -83,10 +84,10 @@ namespace seer {
 				_clear_callback = callback;
 			}
 		private:
-			std::size_t _size { 10000000 }; 
+			std::size_t _size{ 10000000 };
 			std::vector<char> _store;
 			std::mutex _mutex;
-			std::size_t _head { 0 };
+			std::size_t _head{ 0 };
 			std::function<void()> _clear_callback;
 
 			StringStore() {
@@ -215,7 +216,7 @@ namespace seer {
 
 			EventStore() {
 				_events.reserve(_buffer_size_in_bytes / sizeof(DataPoint));
-			}			
+			}
 			~EventStore() = default;
 			EventStore(const EventStore&) = delete;
 			EventStore& operator=(const EventStore&) = delete;
@@ -286,7 +287,7 @@ namespace seer {
 				_creation,
 				extra
 				});
-		}		
+		}
 		ScopeTimer(const ScopeTimer&) = delete;
 		ScopeTimer& operator=(const ScopeTimer& other) = delete;
 		ScopeTimer(ScopeTimer&&) = delete;
