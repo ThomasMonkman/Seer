@@ -183,7 +183,7 @@ namespace seer {
 				return _events.capacity();
 			}
 		private:
-			std::size_t _buffer_size_in_bytes = 10'000'000;
+			std::size_t _buffer_size_in_bytes = 10000000;
 			std::vector<DataPoint> _events;
 			std::mutex _event_mutex;
 
