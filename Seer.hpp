@@ -13,6 +13,15 @@
 #include <algorithm>
 #include <functional>
 
+#ifdef __linux__ 
+//linux code goes here
+#include <sys/types.h>
+#include <unistd.h>
+#elif _WIN32
+// windows code goes here
+#include "Windows.h";
+#endif
+
 
 namespace seer {
 	enum class BufferOverflowBehaviour {
@@ -72,7 +81,6 @@ namespace seer {
 
 			void clear() {
 				std::lock_guard<std::mutex> lock(_mutex);
-				_store.clear();
 				_head = 0;
 			}
 
@@ -145,7 +153,13 @@ namespace seer {
 		{
 			out_stream << "{\"name\":\"" << event.name
 				<< "\",\"ph\":\"" << static_cast<char>(event.event_type)
+#ifdef __linux__
+				<< "\",\"pid\":" << ::getpid()
+#elif _WIN32
+				<< "\",\"pid\":" << ::GetCurrentProcessId()
+#elif
 				<< "\",\"pid\":" << 0
+#endif
 				<< ",\"tid\":" << event.thread_id
 				<< ",\"ts\":" << std::chrono::duration_cast<std::chrono::microseconds>(event.time_point.time_since_epoch()).count();
 			// Add in optional extra depending on the data type
@@ -188,6 +202,9 @@ namespace seer {
 				std::lock_guard<std::mutex> lock(_event_mutex);
 				//std::stringstream json;
 				auto separator = '[';
+				if (_events.size() == 0) {
+					stream << separator;
+				}
 				for (const auto& event : _events)
 				{
 					stream << separator << event;
@@ -235,6 +252,11 @@ namespace seer {
 			std::size_t size_in_bytes()
 			{
 				return internal::StringStore::i().buffer_size() + internal::EventStore::i().buffer_size();
+			}
+
+			void clear() {
+				EventStore::i().clear();
+				StringStore::i().clear();
 			}
 		};
 
