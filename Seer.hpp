@@ -14,12 +14,10 @@
 #include <functional>
 
 #ifdef __linux__ 
-//linux code goes here
 #include <sys/types.h>
 #include <unistd.h>
 #elif _WIN32
-// windows code goes here
-#include "Windows.h";
+#include "Windows.h"
 #endif
 
 
@@ -167,6 +165,8 @@ namespace seer {
 			{
 			case EventType::complete:
 				out_stream << ",\"dur\":" << std::chrono::duration_cast<std::chrono::microseconds>(event.extra.end_time - event.time_point).count();
+			case EventType::instant:
+				out_stream << ",\"s\":\"" << static_cast<char>(event.extra.instant) << "\"";
 			default:
 				break;
 			}
@@ -308,7 +308,7 @@ namespace seer {
 				std::this_thread::get_id(),
 				_creation,
 				extra
-				});
+			});
 		}
 		ScopeTimer(const ScopeTimer&) = delete;
 		ScopeTimer& operator=(const ScopeTimer& other) = delete;
@@ -318,6 +318,20 @@ namespace seer {
 		const std::chrono::steady_clock::time_point _creation;
 		const internal::StringLookup _name;
 	};
+	
+	using InstantEventScope = internal::InstantEventScope;
+
+	static void instant_event(const std::string& name, const InstantEventScope event_type = InstantEventScope::thread) {
+		internal::DataPointExtra extra = { nullptr };
+		extra.instant = event_type;
+		internal::EventStore::i().send({
+			internal::StringStore::i().store(name),
+			internal::EventType::instant,
+			std::this_thread::get_id(),
+			std::chrono::steady_clock::now(),
+			extra
+		});
+	}
 }
 ////Duration 
 //{
