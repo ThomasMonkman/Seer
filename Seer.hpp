@@ -155,7 +155,7 @@ namespace seer {
 				<< "\",\"pid\":" << ::getpid()
 #elif _WIN32
 				<< "\",\"pid\":" << ::GetCurrentProcessId()
-#elif
+#else
 				<< "\",\"pid\":" << 0
 #endif
 				<< ",\"tid\":" << event.thread_id
