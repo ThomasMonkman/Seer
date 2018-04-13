@@ -27,6 +27,26 @@ void isInstantEvent(const nlohmann::json& event, std::string name, seer::interna
 	REQUIRE(event["s"] == std::string(1, static_cast<char>(type)));
 }
 
+TEST_CASE("buffer clears", "[seer::buffer]") {
+
+	seer::buffer.clear();
+
+	SECTION("clears") {
+		{
+			seer::ScopeTimer test("Test");
+		}
+		REQUIRE(seer::buffer.str() != "[]");
+		seer::buffer.clear();
+		REQUIRE(seer::buffer.str() == "[]");
+	}
+	
+	SECTION("works even when empty") {
+		REQUIRE(seer::buffer.str() == "[]");
+		seer::buffer.clear();
+		REQUIRE(seer::buffer.str() == "[]");
+	}
+}
+
 TEST_CASE("ScopeTimer produces correct json", "[ScopeTimer]") {
 
 	seer::buffer.clear();
