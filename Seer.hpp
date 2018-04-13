@@ -164,9 +164,9 @@ namespace seer {
 			switch (event.event_type)
 			{
 			case EventType::complete:
-				out_stream << ",\"dur\":" << std::chrono::duration_cast<std::chrono::microseconds>(event.extra.end_time - event.time_point).count();
+				out_stream << ",\"dur\":" << std::chrono::duration_cast<std::chrono::microseconds>(event.extra.end_time - event.time_point).count(); break;
 			case EventType::instant:
-				out_stream << ",\"s\":\"" << static_cast<char>(event.extra.instant) << "\"";
+				out_stream << ",\"s\":\"" << static_cast<char>(event.extra.instant) << "\""; break;
 			default:
 				break;
 			}
