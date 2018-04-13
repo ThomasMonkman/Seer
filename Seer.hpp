@@ -12,6 +12,7 @@
 #include <exception>
 #include <algorithm>
 #include <functional>
+#include <sstream>
 
 #ifdef __linux__ 
 #include <sys/types.h>
@@ -167,6 +168,8 @@ namespace seer {
 				out_stream << ",\"dur\":" << std::chrono::duration_cast<std::chrono::microseconds>(event.extra.end_time - event.time_point).count(); break;
 			case EventType::instant:
 				out_stream << ",\"s\":\"" << static_cast<char>(event.extra.instant) << "\""; break;
+			case EventType::counter:
+				out_stream << ",\"args\":{\"" << event.name << "\":\"" << event.extra.counter_value << "\"}"; break;
 			default:
 				break;
 			}
@@ -332,6 +335,37 @@ namespace seer {
 			extra
 		});
 	}
+	
+		template<typename T>
+	class Counter
+	{
+	public:
+		Counter(const std::string& name, const T& value) :
+			_name(internal::StringStore::i().store(name))
+		{
+			store(value);
+		}
+		~Counter() {}
+		void update(const T& value) {
+			store(value);
+		}
+	private:
+		const internal::StringLookup _name;
+
+		void store(const T& value) {
+			internal::DataPointExtra extra = { nullptr };
+			std::stringstream ss;
+			ss << value;
+			extra.counter_value = internal::StringStore::i().store(ss.str());
+			internal::EventStore::i().send({
+				_name,
+				internal::EventType::counter,
+				std::this_thread::get_id(),
+				std::chrono::steady_clock::now(),
+				extra
+			});
+		}
+	};
 }
 ////Duration 
 //{
