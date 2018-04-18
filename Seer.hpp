@@ -351,6 +351,12 @@ namespace seer {
 		}
 	private:
 		const internal::StringLookup _name;
+		
+		
+		StringStore(const StringStore&) = delete;
+		StringStore& operator=(const StringStore&) = delete;
+		StringStore(StringStore&&) = delete;
+		StringStore& operator=(StringStore&&) = delete;
 
 		template<class Q = T>
 		typename std::enable_if<std::is_arithmetic<Q>::value, std::string>::type
