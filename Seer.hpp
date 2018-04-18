@@ -169,7 +169,7 @@ namespace seer {
 			case EventType::instant:
 				out_stream << ",\"s\":\"" << static_cast<char>(event.extra.instant) << "\""; break;
 			case EventType::counter:
-				out_stream << ",\"args\":{\"" << event.name << "\":\"" << event.extra.counter_value << "\"}"; break;
+				out_stream << ",\"args\":{\"" << event.name << "\":" << event.extra.counter_value << "}"; break;
 			default:
 				break;
 			}
