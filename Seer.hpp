@@ -336,27 +336,54 @@ namespace seer {
 		});
 	}
 	
-		template<typename T>
+	template<typename T>
 	class Counter
 	{
 	public:
 		Counter(const std::string& name, const T& value) :
 			_name(internal::StringStore::i().store(name))
 		{
-			store(value);
+			store(stringify<T>(value));
 		}
 		~Counter() {}
 		void update(const T& value) {
-			store(value);
+			store(stringify<T>(value));
 		}
 	private:
 		const internal::StringLookup _name;
 
-		void store(const T& value) {
+		template<class Q = T>
+		typename std::enable_if<std::is_arithmetic<Q>::value, std::string>::type
+		stringify(const Q value) 
+		{
+		    	std::stringstream ss;            
+			ss << "number" << value;
+			return ss.str();
+		}
+
+		// anything else should be a string, so we add quotes
+		template<class Q = T>
+		typename std::enable_if<!std::is_arithmetic<Q>::value, std::string>::type
+		stringify(const Q& value) 
+		{
+		    	std::stringstream ss;            
+			ss << "\"" << value << "\"";
+			return ss.str();
+		}
+
+		// boolean should be "true"|"false"
+		template<class Q = T>
+		std::string
+		stringify(const bool value) 
+		{
+		    	std::stringstream ss;            
+			ss << "boolean" << std::boolalpha << value;
+			return ss.str();
+		}
+		
+		void store(const std::string& value) {
 			internal::DataPointExtra extra = { nullptr };
-			std::stringstream ss;
-			ss << value;
-			extra.counter_value = internal::StringStore::i().store(ss.str());
+			extra.counter_value = internal::StringStore::i().store(value);
 			internal::EventStore::i().send({
 				_name,
 				internal::EventType::counter,
