@@ -357,7 +357,7 @@ namespace seer {
 		stringify(const Q value) 
 		{
 		    	std::stringstream ss;            
-			ss << "number" << value;
+			ss << value;
 			return ss.str();
 		}
 
@@ -377,7 +377,7 @@ namespace seer {
 		stringify(const bool value) 
 		{
 		    	std::stringstream ss;            
-			ss << "boolean" << std::boolalpha << value;
+			ss << std::boolalpha << value;
 			return ss.str();
 		}
 		
