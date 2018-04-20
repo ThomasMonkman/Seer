@@ -6,7 +6,10 @@ target_include_directories(Catch INTERFACE ${PROJECT_SOURCE_DIR}/3rdParty/catch/
 set(SEER_UNIT_TEST_TARGET_NAME "seer_unit")
 add_executable(${SEER_UNIT_TEST_TARGET_NAME}
 	${PROJECT_SOURCE_DIR}/tests/CatchMain.cpp
-	${PROJECT_SOURCE_DIR}/tests/Test.cpp)
+	${PROJECT_SOURCE_DIR}/tests/Buffer.cpp
+	${PROJECT_SOURCE_DIR}/tests/ScopeTimer.cpp
+	${PROJECT_SOURCE_DIR}/tests/InstantEvent.cpp)
+	${PROJECT_SOURCE_DIR}/tests/Counter.cpp)
 
 #enable pthreads for linux
 set(THREADS_PREFER_PTHREAD_FLAG ON)
