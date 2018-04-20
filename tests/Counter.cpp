@@ -65,7 +65,7 @@ TEST_CASE("Count produces correct json", "[seer::Count]") {
 		const auto json = nlohmann::json::parse(seer::buffer.str());
 		REQUIRE(json.size() == test_case.size());
 				
-		for (auto i = 0; i < test_case.size(); i++)
+		for (auto i = 0u; i < test_case.size(); i++)
 		{
 			isCounterEvent(json[i], "Test");
 			REQUIRE(getCounterEventData<int>(json[i]) == test_case[i]);

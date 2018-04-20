@@ -58,7 +58,7 @@ namespace seer {
 						_head = 0;
 						_clear_callback();
 						break;
-					case BufferOverflowBehaviour::expand: _store.resize(_store.size() * 1.5); break;
+					case BufferOverflowBehaviour::expand: _store.resize(static_cast<std::size_t>(_store.size() * 1.5f)); break;
 					case BufferOverflowBehaviour::exception: throw std::overflow_error("String store full");
 					}
 				}
@@ -263,7 +263,7 @@ namespace seer {
 			}
 		};
 
-		inline std::ostream& operator<<(std::ostream& out_stream, const Buffer& buffer)
+		inline std::ostream& operator<<(std::ostream& out_stream, const Buffer&)
 		{
 			EventStore::i().write_to_stream(out_stream);
 			return out_stream;
@@ -287,7 +287,7 @@ namespace seer {
 
 	static internal::Buffer buffer;
 
-	void dump_to_file(const std::string& file_name = "profile.json") {
+	static void dump_to_file(const std::string& file_name = "profile.json") {
 		std::ofstream file(file_name);
 		internal::EventStore::i().write_to_stream(file);
 		file << std::flush;
