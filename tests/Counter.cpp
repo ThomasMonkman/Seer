@@ -71,4 +71,23 @@ TEST_CASE("Count produces correct json", "[seer::Count]") {
 			REQUIRE(getCounterEventData<int>(json[i]) == test_case[i]);
 		}
 	}
+
+	SECTION("update works") {
+		auto test_case = std::vector<int>{ 0, 2, 4, 5 };
+		{
+			seer::Counter<int> counter("Test", 9);
+			for (const auto test : test_case)
+			{
+				counter.update(test);
+			}
+		}
+		const auto json = nlohmann::json::parse(seer::buffer.str());
+		REQUIRE(json.size() == test_case.size() + 1);
+
+		for (auto i = 1u; i < test_case.size() + 1; i++)
+		{
+			isCounterEvent(json[i], "Test");
+			REQUIRE(getCounterEventData<int>(json[i]) == test_case[i - 1]);
+		}
+	}
 }
