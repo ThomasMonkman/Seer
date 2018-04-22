@@ -8,7 +8,7 @@
 
 #include <iostream>
 
-void isInstantEvent(const nlohmann::json& event, const std::string& name, seer::internal::InstantEventScope type) {
+void is_instant_event(const nlohmann::json& event, const std::string& name, seer::internal::InstantEventScope type) {
 	REQUIRE(event["name"] == name);
 	REQUIRE(event["ph"] == "i");
 	REQUIRE(event["ts"].type() == nlohmann::json::value_t::number_unsigned);
@@ -32,7 +32,7 @@ TEST_CASE("InstantEvent produces correct json", "[seer::instant_event]") {
 		}
 		const auto json = nlohmann::json::parse(seer::buffer.str());
 		REQUIRE(json.size() == 1);
-		isInstantEvent(json[0], "Test", seer::internal::InstantEventScope::thread);
+		is_instant_event(json[0], "Test", seer::internal::InstantEventScope::thread);
 	}
 	
 	SECTION("1 event") {
@@ -41,7 +41,7 @@ TEST_CASE("InstantEvent produces correct json", "[seer::instant_event]") {
 		}
 		const auto json = nlohmann::json::parse(seer::buffer.str());
 		REQUIRE(json.size() == 1);
-		isInstantEvent(json[0], "Test", seer::internal::InstantEventScope::thread);
+		is_instant_event(json[0], "Test", seer::internal::InstantEventScope::thread);
 	}
 
 	SECTION("2 events") {
@@ -51,8 +51,8 @@ TEST_CASE("InstantEvent produces correct json", "[seer::instant_event]") {
 		}
 		const auto json = nlohmann::json::parse(seer::buffer.str());
 		REQUIRE(json.size() == 2);
-		isInstantEvent(json[0], "Test", seer::internal::InstantEventScope::thread);
-		isInstantEvent(json[1], "Test2", seer::internal::InstantEventScope::thread);
+		is_instant_event(json[0], "Test", seer::internal::InstantEventScope::thread);
+		is_instant_event(json[1], "Test2", seer::internal::InstantEventScope::thread);
 	}
 
 	SECTION("scope == global") {
@@ -61,7 +61,7 @@ TEST_CASE("InstantEvent produces correct json", "[seer::instant_event]") {
 		}
 		const auto json = nlohmann::json::parse(seer::buffer.str());
 		REQUIRE(json.size() == 1);
-		isInstantEvent(json[0], "Test", seer::internal::InstantEventScope::global);
+		is_instant_event(json[0], "Test", seer::internal::InstantEventScope::global);
 	}
 	SECTION("scope == process") {
 		{
@@ -69,7 +69,7 @@ TEST_CASE("InstantEvent produces correct json", "[seer::instant_event]") {
 		}
 		const auto json = nlohmann::json::parse(seer::buffer.str());
 		REQUIRE(json.size() == 1);
-		isInstantEvent(json[0], "Test", seer::internal::InstantEventScope::process);
+		is_instant_event(json[0], "Test", seer::internal::InstantEventScope::process);
 	}
 	SECTION("scope == thread") {
 		{
@@ -77,6 +77,6 @@ TEST_CASE("InstantEvent produces correct json", "[seer::instant_event]") {
 		}
 		const auto json = nlohmann::json::parse(seer::buffer.str());
 		REQUIRE(json.size() == 1);
-		isInstantEvent(json[0], "Test", seer::internal::InstantEventScope::thread);
+		is_instant_event(json[0], "Test", seer::internal::InstantEventScope::thread);
 	}
 }

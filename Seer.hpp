@@ -127,7 +127,7 @@ namespace seer {
 			void* not_used;
 			InstantEventScope instant;
 			StringLookup counter_value;
-			StringLookup thread_name;
+			StringLookup meta_object;
 			std::chrono::steady_clock::time_point end_time;
 		};
 
@@ -170,6 +170,8 @@ namespace seer {
 				out_stream << ",\"s\":\"" << static_cast<char>(event.extra.instant) << "\""; break;
 			case EventType::counter:
 				out_stream << ",\"args\":{\"" << event.name << "\":" << event.extra.counter_value << "}"; break;
+			case EventType::meta:
+				out_stream << ",\"args\":" << event.extra.meta_object; break;
 			default:
 				break;
 			}
@@ -399,6 +401,30 @@ namespace seer {
 			});
 		}
 	};
+
+	static void set_thread_name(const std::string& name, std::thread::id thread_id = std::this_thread::get_id()) {
+		internal::DataPointExtra extra = { nullptr };
+		extra.meta_object = internal::StringStore::i().store("{\"name\":\"" + name + "\"}");
+		internal::EventStore::i().send({
+			internal::StringStore::i().store("thread_name"),
+			internal::EventType::meta,
+			thread_id,
+			std::chrono::steady_clock::now(),
+			extra
+			});
+	}
+
+	static void set_process_name(const std::string& name) {
+		internal::DataPointExtra extra = { nullptr };
+		extra.meta_object = internal::StringStore::i().store("{\"name\":\"" + name + "\"}");
+		internal::EventStore::i().send({
+			internal::StringStore::i().store("process_name"),
+			internal::EventType::meta,
+			std::this_thread::get_id(),
+			std::chrono::steady_clock::now(),
+			extra
+			});
+	}
 }
 ////Duration 
 //{

@@ -8,7 +8,7 @@
 
 #include <iostream>
 
-void isCounterEvent(const nlohmann::json& event, const std::string& name) {
+void is_counter_event(const nlohmann::json& event, const std::string& name) {
 	REQUIRE(event["name"] == name);
 	REQUIRE(event["ph"] == "C");
 	REQUIRE(event["ts"].type() == nlohmann::json::value_t::number_unsigned);
@@ -19,7 +19,7 @@ void isCounterEvent(const nlohmann::json& event, const std::string& name) {
 }
 
 template<typename T>
-T getCounterEventData(const nlohmann::json& event) {
+T get_counter_event_data(const nlohmann::json& event) {
 	return event["args"][event["name"].get<std::string>()].get<T>();
 }
 
@@ -37,8 +37,8 @@ TEST_CASE("Count produces correct json", "[seer::Count]") {
 		}
 		const auto json = nlohmann::json::parse(seer::buffer.str());
 		REQUIRE(json.size() == 1);
-		isCounterEvent(json[0], "Test");
-		REQUIRE(getCounterEventData<int>(json[0]) == 0);
+		is_counter_event(json[0], "Test");
+		REQUIRE(get_counter_event_data<int>(json[0]) == 0);
 	}
 
 	SECTION("2 events") {
@@ -48,10 +48,10 @@ TEST_CASE("Count produces correct json", "[seer::Count]") {
 		}
 		const auto json = nlohmann::json::parse(seer::buffer.str());
 		REQUIRE(json.size() == 2);
-		isCounterEvent(json[0], "Test");
-		REQUIRE(getCounterEventData<int>(json[0]) == 0);
-		isCounterEvent(json[1], "Test2");
-		REQUIRE(getCounterEventData<int>(json[1]) == 1);
+		is_counter_event(json[0], "Test");
+		REQUIRE(get_counter_event_data<int>(json[0]) == 0);
+		is_counter_event(json[1], "Test2");
+		REQUIRE(get_counter_event_data<int>(json[1]) == 1);
 	}
 
 	SECTION("1 event multiple times") {
@@ -67,8 +67,8 @@ TEST_CASE("Count produces correct json", "[seer::Count]") {
 				
 		for (auto i = 0u; i < test_case.size(); i++)
 		{
-			isCounterEvent(json[i], "Test");
-			REQUIRE(getCounterEventData<int>(json[i]) == test_case[i]);
+			is_counter_event(json[i], "Test");
+			REQUIRE(get_counter_event_data<int>(json[i]) == test_case[i]);
 		}
 	}
 
@@ -86,8 +86,8 @@ TEST_CASE("Count produces correct json", "[seer::Count]") {
 
 		for (auto i = 1u; i < test_case.size() + 1; i++)
 		{
-			isCounterEvent(json[i], "Test");
-			REQUIRE(getCounterEventData<int>(json[i]) == test_case[i - 1]);
+			is_counter_event(json[i], "Test");
+			REQUIRE(get_counter_event_data<int>(json[i]) == test_case[i - 1]);
 		}
 	}
 
@@ -98,9 +98,9 @@ TEST_CASE("Count produces correct json", "[seer::Count]") {
 		}
 		const auto json = nlohmann::json::parse(seer::buffer.str());
 		REQUIRE(json.size() == 2);
-		isCounterEvent(json[0], "Test");
-		REQUIRE(getCounterEventData<bool>(json[0]) == false);
-		isCounterEvent(json[1], "Test");
-		REQUIRE(getCounterEventData<bool>(json[1]) == true);
+		is_counter_event(json[0], "Test");
+		REQUIRE(get_counter_event_data<bool>(json[0]) == false);
+		is_counter_event(json[1], "Test");
+		REQUIRE(get_counter_event_data<bool>(json[1]) == true);
 	}
 }

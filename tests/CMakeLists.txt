@@ -9,7 +9,9 @@ add_executable(${SEER_UNIT_TEST_TARGET_NAME}
 	${PROJECT_SOURCE_DIR}/tests/Buffer.cpp
 	${PROJECT_SOURCE_DIR}/tests/ScopeTimer.cpp
 	${PROJECT_SOURCE_DIR}/tests/InstantEvent.cpp
-	${PROJECT_SOURCE_DIR}/tests/Counter.cpp)
+	${PROJECT_SOURCE_DIR}/tests/Counter.cpp
+	${PROJECT_SOURCE_DIR}/tests/SetThreadName.cpp
+	${PROJECT_SOURCE_DIR}/tests/SetProcessName.cpp)
 
 #enable pthreads for linux
 set(THREADS_PREFER_PTHREAD_FLAG ON)

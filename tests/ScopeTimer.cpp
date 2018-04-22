@@ -8,7 +8,7 @@
 
 #include <iostream>
 
-void isCompleteEvent(const nlohmann::json& event, const std::string& name) {
+void is_complete_event(const nlohmann::json& event, const std::string& name) {
 	REQUIRE(event["name"] == name);
 	REQUIRE(event["ph"] == "X");
 	REQUIRE(event["ts"].type() == nlohmann::json::value_t::number_unsigned);
@@ -31,7 +31,7 @@ TEST_CASE("ScopeTimer produces correct json", "[ScopeTimer]") {
 		}
 		const auto json = nlohmann::json::parse(seer::buffer.str());
 		REQUIRE(json.size() == 1);
-		isCompleteEvent(json[0], "Test");
+		is_complete_event(json[0], "Test");
 	}
 
 	SECTION("2 events") {
@@ -41,7 +41,7 @@ TEST_CASE("ScopeTimer produces correct json", "[ScopeTimer]") {
 		}
 		const auto json = nlohmann::json::parse(seer::buffer.str());
 		REQUIRE(json.size() == 2);
-		isCompleteEvent(json[0], "Test2");
-		isCompleteEvent(json[1], "Test");
+		is_complete_event(json[0], "Test2");
+		is_complete_event(json[1], "Test");
 	}
 }
