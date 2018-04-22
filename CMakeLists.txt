@@ -35,3 +35,6 @@ endif()
 if(BuildTests)
     add_subdirectory(tests)
 endif()
+
+# benchmarks
+add_subdirectory(benchmarks)
