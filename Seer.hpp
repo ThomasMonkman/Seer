@@ -425,6 +425,17 @@ namespace seer {
 			extra
 			});
 	}
+
+	static void mark(const std::string& name) {
+		internal::DataPointExtra extra = { nullptr };
+		internal::EventStore::i().send({
+			internal::StringStore::i().store(name),
+			internal::EventType::mark,
+			std::this_thread::get_id(),
+			std::chrono::steady_clock::now(),
+			extra
+			});
+	}
 }
 ////Duration 
 //{
