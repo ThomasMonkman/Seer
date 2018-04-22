@@ -90,4 +90,17 @@ TEST_CASE("Count produces correct json", "[seer::Count]") {
 			REQUIRE(getCounterEventData<int>(json[i]) == test_case[i - 1]);
 		}
 	}
+
+	SECTION("bool") {
+		{
+			seer::Counter<bool> counter("Test", false);
+			counter.update(true);
+		}
+		const auto json = nlohmann::json::parse(seer::buffer.str());
+		REQUIRE(json.size() == 2);
+		isCounterEvent(json[0], "Test");
+		REQUIRE(getCounterEventData<bool>(json[0]) == false);
+		isCounterEvent(json[1], "Test");
+		REQUIRE(getCounterEventData<bool>(json[1]) == true);
+	}
 }
