@@ -9,7 +9,7 @@
 A Single header performance logger outputting to chrome tracing in C++11 for windows and linux
 
 ### Install:
-Drop [Seer.hpp](https://github.com/ThomasMonkman/filewatch/blob/master/Seer.hpp) in to your include path, and you should be good to go.
+Drop [Seer.hpp](https://github.com/ThomasMonkman/Seer/blob/master/Seer.hpp) in to your include path, and you should be good to go.
 ### Functions:
 - [ScopeTimer](#1)
 - [Counter](#2)
