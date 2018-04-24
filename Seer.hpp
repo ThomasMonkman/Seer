@@ -19,6 +19,8 @@
 #include <unistd.h>
 #elif _WIN32
 #include "Windows.h"
+#elif __APPLE__
+#include <unistd.h>
 #endif
 
 
@@ -152,7 +154,7 @@ namespace seer {
 		{
 			out_stream << "{\"name\":\"" << event.name
 				<< "\",\"ph\":\"" << static_cast<char>(event.event_type)
-#ifdef __linux__
+#if defined __linux__ || defined __APPLE__
 				<< "\",\"pid\":" << ::getpid()
 #elif _WIN32
 				<< "\",\"pid\":" << ::GetCurrentProcessId()
