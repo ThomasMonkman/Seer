@@ -254,9 +254,14 @@ namespace seer {
 				EventStore::i().write_to_stream(ss);
 				return ss.str();
 			}
-			std::size_t size_in_bytes()
-			{
+			std::size_t size_in_bytes() {
 				return internal::StringStore::i().buffer_size() + internal::EventStore::i().buffer_size();
+			}
+
+			void dump_to_file(const std::string& file_name = "profile.json") {
+				std::ofstream file(file_name);
+				internal::EventStore::i().write_to_stream(file);
+				file << std::flush;
 			}
 
 			void clear() {
@@ -289,12 +294,6 @@ namespace seer {
 
 	static internal::Buffer buffer;
 
-	static void dump_to_file(const std::string& file_name = "profile.json") {
-		std::ofstream file(file_name);
-		internal::EventStore::i().write_to_stream(file);
-		file << std::flush;
-	}
-
 	class ScopeTimer
 	{
 	public:
@@ -313,7 +312,7 @@ namespace seer {
 				std::this_thread::get_id(),
 				_creation,
 				extra
-			});
+				});
 		}
 		ScopeTimer(const ScopeTimer&) = delete;
 		ScopeTimer& operator=(const ScopeTimer& other) = delete;
@@ -323,7 +322,7 @@ namespace seer {
 		const std::chrono::steady_clock::time_point _creation;
 		const internal::StringLookup _name;
 	};
-	
+
 	using InstantEventScope = internal::InstantEventScope;
 
 	static void instant_event(const std::string& name, const InstantEventScope event_type = InstantEventScope::thread) {
@@ -335,9 +334,9 @@ namespace seer {
 			std::this_thread::get_id(),
 			std::chrono::steady_clock::now(),
 			extra
-		});
+			});
 	}
-	
+
 	template<typename T>
 	class Counter
 	{
@@ -353,8 +352,8 @@ namespace seer {
 		}
 	private:
 		const internal::StringLookup _name;
-		
-		
+
+
 		Counter(const Counter&) = delete;
 		Counter& operator=(const Counter&) = delete;
 		Counter(Counter&&) = delete;
@@ -362,9 +361,9 @@ namespace seer {
 
 		template<class Q = T>
 		typename std::enable_if<std::is_arithmetic<Q>::value, std::string>::type
-		stringify(const Q value) 
+			stringify(const Q value)
 		{
-		    	std::stringstream ss;            
+			std::stringstream ss;
 			ss << value;
 			return ss.str();
 		}
@@ -372,9 +371,9 @@ namespace seer {
 		// anything else should be a string, so we add quotes
 		template<class Q = T>
 		typename std::enable_if<!std::is_arithmetic<Q>::value, std::string>::type
-		stringify(const Q& value) 
+			stringify(const Q& value)
 		{
-		    	std::stringstream ss;            
+			std::stringstream ss;
 			ss << "\"" << value << "\"";
 			return ss.str();
 		}
@@ -382,13 +381,13 @@ namespace seer {
 		// boolean should be "true"|"false"
 		template<class Q = T>
 		std::string
-		stringify(const bool value) 
+			stringify(const bool value)
 		{
-		    	std::stringstream ss;            
+			std::stringstream ss;
 			ss << std::boolalpha << value;
 			return ss.str();
 		}
-		
+
 		void store(const std::string& value) {
 			internal::DataPointExtra extra = { nullptr };
 			extra.counter_value = internal::StringStore::i().store(value);
@@ -398,7 +397,7 @@ namespace seer {
 				std::this_thread::get_id(),
 				std::chrono::steady_clock::now(),
 				extra
-			});
+				});
 		}
 	};
 
