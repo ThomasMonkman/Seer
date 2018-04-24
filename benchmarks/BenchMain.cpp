@@ -1,16 +1,21 @@
+﻿
+#include "benchmark/benchmark.h"
 #include "../Seer.hpp"
 
-#define PICOBENCH_IMPLEMENT_WITH_MAIN
-#include "picobench/picobench.hpp"
+#include <thread>
 
-
-static void scope_timer(picobench::state& s)
-{
-	seer::buffer.clear();
-	for (auto _ : s)
-	{
+static void scope_timer(benchmark::State& state) {
+	if (state.thread_index == 0) {
+		seer::buffer.clear();
+	}
+	for (auto _ : state) {
 		seer::ScopeTimer("test");
 	}
-	seer::dump_to_file();
+	if (state.thread_index == 0) {
+		// Teardown code here.
+		//seer::dump_to_file();
+	}
 }
-PICOBENCH(scope_timer);
+BENCHMARK(scope_timer)->ThreadRange(1, std::thread::hardware_concurrency());
+
+BENCHMARK_MAIN();
