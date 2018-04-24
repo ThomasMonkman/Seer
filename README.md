@@ -8,9 +8,9 @@
 
 A Single header performance logger outputting to chrome tracing in C++11 for windows and linux
 
-#### Install:
+### Install:
 Drop [Seer.hpp](https://github.com/ThomasMonkman/filewatch/blob/master/Seer.hpp) in to your include path, and you should be good to go.
-#### Functions:
+### Functions:
 - [ScopeTimer](#1)
 - [Counter](#2)
 - [instant_event](#3)
@@ -18,20 +18,20 @@ Drop [Seer.hpp](https://github.com/ThomasMonkman/filewatch/blob/master/Seer.hpp)
 - [set_thread_name](#5)
 - [set_process_name](#6)
 
-#### Getting output and memory usage:
+### Getting output and memory usage:
 - [output](#101)
 - [buffer](#102)
 - [memory usage](#103)
 
-#### Speed:
+### Speed:
 - [benchmarks](#201)
 
-#### Tests:
+### Tests:
 - [tests](#301)
 <hr>
 
-#### Functions:
-###### ScopeTimer: <a id="1"></a>
+### Functions:
+#### ScopeTimer: <a id="1"></a>
 ScopeTimer will measure the time spent in a block/scope.
 This will measure 2 seconds.
 ```c++
@@ -41,7 +41,7 @@ This will measure 2 seconds.
 }
 ```
 
-###### Counter: <a id="2"></a>
+#### Counter: <a id="2"></a>
 Counter can be used for tracking a value over time. 
 > Note: multiple counters sharing the same name will appear in the same chrome trace
 ```c++
@@ -52,7 +52,7 @@ Counter can be used for tracking a value over time.
 }
 ```
 
-###### instant_event: <a id="3"></a>
+#### instant_event: <a id="3"></a>
 Will place an instant event scoped to either thread (default), process, globally.
 ```c++
 {
@@ -62,7 +62,7 @@ Will place an instant event scoped to either thread (default), process, globally
 }
 ```
 
-###### mark: <a id="4"></a>
+##### mark: <a id="4"></a>
 Will produce a mark.
 ```c++
 {
@@ -70,7 +70,7 @@ Will produce a mark.
 }
 ```
 
-###### set_thread_name: <a id="5"></a>
+##### set_thread_name: <a id="5"></a>
 Will name the current thread or optional with another threads id
 ```c++
 {
@@ -79,7 +79,7 @@ Will name the current thread or optional with another threads id
 }
 ```
 
-###### set_process_name: <a id="6"></a>
+##### set_process_name: <a id="6"></a>
 Will name the current process
 ```c++
 {
@@ -88,8 +88,8 @@ Will name the current process
 ```
 <hr>
 
-#### Getting output and memory usage:
-###### output: <a id="101"></a>
+### Getting output and memory usage:
+##### output: <a id="101"></a>
 Chrome expects a json file, this can be fetched in several way.
 
 Interface to this data can be found through `seer::buffer`
@@ -100,18 +100,18 @@ Interface to this data can be found through `seer::buffer`
 	std::string json = seer::buffer.str(); //by string
 }
 ```
-###### buffer: <a id="102"></a>
+##### buffer: <a id="102"></a>
 Internally Seer allocates a buffer of memory to write to,  this defaults to 50mb. Monitoring and changes to this buffer can be found through `seer::buffer`
 ```c++
 {
 	seer::buffer.size_in_bytes();
 }
 ```
-###### memory usage: <a id="103"></a>
+##### memory usage: <a id="103"></a>
 
 
-#### Speed:
-###### benchmarks: <a id="201"></a>
+### Speed:
+##### benchmarks: <a id="201"></a>
 
-#### Test:
-###### test: <a id="301"></a>
+### Test:
+##### test: <a id="301"></a>
