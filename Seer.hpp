@@ -14,13 +14,12 @@
 #include <functional>
 #include <sstream>
 
-#ifdef __linux__ || defined __APPLE__
-#include <sys/types.h>
-#include <unistd.h>
+#if defined(__linux__) || defined(__APPLE__)
+#	include <sys/types.h>
+#	include <unistd.h>
 #elif _WIN32
-#include "Windows.h"
+#	include "Windows.h"
 #endif
-
 
 namespace seer {
 	enum class BufferOverflowBehaviour {
@@ -152,7 +151,7 @@ namespace seer {
 		{
 			out_stream << "{\"name\":\"" << event.name
 				<< "\",\"ph\":\"" << static_cast<char>(event.event_type)
-#if defined __linux__ || defined __APPLE__
+#if defined(__linux__) || defined(__APPLE__)
 				<< "\",\"pid\":" << ::getpid()
 #elif _WIN32
 				<< "\",\"pid\":" << ::GetCurrentProcessId()
