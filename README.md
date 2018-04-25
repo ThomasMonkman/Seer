@@ -33,10 +33,9 @@ Drop [Seer.hpp](https://github.com/ThomasMonkman/Seer/blob/master/Seer.hpp) in t
 ### Functions:
 #### ScopeTimer: <a id="1"></a>
 ScopeTimer will measure the time spent in a block/scope.
-This will measure 2 seconds.
 ```c++
 {
-    seer::ScopeTimer("test");
+    seer::ScopeTimer("test"); This will measure 2 seconds.
     std::this_thread::sleep_for(2s);
 }
 ```
@@ -83,7 +82,7 @@ Will name the current thread or optional with another threads id.
 Will name the current process.
 ```c++
 {
-	seer::set_process_name("my amazing app");
+	seer::set_process_name("my amazing app"); // this can be called at any point in time
 }
 ```
 <hr>
