@@ -14,13 +14,11 @@
 #include <functional>
 #include <sstream>
 
-#ifdef __linux__ 
+#ifdef __linux__ || defined __APPLE__
 #include <sys/types.h>
 #include <unistd.h>
 #elif _WIN32
 #include "Windows.h"
-#elif __APPLE__
-#include <unistd.h>
 #endif
 
 
