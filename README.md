@@ -35,7 +35,7 @@ Drop [Seer.hpp](https://github.com/ThomasMonkman/Seer/blob/master/Seer.hpp) in t
 ScopeTimer will measure the time spent in a block/scope.
 ```c++
 {
-    seer::ScopeTimer("test"); This will measure 2 seconds.
+    seer::ScopeTimer("test"); // This will measure 2 seconds.
     std::this_thread::sleep_for(2s);
 }
 ```
