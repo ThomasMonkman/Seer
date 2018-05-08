@@ -245,6 +245,18 @@ namespace seer {
 			EventStore& operator=(EventStore&&) = delete;
 		};
 
+		struct BufferStats {
+			std::size_t usage_in_bytes;
+			std::size_t total_in_bytes;
+			
+			/*std::size_t usage_in_bytes;
+			std::size_t total_in_bytes;*/
+			
+			double percent_used() {
+				return usage_in_bytes / total_in_bytes;
+			}
+		};
+
 		// Allows internal buffer to be streamed by just calling "<< seer::buffer"
 		struct Buffer
 		{
@@ -253,8 +265,12 @@ namespace seer {
 				EventStore::i().write_to_stream(ss);
 				return ss.str();
 			}
-			std::size_t size_in_bytes() {
-				return internal::StringStore::i().buffer_size() + internal::EventStore::i().buffer_size();
+
+			BufferStats usage() {
+				return {
+					0,
+					internal::StringStore::i().buffer_size() + internal::EventStore::i().buffer_size()
+				};
 			}
 
 			void dump_to_file(const std::string& file_name = "profile.json") {

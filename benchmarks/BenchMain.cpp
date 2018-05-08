@@ -13,7 +13,7 @@ static void scope_timer(benchmark::State& state) {
 	}
 	if (state.thread_index == 0) {
 		// Teardown code here.
-		//seer::dump_to_file();
+		// seer::buffer.dump_to_file();
 	}
 }
 BENCHMARK(scope_timer)->ThreadRange(1, std::thread::hardware_concurrency());
