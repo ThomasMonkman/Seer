@@ -13,7 +13,7 @@ void is_mark_event(const nlohmann::json& event, const std::string& name) {
 	REQUIRE(event["ph"] == "R");
 	REQUIRE(event["ts"].type() == nlohmann::json::value_t::number_unsigned);
 	REQUIRE(event["pid"].type() == nlohmann::json::value_t::number_unsigned);
-	REQUIRE(event["tid"].type() == nlohmann::json::value_t::number_unsigned);
+	REQUIRE(event["tid"].type() == nlohmann::json::value_t::string);
 }
 
 TEST_CASE("mark produces correct json", "[seer::mark]") {

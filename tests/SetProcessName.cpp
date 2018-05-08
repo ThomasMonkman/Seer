@@ -13,7 +13,7 @@ void is_process_name_event(const nlohmann::json& event) {
 	REQUIRE(event["ph"] == "M");
 	REQUIRE(event["ts"].type() == nlohmann::json::value_t::number_unsigned);
 	REQUIRE(event["pid"].type() == nlohmann::json::value_t::number_unsigned);
-	REQUIRE(event["tid"].type() == nlohmann::json::value_t::number_unsigned);
+	REQUIRE(event["tid"].type() == nlohmann::json::value_t::string);
 	REQUIRE(event["args"].type() == nlohmann::json::value_t::object);
 	REQUIRE(event["args"].find("name") != event["args"].end());
 	REQUIRE(event["args"]["name"].type() == nlohmann::json::value_t::string);

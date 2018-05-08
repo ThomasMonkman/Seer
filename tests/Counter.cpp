@@ -13,7 +13,7 @@ void is_counter_event(const nlohmann::json& event, const std::string& name) {
 	REQUIRE(event["ph"] == "C");
 	REQUIRE(event["ts"].type() == nlohmann::json::value_t::number_unsigned);
 	REQUIRE(event["pid"].type() == nlohmann::json::value_t::number_unsigned);
-	REQUIRE(event["tid"].type() == nlohmann::json::value_t::number_unsigned);
+	REQUIRE(event["tid"].type() == nlohmann::json::value_t::string);
 	REQUIRE(event["args"].type() == nlohmann::json::value_t::object);
 	REQUIRE(event["args"].find(name) != event["args"].end());
 }

@@ -13,7 +13,7 @@ void is_instant_event(const nlohmann::json& event, const std::string& name, seer
 	REQUIRE(event["ph"] == "i");
 	REQUIRE(event["ts"].type() == nlohmann::json::value_t::number_unsigned);
 	REQUIRE(event["pid"].type() == nlohmann::json::value_t::number_unsigned);
-	REQUIRE(event["tid"].type() == nlohmann::json::value_t::number_unsigned);
+	REQUIRE(event["tid"].type() == nlohmann::json::value_t::string);
 	REQUIRE(event["s"].type() == nlohmann::json::value_t::string);
 	REQUIRE(event["s"] == std::string(1, static_cast<char>(type)));
 }

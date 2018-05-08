@@ -158,8 +158,8 @@ namespace seer {
 #else
 				<< "\",\"pid\":" << 0
 #endif
-				<< ",\"tid\":" << event.thread_id
-				<< ",\"ts\":" << std::chrono::duration_cast<std::chrono::microseconds>(event.time_point.time_since_epoch()).count();
+				<< ",\"tid\":\"" << event.thread_id
+				<< "\",\"ts\":" << std::chrono::duration_cast<std::chrono::microseconds>(event.time_point.time_since_epoch()).count();
 			// Add in optional extra depending on the data type
 			switch (event.event_type)
 			{
