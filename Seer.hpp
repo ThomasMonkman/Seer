@@ -83,7 +83,13 @@ namespace seer {
 			}
 
 			std::size_t buffer_size() {
+				std::lock_guard<std::mutex> lock(_mutex);
 				return _store.size();
+			}
+
+			std::size_t buffer_used() {
+				std::lock_guard<std::mutex> lock(_mutex);
+				return _head;
 			}
 
 			void set_clear_callback(std::function<void()> callback) {
@@ -223,7 +229,13 @@ namespace seer {
 			}
 
 			std::size_t buffer_size() {
-				return _events.capacity();
+				std::lock_guard<std::mutex> lock(_event_mutex);
+				return _events.capacity() * sizeof(DataPoint);
+			}
+
+			std::size_t buffer_used() {
+				std::lock_guard<std::mutex> lock(_event_mutex);
+				return _events.size();
 			}
 
 			void set_clear_callback(std::function<void()> callback) {
@@ -268,7 +280,7 @@ namespace seer {
 
 			BufferStats usage() {
 				return {
-					0,
+					internal::StringStore::i().buffer_used() + internal::EventStore::i().buffer_used(),
 					internal::StringStore::i().buffer_size() + internal::EventStore::i().buffer_size()
 				};
 			}
