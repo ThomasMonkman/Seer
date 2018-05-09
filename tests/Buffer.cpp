@@ -37,7 +37,6 @@ TEST_CASE("buffer works", "[seer::buffer]") {
 			seer::ScopeTimer test("Test");
 		}
 		REQUIRE(seer::buffer.usage().usage_in_bytes != 0);
-		REQUIRE(seer::buffer.usage().percent_used() != 0.0);
 	}
 
 	SECTION("writes to string") {

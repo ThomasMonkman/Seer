@@ -235,7 +235,7 @@ namespace seer {
 
 			std::size_t buffer_used() {
 				std::lock_guard<std::mutex> lock(_event_mutex);
-				return _events.size();
+				return _events.size() * sizeof(DataPoint);
 			}
 
 			void set_clear_callback(std::function<void()> callback) {
