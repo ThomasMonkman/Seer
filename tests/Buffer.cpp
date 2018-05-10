@@ -48,4 +48,15 @@ TEST_CASE("buffer works", "[seer::buffer]") {
 		ss << seer::buffer;
 		REQUIRE(ss.str().size() > 0);
 	}
+
+	SECTION("can resize") {
+		seer::buffer.resize(2 * sizeof(seer::internal::DataPoint));
+		const auto usage = seer::buffer.usage();
+		REQUIRE(seer::buffer.usage().usage_in_bytes == 0);
+		REQUIRE(seer::buffer.usage().total_in_bytes == (2 * sizeof(seer::internal::DataPoint)));
+		REQUIRE(seer::buffer.usage().percent_used() == 0.0);
+		// put the size back up
+		seer::buffer.resize(200000 * sizeof(seer::internal::DataPoint));
+
+	}
 }

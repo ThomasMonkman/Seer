@@ -92,7 +92,15 @@ namespace seer {
 				return _head;
 			}
 
+			void set_buffer_size(std::size_t size_in_bytes) {
+				std::lock_guard<std::mutex> lock(_mutex);
+				_store.resize(size_in_bytes);
+				_head = 0;
+				_clear_callback();
+			}
+
 			void set_clear_callback(std::function<void()> callback) {
+				std::lock_guard<std::mutex> lock(_mutex);
 				_clear_callback = callback;
 			}
 		private:
@@ -238,7 +246,19 @@ namespace seer {
 				return _events.size() * sizeof(DataPoint);
 			}
 
+			void set_buffer_size(std::size_t size_in_bytes) {
+				if (size_in_bytes < sizeof(DataPoint) && buffer_overflow_behaviour != BufferOverflowBehaviour::expand) {
+					throw std::exception("buffer too small to fit even a single event");
+				}
+				std::lock_guard<std::mutex> lock(_event_mutex);
+				_events.clear();
+				_events.shrink_to_fit();
+				_events.reserve(size_in_bytes / sizeof(DataPoint));
+				_clear_callback();
+			}
+
 			void set_clear_callback(std::function<void()> callback) {
+				std::lock_guard<std::mutex> lock(_event_mutex);
 				_clear_callback = callback;
 			}
 		private:
@@ -289,6 +309,12 @@ namespace seer {
 				std::ofstream file(file_name);
 				internal::EventStore::i().write_to_stream(file);
 				file << std::flush;
+			}
+
+			void resize(std::size_t size_in_bytes)
+			{
+				internal::StringStore::i().set_buffer_size(size_in_bytes / 2);
+				internal::EventStore::i().set_buffer_size(size_in_bytes / 2);
 			}
 
 			void clear() {
