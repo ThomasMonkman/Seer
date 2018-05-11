@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <functional>
 #include <sstream>
+#include <exception>
 
 #if defined(__linux__) || defined(__APPLE__)
 #	include <sys/types.h>
