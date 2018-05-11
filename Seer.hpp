@@ -249,7 +249,7 @@ namespace seer {
 
 			void set_buffer_size(std::size_t size_in_bytes) {
 				if (size_in_bytes < sizeof(DataPoint) && buffer_overflow_behaviour != BufferOverflowBehaviour::expand) {
-					throw std::exception("buffer too small to fit even a single event");
+					throw std::length_error("buffer too small to fit even a single event");
 				}
 				std::lock_guard<std::mutex> lock(_event_mutex);
 				_events.clear();
