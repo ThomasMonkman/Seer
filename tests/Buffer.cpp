@@ -57,6 +57,5 @@ TEST_CASE("buffer works", "[seer::buffer]") {
 		REQUIRE(seer::buffer.usage().percent_used() == 0.0);
 		// put the size back up
 		seer::buffer.resize(200000 * sizeof(seer::internal::DataPoint));
-
 	}
 }
