@@ -27,12 +27,23 @@ TEST_CASE("ScopeTimer produces correct json", "[ScopeTimer]") {
 
 	SECTION("1 event") {
 
-		seer::AsyncTag id;
+		seer::AsyncTimer asyncTimer;
 		{
+			auto timer = asyncTimer.Time("Test", AsyncTimer::continue);
+			
+			
 			seer::AsyncTimer test("Test");
 			id = test.continue();
 		}
 		{
+			auto timer = asyncTimer.Time("Test2", AsyncTimer::end);
+			
+			2 time
+			
+			asyncTimer.end();
+			
+			
+			id.newTimer("Test2")
 			seer::AsyncTimer test("Test2", id);
 		}
 		const auto json = nlohmann::json::parse(seer::buffer.str());
