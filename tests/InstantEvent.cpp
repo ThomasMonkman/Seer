@@ -19,9 +19,9 @@ void is_instant_event(const nlohmann::json& event, const std::string& name, seer
 }
 
 TEST_CASE("InstantEvent produces correct json", "[seer::instant_event]") {
-
-	seer::buffer.clear();
-
+	
+	test_helper::reset_seer();
+	
 	SECTION("0 event") {
 		REQUIRE(seer::buffer.str() == "[]");
 	}

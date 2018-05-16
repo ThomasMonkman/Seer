@@ -19,7 +19,7 @@ void is_complete_event(const nlohmann::json& event, const std::string& name) {
 
 TEST_CASE("ScopeTimer produces correct json", "[ScopeTimer]") {
 
-	seer::buffer.clear();
+	test_helper::reset_seer();
 
 	SECTION("0 event") {
 		REQUIRE(seer::buffer.str() == "[]");

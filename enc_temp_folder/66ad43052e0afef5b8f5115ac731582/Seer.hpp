@@ -49,7 +49,7 @@ namespace seer {
 				std::lock_guard<std::mutex> lock(_mutex);
 				if (string_to_store.size() + _head > _store.size())
 				{
-					if (string_to_store.size() > _store.size() && buffer_overflow_behaviour == BufferOverflowBehaviour::reset) {
+					if (string_to_store.size() > _store.size()) {
 						throw std::length_error("String store not big enough for string");
 					}
 					switch (buffer_overflow_behaviour)

@@ -22,7 +22,7 @@ void is_process_name_event(const nlohmann::json& event) {
 
 TEST_CASE("Sets process name", "[seer::set_process_name]") {
 
-	seer::buffer.clear();
+	test_helper::reset_seer();
 
 	SECTION("sets current process name") {
 		seer::set_process_name("Test");

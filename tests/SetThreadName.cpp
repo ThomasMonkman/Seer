@@ -22,7 +22,7 @@ void is_thread_name_event(const nlohmann::json& event) {
 
 TEST_CASE("Sets thread name", "[seer::set_thread_name]") {
 
-	seer::buffer.clear();
+	test_helper::reset_seer();
 
 	SECTION("sets current threads name") {
 		seer::set_thread_name("Test");

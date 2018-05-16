@@ -7,10 +7,12 @@
 #include "Util/TestHelper.hpp"
 
 #include <iostream>
+#include <exception>
 
 TEST_CASE("buffer works", "[seer::buffer]") {
+	
+	test_helper::reset_seer();
 
-	seer::buffer.clear();
 
 	SECTION("start empty") {
 		REQUIRE(seer::buffer.usage().usage_in_bytes == 0);
@@ -55,7 +57,59 @@ TEST_CASE("buffer works", "[seer::buffer]") {
 		REQUIRE(seer::buffer.usage().usage_in_bytes == 0);
 		REQUIRE(seer::buffer.usage().total_in_bytes == (2 * sizeof(seer::internal::DataPoint)));
 		REQUIRE(seer::buffer.usage().percent_used() == 0.0);
-		// put the size back up
-		seer::buffer.resize(200000 * sizeof(seer::internal::DataPoint));
+	}
+
+	SECTION("BufferOverflowBehaviour::reset") {
+		seer::buffer_overflow_behaviour = seer::BufferOverflowBehaviour::reset;
+		seer::buffer.resize(2 * sizeof(seer::internal::DataPoint)); // not large enough to store 2 timers plus text
+		{
+			seer::ScopeTimer("Test");
+			seer::ScopeTimer("Test");
+		}
+
+		const auto json = nlohmann::json::parse(seer::buffer.str());
+		REQUIRE(json.size() == 1);
+		const auto usage = seer::buffer.usage();
+		REQUIRE(seer::buffer.usage().total_in_bytes == (2 * sizeof(seer::internal::DataPoint)));
+	}
+
+	SECTION("BufferOverflowBehaviour::expand") {
+		seer::buffer_overflow_behaviour = seer::BufferOverflowBehaviour::expand;
+		seer::buffer.resize(2 * sizeof(seer::internal::DataPoint)); // not large enough to store 2 timers plus text
+		{
+			seer::ScopeTimer("Test");
+			seer::ScopeTimer("Test");
+		}
+
+		const auto json = nlohmann::json::parse(seer::buffer.str());
+		REQUIRE(json.size() == 2);
+	}
+
+	SECTION("BufferOverflowBehaviour::exception") {
+		seer::buffer_overflow_behaviour = seer::BufferOverflowBehaviour::exception;
+		seer::buffer.resize(2 * sizeof(seer::internal::DataPoint)); // not large enough to store 2 timers plus text
+		
+		seer::ScopeTimer("Test");
+		
+		REQUIRE_THROWS_AS([]() {
+			seer::ScopeTimer("");
+		}(), std::overflow_error);
+
+		REQUIRE_THROWS_WITH([]() {
+			seer::ScopeTimer("");
+		}(), "Event store full");
+
+		REQUIRE_THROWS_AS([]() {
+			seer::ScopeTimer("very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string");
+		}(), std::length_error);
+
+		REQUIRE_THROWS_WITH([]() {
+			seer::ScopeTimer("very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string");
+		}(), "String store not big enough for string");
+
+		const auto json = nlohmann::json::parse(seer::buffer.str());
+		REQUIRE(json.size() == 1);
+		const auto usage = seer::buffer.usage();
+		REQUIRE(seer::buffer.usage().total_in_bytes == (2 * sizeof(seer::internal::DataPoint)));
 	}
 }

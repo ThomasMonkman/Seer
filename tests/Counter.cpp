@@ -25,7 +25,7 @@ T get_counter_event_data(const nlohmann::json& event) {
 
 TEST_CASE("Count produces correct json", "[seer::Count]") {
 
-	seer::buffer.clear();
+	test_helper::reset_seer();
 
 	SECTION("0 event") {
 		REQUIRE(seer::buffer.str() == "[]");
