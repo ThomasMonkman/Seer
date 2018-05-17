@@ -32,40 +32,19 @@ TEST_CASE("Async produces correct json", "[ScopeTimer]") {
 
 		seer::Async async;
 		{
-			const auto timer = async.create_timer("Step 1", seer::Async::LifeTime::start);
+			const auto timer = async.create_timer("Step 1");
 			std::this_thread::sleep_for(std::chrono::seconds(1));
 		}
 		test_helper::get_with_timeout(std::async(std::launch::async, [async] {
-			auto timer2 = async.create_timer("Step 2", seer::Async::LifeTime::continued);
+			const auto timer2 = async.create_timer("Step 2");
 			std::this_thread::sleep_for(std::chrono::seconds(1));
 		}));
 		{
-			const auto timer = async.create_timer("Step 1", seer::Async::LifeTime::start);
+			const auto timer3 = async.create_timer("Step 3");
 			std::this_thread::sleep_for(std::chrono::seconds(1));
 		}
+
 		const auto json = nlohmann::json::parse(seer::buffer.str());
-		REQUIRE(json.size() == 1);
-		/*seer::AsyncTimer asyncTimer;
-		{
-			auto timer = asyncTimer.Time("Test", AsyncTimer::continue);
-			
-			
-			seer::AsyncTimer test("Test");
-			id = test.continue();
-		}
-		{
-			auto timer = asyncTimer.Time("Test2", AsyncTimer::end);
-			
-			2 time
-			
-			asyncTimer.end();
-			
-			
-			id.newTimer("Test2")
-			seer::AsyncTimer test("Test2", id);
-		}
-		const auto json = nlohmann::json::parse(seer::buffer.str());
-		REQUIRE(json.size() == 1);
-		is_complete_event(json[0], "Test");*/
+		REQUIRE(json.size() == 6);
 	}
 }

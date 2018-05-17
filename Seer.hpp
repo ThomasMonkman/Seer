@@ -37,6 +37,7 @@
 #include <sstream>
 #include <exception>
 #include <atomic>
+#include <set>
 
 #if defined(__linux__) || defined(__APPLE__)
 #	include <sys/types.h>
@@ -212,6 +213,10 @@ namespace seer {
 				out_stream << ",\"args\":{\"" << event.name << "\":" << event.extra.counter_value << "}"; break;
 			case EventType::meta:
 				out_stream << ",\"args\":" << event.extra.meta_object; break;
+			case EventType::flow_start:
+				out_stream << ",\"id\":\"" << event.extra.flow_id << "\""; break;
+			case EventType::flow_step:
+				out_stream << ",\"id\":\"" << event.extra.flow_id << "\""; break;
 			default:
 				break;
 			}
@@ -245,7 +250,24 @@ namespace seer {
 
 			void write_to_stream(std::ostream& stream) {
 				std::lock_guard<std::mutex> lock(_event_mutex);
-				//std::stringstream json;
+
+				//find all flow events and set the starting one as a flow start
+				std::set<std::size_t> flow_events_found;
+				for (const auto& event : _events) {
+					if (event.event_type == EventType::flow_step && flow_events_found.find(event.extra.flow_id) == flow_events_found.end()) {
+						// check we have not already once converted this flow event another this buffer was streamed
+						const auto found = std::find_if(_events.begin(), _events.end(), [&event](const DataPoint& e) { 
+							return e.event_type == EventType::flow_start && e.extra.flow_id == event.extra.flow_id;
+						});
+						if (found == _events.end()) {
+							auto start_flow_event = std::min_element(_events.begin(), _events.end(), [](const DataPoint& a, const DataPoint& b) { 
+								return a.time_point < b.time_point;
+							});
+							start_flow_event->event_type = EventType::flow_start;
+						}
+					}
+				}
+								
 				auto separator = '[';
 				if (_events.size() == 0) {
 					stream << separator;
@@ -364,6 +386,8 @@ namespace seer {
 			Coordinator& operator=(const Coordinator&) = delete;
 			Coordinator(Coordinator&&) = delete;
 			Coordinator& operator=(Coordinator&&) = delete;
+
+			std::atomic<std::size_t> async_id{0};
 		};
 
 		static Coordinator coordinator;
@@ -513,54 +537,55 @@ namespace seer {
 			});
 	}
 
-
 	class Async
 	{
 	public:
-		enum class LifeTime {
-			start,
-			continued,
-			end
-		};
 		class Timer
 		{
 		public:
-			Timer(const std::string& name, /*LifeTime life_time, */std::size_t async_id) :
+			Timer(const std::string& name, std::size_t async_id) :
 				_creation(std::chrono::steady_clock::now()),
 				_name(internal::StringStore::i().store(name)),
 				_async_id(async_id)
-				//_life_time(life_time)
 			{}
 			~Timer() {
+				const auto end_time = std::chrono::steady_clock::now();
+				internal::DataPointExtra extra_flow = { nullptr };
+				extra_flow.flow_id = _async_id;
+				internal::EventStore::i().send({
+					_name,
+					internal::EventType::flow_step,
+					std::this_thread::get_id(),
+					_creation,
+					extra_flow
+				});
 
-				//send end time to network
 				internal::DataPointExtra extra = { nullptr };
-				extra.end_time = std::chrono::steady_clock::now();
+				extra.end_time = end_time;
 				internal::EventStore::i().send({
 					_name,
 					internal::EventType::complete,
 					std::this_thread::get_id(),
 					_creation,
 					extra
-					});
+				});
 			}
 			Timer(const Timer&) = delete;
 			Timer& operator=(const Timer& other) = delete;
-			Timer(Timer&&) = delete;
-			Timer& operator=(Timer&& other) = delete;
+			Timer(Timer&&) = default;
+			Timer& operator=(Timer&& other) = default;
 		private:
 			const std::chrono::steady_clock::time_point _creation;
 			const internal::StringLookup _name;
 			const std::size_t _async_id;
-			//const LifeTime _life_time;
 		};
 		Async() :
-			id(a.fetch_add(1))
+			id(internal::coordinator.async_id.fetch_add(1))
 		{}
 		~Async() = default;
 
-		Timer create_timer(const std::string& name/*, LifeTime life_time*/) const {
-			return { name,/*, life_time, */id };
+		Timer create_timer(const std::string& name) const {
+			return { name, id };
 		}
 
 		Async(const Async&) = default;
@@ -569,7 +594,6 @@ namespace seer {
 		Async& operator=(Async&& other) = default;
 	private:	
 		const std::size_t id;
-		static std::atomic<std::size_t> a;
 	};
 }
 ////Duration 

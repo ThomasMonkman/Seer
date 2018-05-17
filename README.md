@@ -17,6 +17,7 @@ Drop [Seer.hpp](https://github.com/ThomasMonkman/Seer/blob/master/Seer.hpp) in t
 - [mark](#4)
 - [set_thread_name](#5)
 - [set_process_name](#6)
+- [Async](#7)
 
 ### Getting output and memory usage:
 - [output](#101)
@@ -84,6 +85,50 @@ Will name the current process.
 {
 	seer::set_process_name("my amazing app"); // this can be called at any point in time
 }
+```
+
+#### Async: <a id="7"></a>
+Async allows you to draw visual connections between scopes, this shows up in chrome as arrows joining blocks.
+This is handy for tracking events across threads or separated by time.
+
+Across Threads
+```c++
+
+	seer::Async async;	
+	{
+		const auto timer = async.create_timer("Step 1");
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+	}
+	
+	std::async(std::launch::async, [async] {
+		const auto timer2 = async.create_timer("Step 2");
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+	}).get();
+	
+	{
+		const auto timer3 = async.create_timer("Step 3");
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+	}
+```
+
+Across time
+```c++
+
+	seer::Async async;	
+	{
+		const auto timer = async.create_timer("Step 1");
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+	}
+		// some other work
+	{
+		const auto timer2 = async.create_timer("Step 2");
+		std::this_thread::sleep_for(std::chrono::seconds(1));	
+	}
+		// some more work
+	{
+		const auto timer3 = async.create_timer("Step 3");
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+	}
 ```
 <hr>
 
