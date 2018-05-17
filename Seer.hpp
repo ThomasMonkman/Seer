@@ -1,4 +1,26 @@
-﻿#ifndef SEER_HPP
+﻿// MIT License
+// 
+// Copyright(c) 2016 Thomas Monkman
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files(the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions :
+// 
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+#ifndef SEER_HPP
 #define SEER_HPP
 // outputs chrome tracer json format https://docs.google.com/document/d/1CvAClvFfyA5R-PhYUmn5OOQtYMH4h6I0nSsKchNAySU/preview#
 #include <string>
@@ -105,7 +127,7 @@ namespace seer {
 				_clear_callback = callback;
 			}
 		private:
-			std::size_t _size{ 10000000 };
+			std::size_t _size{ 5000000 };
 			std::vector<char> _store;
 			std::mutex _mutex;
 			std::size_t _head{ 0 };
@@ -263,7 +285,7 @@ namespace seer {
 				_clear_callback = callback;
 			}
 		private:
-			std::size_t _buffer_size_in_bytes = 10000000;
+			std::size_t _buffer_size_in_bytes = 5000000;
 			std::vector<DataPoint> _events;
 			std::mutex _event_mutex;
 			std::function<void()> _clear_callback;
@@ -281,9 +303,6 @@ namespace seer {
 		struct BufferStats {
 			std::size_t usage_in_bytes;
 			std::size_t total_in_bytes;
-			
-			/*std::size_t usage_in_bytes;
-			std::size_t total_in_bytes;*/
 			
 			double percent_used() {
 				return usage_in_bytes / total_in_bytes;
@@ -538,389 +557,4 @@ namespace seer {
 //	"ts" : 0, // mircoseconds
 //}
 
-//namespace seer {
-//	enum class EventScope {
-//		thread,
-//		process,
-//		global
-//	};
-//
-//	inline std::ostream& operator<<(std::ostream& out, const EventScope& event)
-//	{
-//		switch (event)
-//		{
-//		case EventScope::thread:
-//			out << 't';
-//			break;
-//		case EventScope::process:
-//			out << 'p';
-//			break;
-//		case EventScope::global:
-//			out << 'g';
-//			break;
-//		}
-//		return out;
-//	}
-//	namespace internal {
-//		namespace event {
-//			struct BaseEvent
-//			{
-//				virtual ~BaseEvent() {}
-//
-//				/**
-//				* \brief: output this DataPoint as json to the supplied ostream.
-//				* \param out_stream to write to.
-//				*/
-//				virtual void print_data(std::ostream &out_stream) const
-//				{
-//					out_stream << "{}";
-//				}
-//			};
-//			inline std::ostream& operator<<(std::ostream& out, const BaseEvent& base_data_point)
-//			{
-//				base_data_point.print_data(out);
-//				return out;
-//			}
-//
-//			struct DurationEvent : public BaseEvent
-//			{
-//				/**
-//				* \brief Create a datapoint specialised around timers.
-//				* \param name of the Event, the ending event must have the same name.
-//				* \param time_point to store.
-//				* \param start is this the first datapoint of the pair under this name, in this series.
-//				*/
-//				DurationEvent(const std::string name,
-//					const std::chrono::steady_clock::time_point time_point,
-//					const bool start) :
-//					name(name),
-//					thread_id(std::hash<std::thread::id>()(std::this_thread::get_id())),
-//					time_point(time_point),
-//					start(start)
-//				{}
-//
-//				~DurationEvent() override
-//				{
-//				}
-//
-//				const std::string name;
-//				const std::size_t thread_id;
-//				const std::chrono::steady_clock::time_point time_point;
-//				const bool start;
-//
-//				/**
-//				* \brief: output this TimePoint as json to the supplied ostream.
-//				* \param out_stream to write to.
-//				*/
-//				void print_data(std::ostream &out_stream) const override
-//				{
-//					out_stream << "{\"name\":\"" << name
-//						<< "\",\"ph\":\"" << (start ? 'B' : 'E')
-//						<< "\",\"pid\":" << 0
-//						<< ",\"tid\":" << thread_id
-//						<< ",\"ts\":" << std::chrono::duration_cast<std::chrono::microseconds>(time_point.time_since_epoch()).count()
-//						<< "}";
-//				};
-//			};
-//
-//			inline std::ostream& operator<<(std::ostream& out, const DurationEvent& duration_event)
-//			{
-//				duration_event.print_data(out);
-//				return out;
-//			}
-//
-//			struct InstantEvent : public BaseEvent
-//			{
-//				/**
-//				* \brief Create a datapoint specialised around timers.
-//				* \param name of the Event, the ending event must have the same name.
-//				* \param time_point to store.
-//				* \param start is this the first datapoint of the pair under this name, in this series.
-//				*/
-//				InstantEvent(const std::string name,
-//					const std::chrono::steady_clock::time_point time_point,
-//					const seer::EventScope event) :
-//					name(name),
-//					thread_id(std::hash<std::thread::id>()(std::this_thread::get_id())),
-//					time_point(time_point),
-//					event(event)
-//				{}
-//
-//				~InstantEvent() override
-//				{
-//				}
-//
-//				const std::string name;
-//				const std::size_t thread_id;
-//				const std::chrono::steady_clock::time_point time_point;
-//				const EventScope event;
-//				/**
-//				* \brief: output this TimePoint as json to the supplied ostream.
-//				* \param out_stream to write to.
-//				*/
-//				void print_data(std::ostream &out_stream) const override
-//				{
-//					out_stream << "{\"name\":\"" << name
-//						<< "\",\"ph\":\"" << "i"
-//						<< "\",\"pid\":" << 0
-//						<< ",\"tid\":" << thread_id
-//						<< ",\"ts\":" << std::chrono::duration_cast<std::chrono::microseconds>(time_point.time_since_epoch()).count()
-//						<< ",\"s\":\"" << event
-//						<< "\"}";
-//				};
-//			};
-//
-//			inline std::ostream& operator<<(std::ostream& out, const InstantEvent& instant_event)
-//			{
-//				instant_event.print_data(out);
-//				return out;
-//			}
-//
-//			template<typename T>
-//			struct CounterEvent : public BaseEvent
-//			{
-//				/**
-//				* \brief Create a datapoint specialised around timers.
-//				* \param name of the Event, the ending event must have the same name.
-//				* \param time_point to store.
-//				* \param start is this the first datapoint of the pair under this name, in this series.
-//				*/
-//				CounterEvent(const std::string name,
-//					const std::chrono::steady_clock::time_point time_point,
-//					const T value) :
-//					name(name),
-//					thread_id(std::hash<std::thread::id>()(std::this_thread::get_id())),
-//					time_point(time_point),
-//					value(value)
-//				{}
-//
-//				~CounterEvent() override
-//				{
-//				}
-//
-//				const std::string name;
-//				const std::size_t thread_id;
-//				const std::chrono::steady_clock::time_point time_point;
-//				const T value;
-//				/**
-//				* \brief: output this TimePoint as json to the supplied ostream.
-//				* \param out_stream to write to.
-//				*/
-//				void print_data(std::ostream &out_stream) const override
-//				{
-//					out_stream << "{\"name\":\"" << name
-//						<< "\",\"ph\":\"" << "C"
-//						<< "\",\"pid\":" << 0
-//						<< ",\"tid\":" << thread_id
-//						<< ",\"ts\":" << std::chrono::duration_cast<std::chrono::microseconds>(time_point.time_since_epoch()).count()
-//						<< ",\"args\": { \"" << name << "\":" << value
-//						<< "}}";
-//				};
-//			};
-//
-//			template<typename T>
-//			inline std::ostream& operator<<(std::ostream& out, const CounterEvent<T>& counter_event)
-//			{
-//				counter_event.print_data(out);
-//				return out;
-//			}
-//
-//			struct ThreadEvent : public BaseEvent
-//			{
-//				/**
-//				* \brief Create a datapoint specialised around timers.
-//				* \param name of the Event, the ending event must have the same name.
-//				* \param time_point to store.
-//				* \param start is this the first datapoint of the pair under this name, in this series.
-//				*/
-//				ThreadEvent(const std::string name) :
-//					name(name),
-//					thread_id(std::hash<std::thread::id>()(std::this_thread::get_id()))
-//				{}
-//
-//				~ThreadEvent() override
-//				{
-//				}
-//
-//				const std::string name;
-//				const std::size_t thread_id;
-//
-//				/**
-//				* \brief: output this TimePoint as json to the supplied ostream.
-//				* \param out_stream to write to.
-//				*/
-//				void print_data(std::ostream &out_stream) const override
-//				{
-//					out_stream << "{\"name\":\"thread_name\",\"ph\":\"" << "M"
-//						<< "\",\"pid\":" << 0
-//						<< ",\"tid\":" << thread_id
-//						<< ",\"args\": { \"name\":\"" << name
-//						<< "\"}}";
-//				};
-//			};
-//
-//			inline std::ostream& operator<<(std::ostream& out, const ThreadEvent& thread_event)
-//			{
-//				thread_event.print_data(out);
-//				return out;
-//			}
-//
-//
-//
-//			struct MarkEvent : public BaseEvent
-//			{
-//				/**
-//				* \brief Create a datapoint specialised around timers.
-//				* \param name of the Event, the ending event must have the same name.
-//				* \param time_point to store.
-//				* \param start is this the first datapoint of the pair under this name, in this series.
-//				*/
-//				MarkEvent(const std::string name,
-//					const std::chrono::steady_clock::time_point time_point) :
-//					name(name),
-//					thread_id(std::hash<std::thread::id>()(std::this_thread::get_id())),
-//					time_point(time_point)
-//				{}
-//
-//				~MarkEvent() override
-//				{
-//				}
-//
-//				const std::string name;
-//				const std::size_t thread_id;
-//				const std::chrono::steady_clock::time_point time_point;
-//				/**
-//				* \brief: output this TimePoint as json to the supplied ostream.
-//				* \param out_stream to write to.
-//				*/
-//				void print_data(std::ostream &out_stream) const override
-//				{
-//					out_stream << "{\"name\":\"" << name
-//						<< "\",\"ph\":\"" << "R"
-//						<< "\",\"pid\":" << 0
-//						<< ",\"tid\":" << thread_id
-//						<< ",\"ts\":" << std::chrono::duration_cast<std::chrono::microseconds>(time_point.time_since_epoch()).count()
-//						<< "}";
-//				};
-//			};
-//
-//			inline std::ostream& operator<<(std::ostream& out, const MarkEvent& mark_event)
-//			{
-//				mark_event.print_data(out);
-//				return out;
-//			}
-//		}
-//
-//		class Pipe
-//		{
-//		public:
-//			static Pipe& i() {
-//				static Pipe pipe;
-//				return pipe;
-//			}
-//			void send(std::unique_ptr<event::BaseEvent> event) {
-//				std::lock_guard<std::mutex> lock(_event_mutex);
-//				if (_events.size() < 10000000) {
-//					_events.clear();
-//				}
-//				_events.push_back(std::move(event));
-//			}
-//			void dump_to_file(const std::string& file_name = "profile.json") {
-//				std::lock_guard<std::mutex> lock(_event_mutex);
-//				//std::stringstream json;
-//				std::ofstream file(file_name);
-//				auto separator = '[';
-//				for (const auto& event : _events)
-//				{
-//					file << separator << *event;
-//					separator = ',';
-//				}
-//				file << ']' << std::flush;
-//			}
-//		private:
-//			std::vector<std::unique_ptr<event::BaseEvent>> _events;
-//			std::mutex _event_mutex;
-//
-//			Pipe() {}
-//			~Pipe() {}
-//		};
-//	}
-//	class ScopeTimer
-//	{
-//	public:
-//		ScopeTimer(const std::string name) :
-//			_name(name),
-//			_creation(std::chrono::steady_clock::now())
-//		{
-//#ifndef SEER_DISABLE
-//			//Send start time
-//			internal::Pipe::i().send(
-//				std::make_unique<internal::event::DurationEvent>(_name, _creation, true)
-//			);
-//#endif // !SEER_DISABLE
-//		}
-//		~ScopeTimer() {
-//#ifndef SEER_DISABLE
-//			const auto _destruction = std::chrono::steady_clock::now();
-//			//send end time to network
-//			internal::Pipe::i().send(
-//				std::make_unique<internal::event::DurationEvent>(_name, _destruction, false)
-//			);
-//#endif // !SEER_DISABLE
-//		}
-//	private:
-//		const std::chrono::steady_clock::time_point _creation;
-//		const std::string _name;
-//	};
-//
-//	static void event(const std::string name, const EventScope event = EventScope::thread) {
-//#ifndef SEER_DISABLE
-//		internal::Pipe::i().send(
-//			std::make_unique<internal::event::InstantEvent>(name, std::chrono::steady_clock::now(), event)
-//		);
-//#endif // !SEER_DISABLE
-//	}
-//
-//	template<typename T>
-//	struct Count
-//	{
-//		Count(const std::string name, const T value)
-//			: _name(name)
-//		{
-//#ifndef SEER_DISABLE
-//			internal::Pipe::i().send(
-//				std::make_unique<internal::event::CounterEvent<T>>(name, std::chrono::steady_clock::now(), value)
-//			);
-//#endif // !SEER_DISABLE
-//		}
-//		~Count() {}
-//		void update(const T value) {
-//#ifndef SEER_DISABLE
-//			internal::Pipe::i().send(
-//				std::make_unique<internal::event::CounterEvent<T>>(_name, std::chrono::steady_clock::now(), value)
-//			);
-//#endif // !SEER_DISABLE
-//		}
-//	private:
-//		const std::string _name;
-//	};
-//
-//	// set current thread name
-//	static void setThreadName(const std::string name) {
-//#ifndef SEER_DISABLE
-//		internal::Pipe::i().send(
-//			std::make_unique<internal::event::ThreadEvent>(name)
-//		);
-//#endif // !SEER_DISABLE
-//	}
-//
-//	static void marker(const std::string name) {
-//#ifndef SEER_DISABLE
-//		internal::Pipe::i().send(
-//			std::make_unique<internal::event::MarkEvent>(name, std::chrono::steady_clock::now())
-//		);
-//#endif // !SEER_DISABLE
-//	}
-//}
-//
 #endif // SEER_HPP

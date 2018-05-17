@@ -6,7 +6,7 @@
 | **Master**    | [![Master](https://travis-ci.org/ThomasMonkman/Seer.svg?branch=master)](https://travis-ci.org/ThomasMonkman/Seer)|
 | **Develop**   | [![Develop](https://travis-ci.org/ThomasMonkman/Seer.svg?branch=develop)](https://travis-ci.org/ThomasMonkman/Seer) |
 
-A single header performance logger outputting to chrome tracing in C++11 for windows and linux
+A single header performance logger outputting to chrome tracing in C++11 for windows, linux and mac, readable using [chrome://tracing](chrome://tracing)
 
 ### Install:
 Drop [Seer.hpp](https://github.com/ThomasMonkman/Seer/blob/master/Seer.hpp) in to your include path and you should be good to go.
@@ -20,8 +20,8 @@ Drop [Seer.hpp](https://github.com/ThomasMonkman/Seer/blob/master/Seer.hpp) in t
 
 ### Getting output and memory usage:
 - [output](#101)
-- [buffer](#102)
-- [memory usage](#103)
+- [buffer and memory usage](#102)
+- [buffer filled behaviour](#103)
 
 ### Speed:
 - [benchmarks](#201)
@@ -89,7 +89,7 @@ Will name the current process.
 
 ### Getting output and memory usage:
 #### output: <a id="101"></a>
-Chrome expects a json file, this can be fetched in several way.
+[chrome://tracing](chrome://tracing) expects a json file, this can be fetched in several way.
 
 Interface to this data can be found through `seer::buffer`
 ```c++
@@ -99,18 +99,70 @@ Interface to this data can be found through `seer::buffer`
 	std::string json = seer::buffer.str(); //by string
 }
 ```
-#### buffer: <a id="102"></a>
-Internally Seer allocates a buffer of memory to write to,  this defaults to 50mb. Monitoring and changes to this buffer can be found through `seer::buffer`
+#### buffer and memory usage: <a id="102"></a>
+Internally Seer allocates a buffer of memory to write to, this defaults to ~10mb. Monitoring and changes to this buffer can be found through `seer::buffer`
 ```c++
 {
-	seer::buffer.size_in_bytes();
+	// usage
+	seer::buffer.usage().usage_in_bytes;
+	seer::buffer.usage().total_in_bytes;
+	seer::buffer.usage().percent_used();
+	
+	// resize
+	seer::buffer.resize(1000000000); // resize to 1gb
+
+	// clear
+	seer::buffer.clear();
 }
 ```
-#### memory usage: <a id="103"></a>
 
+#### buffer filled behaviour: <a id="103"></a>
+When the internal buffer fills up by default it resets and starts a fresh, chucking out its old data, however this can be customised
+```c++
+{	
+	seer::buffer_overflow_behaviour = seer::BufferOverflowBehaviour::reset;
+	// the default, the buffer forgets its old data and starts again
+
+	seer::buffer_overflow_behaviour = seer::BufferOverflowBehaviour::expand;
+	// the buffer will grow on its own with no upper limit
+
+	seer::buffer_overflow_behaviour = seer::BufferOverflowBehaviour::discard;
+	// the buffer will discard all new events once it fills
+}
+```
 
 ### Speed:
 #### benchmarks: <a id="201"></a>
+While seer maybe header only, the benchmarks use google benchmark, and require building.
+
+Mac and linux:
+```
+{
+	git clone https://github.com/ThomasMonkman/Seer.git
+	cd ./Seer
+	mkdir build && cd build/
+	cmake -DCMAKE_BUILD_TYPE=Release ../
+	make
+	benchmarks/seer_benchmark
+}
+```
+Windows:
+Simply open the repo in visual studio 17, and with its new cmake abilties and you should just be able to run the projects, make sure you use release.
 
 ### Test:
 #### test: <a id="301"></a>
+While seer maybe header only, the test use catch 2, and require building
+
+Mac and linux:
+```
+{
+	git clone https://github.com/ThomasMonkman/Seer.git
+	cd ./Seer
+	mkdir build && cd build/
+	cmake -DCMAKE_BUILD_TYPE=Release ../
+	make
+	tests/seer_unit
+}
+```
+Windows:
+Simply open the repo in visual studio 17, and with its new cmake abilties and you should just be able to run the projects.
