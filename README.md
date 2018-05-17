@@ -12,12 +12,12 @@ A single header performance logger outputting to chrome tracing in C++11 for win
 Drop [Seer.hpp](https://github.com/ThomasMonkman/Seer/blob/master/Seer.hpp) in to your include path and you should be good to go.
 ### Functions:
 - [ScopeTimer](#1)
-- [Counter](#2)
-- [instant_event](#3)
-- [mark](#4)
-- [set_thread_name](#5)
-- [set_process_name](#6)
-- [Async](#7)
+- [Async](#2)
+- [Counter](#3)
+- [instant_event](#4)
+- [mark](#5)
+- [set_thread_name](#6)
+- [set_process_name](#7)
 
 ### Getting output and memory usage:
 - [output](#101)
@@ -41,54 +41,8 @@ ScopeTimer will measure the time spent in a block/scope.
 }
 ```
 
-#### Counter: <a id="2"></a>
-Counter can be used for tracking a value over time. 
-> Note: multiple counters sharing the same name will appear in the same chrome trace.
-```c++
-{
-    seer::Counter<int> counter("test", 1);
-    std::this_thread::sleep_for(2s);
-    counter.update(2);
-}
-```
-
-#### instant_event: <a id="3"></a>
-Will place an instant event scoped to either thread (default), process, globally.
-```c++
-{
-	seer::instant_event("test"); // thread
-	seer::instant_event("test", seer::InstantEventScope::process); // process
-	seer::instant_event("test", seer::InstantEventScope::global); // global
-}
-```
-
-#### mark: <a id="4"></a>
-Will produce a mark.
-```c++
-{
-	seer::mark("test");
-}
-```
-
-#### set_thread_name: <a id="5"></a>
-Will name the current thread or optional with another threads id.
-```c++
-{
-	seer::set_thread_name("render");
-	seer::set_thread_name("worker", worker.id);
-}
-```
-
-#### set_process_name: <a id="6"></a>
-Will name the current process.
-```c++
-{
-	seer::set_process_name("my amazing app"); // this can be called at any point in time
-}
-```
-
-#### Async: <a id="7"></a>
-Async allows you to draw visual connections between scopes, this shows up in chrome as arrows joining blocks.
+#### Async: <a id="2"></a>
+Async allows you to draw visual connections between scopes timers, this shows up in chrome as arrows joining blocks.
 This is handy for tracking events across threads or separated by time.
 
 Across Threads
@@ -129,6 +83,52 @@ Across time
 		const auto timer3 = async.create_timer("Step 3");
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
+```
+
+#### Counter: <a id="3"></a>
+Counter can be used for tracking a value over time. 
+> Note: multiple counters sharing the same name will appear in the same chrome trace.
+```c++
+{
+    seer::Counter<int> counter("test", 1);
+    std::this_thread::sleep_for(2s);
+    counter.update(2);
+}
+```
+
+#### instant_event: <a id="4"></a>
+Will place an instant event scoped to either thread (default), process, globally.
+```c++
+{
+	seer::instant_event("test"); // thread
+	seer::instant_event("test", seer::InstantEventScope::process); // process
+	seer::instant_event("test", seer::InstantEventScope::global); // global
+}
+```
+
+#### mark: <a id="5"></a>
+Will produce a mark.
+```c++
+{
+	seer::mark("test");
+}
+```
+
+#### set_thread_name: <a id="6"></a>
+Will name the current thread or optional with another threads id.
+```c++
+{
+	seer::set_thread_name("render");
+	seer::set_thread_name("worker", worker.id);
+}
+```
+
+#### set_process_name: <a id="7"></a>
+Will name the current process.
+```c++
+{
+	seer::set_process_name("my amazing app"); // this can be called at any point in time
+}
 ```
 <hr>
 
