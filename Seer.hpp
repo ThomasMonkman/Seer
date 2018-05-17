@@ -36,6 +36,7 @@
 #include <functional>
 #include <sstream>
 #include <exception>
+#include <atomic>
 
 #if defined(__linux__) || defined(__APPLE__)
 #	include <sys/types.h>
@@ -150,7 +151,9 @@ namespace seer {
 			instant = 'i',
 			counter = 'C',
 			meta = 'M',
-			mark = 'R'
+			mark = 'R',
+			flow_start = 's',
+			flow_step = 't'
 		};
 
 		enum class InstantEventScope : char {
@@ -165,6 +168,7 @@ namespace seer {
 			StringLookup counter_value;
 			StringLookup meta_object;
 			std::chrono::steady_clock::time_point end_time;
+			std::size_t flow_id;
 		};
 
 		struct DataPoint // 40 bytes
@@ -508,6 +512,65 @@ namespace seer {
 			extra
 			});
 	}
+
+
+	class Async
+	{
+	public:
+		enum class LifeTime {
+			start,
+			continued,
+			end
+		};
+		class Timer
+		{
+		public:
+			Timer(const std::string& name, /*LifeTime life_time, */std::size_t async_id) :
+				_creation(std::chrono::steady_clock::now()),
+				_name(internal::StringStore::i().store(name)),
+				_async_id(async_id)
+				//_life_time(life_time)
+			{}
+			~Timer() {
+
+				//send end time to network
+				internal::DataPointExtra extra = { nullptr };
+				extra.end_time = std::chrono::steady_clock::now();
+				internal::EventStore::i().send({
+					_name,
+					internal::EventType::complete,
+					std::this_thread::get_id(),
+					_creation,
+					extra
+					});
+			}
+			Timer(const Timer&) = delete;
+			Timer& operator=(const Timer& other) = delete;
+			Timer(Timer&&) = delete;
+			Timer& operator=(Timer&& other) = delete;
+		private:
+			const std::chrono::steady_clock::time_point _creation;
+			const internal::StringLookup _name;
+			const std::size_t _async_id;
+			//const LifeTime _life_time;
+		};
+		Async() :
+			id(a.fetch_add(1))
+		{}
+		~Async() = default;
+
+		Timer create_timer(const std::string& name/*, LifeTime life_time*/) const {
+			return { name,/*, life_time, */id };
+		}
+
+		Async(const Async&) = default;
+		Async& operator=(const Async& other) = default;
+		Async(Async&&) = default;
+		Async& operator=(Async&& other) = default;
+	private:	
+		const std::size_t id;
+		static std::atomic<std::size_t> a;
+	};
 }
 ////Duration 
 //{
