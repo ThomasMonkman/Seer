@@ -163,7 +163,7 @@ namespace seer {
 			global = 'g'
 		};
 
-		union DataPointExtra {
+		union EventExtra {
 			void* not_used;
 			InstantEventScope instant;
 			StringLookup counter_value;
@@ -172,7 +172,7 @@ namespace seer {
 			std::size_t flow_id;
 		};
 
-		struct DataPoint // 40 bytes
+		struct Event // 40 bytes
 		{
 			// common to everything
 			StringLookup name; //8 bytes
@@ -180,7 +180,7 @@ namespace seer {
 			std::thread::id thread_id; // 4 bytes
 			const std::chrono::steady_clock::time_point time_point; // 4 bytes
 																	// extra
-			DataPointExtra extra; // 8 bytes;
+			EventExtra extra; // 8 bytes;
 		};
 
 		inline std::ostream& operator<<(std::ostream& out_stream, const StringLookup& string_store)
@@ -189,7 +189,7 @@ namespace seer {
 			return out_stream;
 		}
 
-		inline std::ostream& operator<<(std::ostream& out_stream, const DataPoint& event)
+		inline std::ostream& operator<<(std::ostream& out_stream, const Event& event)
 		{
 			out_stream << "{\"name\":\"" << event.name
 				<< "\",\"ph\":\"" << static_cast<char>(event.event_type)
@@ -232,7 +232,7 @@ namespace seer {
 				static EventStore pipe;
 				return pipe;
 			}
-			void send(DataPoint&& event) {
+			void send(Event&& event) {
 				std::lock_guard<std::mutex> lock(_event_mutex);
 				if (_events.size() >= _events.capacity()) {
 					switch (buffer_overflow_behaviour)
@@ -256,11 +256,11 @@ namespace seer {
 				for (const auto& event : _events) {
 					if (event.event_type == EventType::flow_step && flow_events_found.find(event.extra.flow_id) == flow_events_found.end()) {
 						// check we have not already once converted this flow event another this buffer was streamed
-						const auto found = std::find_if(_events.begin(), _events.end(), [&event](const DataPoint& e) { 
+						const auto found = std::find_if(_events.begin(), _events.end(), [&event](const Event& e) { 
 							return e.event_type == EventType::flow_start && e.extra.flow_id == event.extra.flow_id;
 						});
 						if (found == _events.end()) {
-							auto start_flow_event = std::min_element(_events.begin(), _events.end(), [](const DataPoint& a, const DataPoint& b) { 
+							auto start_flow_event = std::min_element(_events.begin(), _events.end(), [](const Event& a, const Event& b) { 
 								return a.time_point < b.time_point;
 							});
 							start_flow_event->event_type = EventType::flow_start;
@@ -287,22 +287,22 @@ namespace seer {
 
 			std::size_t buffer_size() {
 				std::lock_guard<std::mutex> lock(_event_mutex);
-				return _events.capacity() * sizeof(DataPoint);
+				return _events.capacity() * sizeof(Event);
 			}
 
 			std::size_t buffer_used() {
 				std::lock_guard<std::mutex> lock(_event_mutex);
-				return _events.size() * sizeof(DataPoint);
+				return _events.size() * sizeof(Event);
 			}
 
 			void set_buffer_size(std::size_t size_in_bytes) {
-				if (size_in_bytes < sizeof(DataPoint) && buffer_overflow_behaviour != BufferOverflowBehaviour::expand) {
+				if (size_in_bytes < sizeof(Event) && buffer_overflow_behaviour != BufferOverflowBehaviour::expand) {
 					throw std::length_error("buffer too small to fit even a single event");
 				}
 				std::lock_guard<std::mutex> lock(_event_mutex);
 				_events.clear();
 				_events.shrink_to_fit();
-				_events.reserve(size_in_bytes / sizeof(DataPoint));
+				_events.reserve(size_in_bytes / sizeof(Event));
 				_clear_callback();
 			}
 
@@ -312,12 +312,12 @@ namespace seer {
 			}
 		private:
 			std::size_t _buffer_size_in_bytes = 5000000;
-			std::vector<DataPoint> _events;
+			std::vector<Event> _events;
 			std::mutex _event_mutex;
 			std::function<void()> _clear_callback;
 
 			EventStore() {
-				_events.reserve(_buffer_size_in_bytes / sizeof(DataPoint));
+				_events.reserve(_buffer_size_in_bytes / sizeof(Event));
 			}
 			~EventStore() = default;
 			EventStore(const EventStore&) = delete;
@@ -405,7 +405,7 @@ namespace seer {
 		~ScopeTimer() {
 
 			//send end time to network
-			internal::DataPointExtra extra = { nullptr };
+			internal::EventExtra extra = { nullptr };
 			extra.end_time = std::chrono::steady_clock::now();
 			internal::EventStore::i().send({
 				_name,
@@ -427,7 +427,7 @@ namespace seer {
 	using InstantEventScope = internal::InstantEventScope;
 
 	static void instant_event(const std::string& name, const InstantEventScope event_type = InstantEventScope::thread) {
-		internal::DataPointExtra extra = { nullptr };
+		internal::EventExtra extra = { nullptr };
 		extra.instant = event_type;
 		internal::EventStore::i().send({
 			internal::StringStore::i().store(name),
@@ -490,7 +490,7 @@ namespace seer {
 		}
 
 		void store(const std::string& value) {
-			internal::DataPointExtra extra = { nullptr };
+			internal::EventExtra extra = { nullptr };
 			extra.counter_value = internal::StringStore::i().store(value);
 			internal::EventStore::i().send({
 				_name,
@@ -503,7 +503,7 @@ namespace seer {
 	};
 
 	static void set_thread_name(const std::string& name, std::thread::id thread_id = std::this_thread::get_id()) {
-		internal::DataPointExtra extra = { nullptr };
+		internal::EventExtra extra = { nullptr };
 		extra.meta_object = internal::StringStore::i().store("{\"name\":\"" + name + "\"}");
 		internal::EventStore::i().send({
 			internal::StringStore::i().store("thread_name"),
@@ -515,7 +515,7 @@ namespace seer {
 	}
 
 	static void set_process_name(const std::string& name) {
-		internal::DataPointExtra extra = { nullptr };
+		internal::EventExtra extra = { nullptr };
 		extra.meta_object = internal::StringStore::i().store("{\"name\":\"" + name + "\"}");
 		internal::EventStore::i().send({
 			internal::StringStore::i().store("process_name"),
@@ -527,7 +527,7 @@ namespace seer {
 	}
 
 	static void mark(const std::string& name) {
-		internal::DataPointExtra extra = { nullptr };
+		internal::EventExtra extra = { nullptr };
 		internal::EventStore::i().send({
 			internal::StringStore::i().store(name),
 			internal::EventType::mark,
@@ -550,7 +550,7 @@ namespace seer {
 			{}
 			~Timer() {
 				const auto end_time = std::chrono::steady_clock::now();
-				internal::DataPointExtra extra_flow = { nullptr };
+				internal::EventExtra extra_flow = { nullptr };
 				extra_flow.flow_id = _async_id;
 				internal::EventStore::i().send({
 					_name,
@@ -560,7 +560,7 @@ namespace seer {
 					extra_flow
 				});
 
-				internal::DataPointExtra extra = { nullptr };
+				internal::EventExtra extra = { nullptr };
 				extra.end_time = end_time;
 				internal::EventStore::i().send({
 					_name,

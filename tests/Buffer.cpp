@@ -52,16 +52,16 @@ TEST_CASE("buffer works", "[seer::buffer]") {
 	}
 
 	SECTION("can resize") {
-		seer::buffer.resize(2 * sizeof(seer::internal::DataPoint));
+		seer::buffer.resize(2 * sizeof(seer::internal::Event));
 		const auto usage = seer::buffer.usage();
 		REQUIRE(seer::buffer.usage().usage_in_bytes == 0);
-		REQUIRE(seer::buffer.usage().total_in_bytes == (2 * sizeof(seer::internal::DataPoint)));
+		REQUIRE(seer::buffer.usage().total_in_bytes == (2 * sizeof(seer::internal::Event)));
 		REQUIRE(seer::buffer.usage().percent_used == 0.0);
 	}
 
 	SECTION("BufferOverflowBehaviour::reset") {
 		seer::buffer_overflow_behaviour = seer::BufferOverflowBehaviour::reset;
-		seer::buffer.resize(2 * sizeof(seer::internal::DataPoint)); // not large enough to store 2 timers plus text
+		seer::buffer.resize(2 * sizeof(seer::internal::Event)); // not large enough to store 2 timers plus text
 		{
 			seer::ScopeTimer("Test");
 			seer::ScopeTimer("Test");
@@ -70,12 +70,12 @@ TEST_CASE("buffer works", "[seer::buffer]") {
 		const auto json = nlohmann::json::parse(seer::buffer.str());
 		REQUIRE(json.size() == 1);
 		const auto usage = seer::buffer.usage();
-		REQUIRE(seer::buffer.usage().total_in_bytes == (2 * sizeof(seer::internal::DataPoint)));
+		REQUIRE(seer::buffer.usage().total_in_bytes == (2 * sizeof(seer::internal::Event)));
 	}
 
 	SECTION("BufferOverflowBehaviour::expand") {
 		seer::buffer_overflow_behaviour = seer::BufferOverflowBehaviour::expand;
-		seer::buffer.resize(2 * sizeof(seer::internal::DataPoint)); // not large enough to store 2 timers plus text
+		seer::buffer.resize(2 * sizeof(seer::internal::Event)); // not large enough to store 2 timers plus text
 		{
 			seer::ScopeTimer("Test");
 			seer::ScopeTimer("Test");
@@ -87,7 +87,7 @@ TEST_CASE("buffer works", "[seer::buffer]") {
 
 	SECTION("BufferOverflowBehaviour::discard") {
 		seer::buffer_overflow_behaviour = seer::BufferOverflowBehaviour::discard;
-		seer::buffer.resize(2 * sizeof(seer::internal::DataPoint)); // not large enough to store 2 timers plus text
+		seer::buffer.resize(2 * sizeof(seer::internal::Event)); // not large enough to store 2 timers plus text
 		{
 			seer::ScopeTimer("Test");
 			seer::ScopeTimer("");
@@ -97,6 +97,6 @@ TEST_CASE("buffer works", "[seer::buffer]") {
 		const auto json = nlohmann::json::parse(seer::buffer.str());
 		REQUIRE(json.size() == 1);
 		const auto usage = seer::buffer.usage();
-		REQUIRE(seer::buffer.usage().total_in_bytes == (2 * sizeof(seer::internal::DataPoint)));
+		REQUIRE(seer::buffer.usage().total_in_bytes == (2 * sizeof(seer::internal::Event)));
 	}
 }

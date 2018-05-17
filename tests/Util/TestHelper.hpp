@@ -6,6 +6,8 @@
 #include <future>
 #include <stdexcept>
 
+#include "../../Seer.hpp"
+
 namespace test_helper {
 	namespace Config {
 		//3 second test timeout
@@ -26,7 +28,7 @@ namespace test_helper {
 	}
 	static const void reset_seer() {
 		seer::buffer.clear();
-		seer::buffer.resize(200000 * sizeof(seer::internal::DataPoint));
+		seer::buffer.resize(200000 * sizeof(seer::internal::Event));
 		seer::buffer_overflow_behaviour = seer::BufferOverflowBehaviour::reset;
 	}
 }
