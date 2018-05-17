@@ -35,7 +35,7 @@ TEST_CASE("Async produces correct json", "[ScopeTimer]") {
 			const auto timer = async.create_timer("Step 1");
 			std::this_thread::sleep_for(std::chrono::seconds(1));
 		}
-		test_helper::get_with_timeout(std::async(std::launch::async, [async] {
+		test_helper::get_with_timeout<void>(std::async(std::launch::async, [async] {
 			const auto timer2 = async.create_timer("Step 2");
 			std::this_thread::sleep_for(std::chrono::seconds(1));
 		}));
