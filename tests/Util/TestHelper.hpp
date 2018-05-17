@@ -14,7 +14,7 @@ namespace test_helper {
 		typedef std::chrono::duration<float, std::ratio_multiply<std::chrono::seconds::period, std::ratio<100>>> test_timeout;
 	}
 	template<typename T>
-	static T get_with_timeout(std::future<T>& future_to_wait_for)
+	static T get_with_timeout(std::future<T>&& future_to_wait_for)
 	{		
 		const auto status = future_to_wait_for.wait_for(test_helper::Config::test_timeout(1));
 		REQUIRE(status != std::future_status::deferred);
