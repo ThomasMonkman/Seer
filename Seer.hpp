@@ -26,7 +26,7 @@ namespace seer {
 	enum class BufferOverflowBehaviour {
 		reset,
 		expand,
-		exception
+		discard
 	};
 	static BufferOverflowBehaviour buffer_overflow_behaviour = BufferOverflowBehaviour::reset;
 	namespace internal {
@@ -50,7 +50,7 @@ namespace seer {
 				if (string_to_store.size() + _head > _store.size())
 				{
 					if (string_to_store.size() > _store.size() && buffer_overflow_behaviour == BufferOverflowBehaviour::reset) {
-						throw std::length_error("String store not big enough for string");
+						return { 0, 0 };
 					}
 					switch (buffer_overflow_behaviour)
 					{
@@ -59,7 +59,7 @@ namespace seer {
 						_clear_callback();
 						break;
 					case BufferOverflowBehaviour::expand: _store.resize(static_cast<std::size_t>(_store.size() * 1.5f)); break;
-					case BufferOverflowBehaviour::exception: throw std::overflow_error("String store full");
+					case BufferOverflowBehaviour::discard: return { 0, 0 };
 					}
 				}
 				const auto insert_position = _store.begin() + _head;
@@ -211,7 +211,7 @@ namespace seer {
 						_clear_callback();
 						break;
 					case BufferOverflowBehaviour::expand: break; //let the vector use its own growth functions
-					case BufferOverflowBehaviour::exception: throw std::overflow_error("Event store full");
+					case BufferOverflowBehaviour::discard: return;
 					}
 				}
 				_events.push_back(event);

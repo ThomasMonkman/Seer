@@ -85,27 +85,14 @@ TEST_CASE("buffer works", "[seer::buffer]") {
 		REQUIRE(json.size() == 2);
 	}
 
-	SECTION("BufferOverflowBehaviour::exception") {
-		seer::buffer_overflow_behaviour = seer::BufferOverflowBehaviour::exception;
+	SECTION("BufferOverflowBehaviour::discard") {
+		seer::buffer_overflow_behaviour = seer::BufferOverflowBehaviour::discard;
 		seer::buffer.resize(2 * sizeof(seer::internal::DataPoint)); // not large enough to store 2 timers plus text
-		
-		seer::ScopeTimer("Test");
-		
-		REQUIRE_THROWS_AS([]() {
+		{
+			seer::ScopeTimer("Test");
 			seer::ScopeTimer("");
-		}(), std::overflow_error);
-
-		REQUIRE_THROWS_WITH([]() {
-			seer::ScopeTimer("");
-		}(), "Event store full");
-
-		REQUIRE_THROWS_AS([]() {
 			seer::ScopeTimer("very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string");
-		}(), std::length_error);
-
-		REQUIRE_THROWS_WITH([]() {
-			seer::ScopeTimer("very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string_very_big_string");
-		}(), "String store not big enough for string");
+		}
 
 		const auto json = nlohmann::json::parse(seer::buffer.str());
 		REQUIRE(json.size() == 1);
