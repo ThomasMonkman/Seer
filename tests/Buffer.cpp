@@ -16,7 +16,7 @@ TEST_CASE("buffer works", "[seer::buffer]") {
 
 	SECTION("start empty") {
 		REQUIRE(seer::buffer.usage().usage_in_bytes == 0);
-		REQUIRE(seer::buffer.usage().percent_used() == 0.0);
+		REQUIRE(seer::buffer.usage().percent_used == 0.0);
 	}
 	
 	SECTION("clears") {
@@ -56,7 +56,7 @@ TEST_CASE("buffer works", "[seer::buffer]") {
 		const auto usage = seer::buffer.usage();
 		REQUIRE(seer::buffer.usage().usage_in_bytes == 0);
 		REQUIRE(seer::buffer.usage().total_in_bytes == (2 * sizeof(seer::internal::DataPoint)));
-		REQUIRE(seer::buffer.usage().percent_used() == 0.0);
+		REQUIRE(seer::buffer.usage().percent_used == 0.0);
 	}
 
 	SECTION("BufferOverflowBehaviour::reset") {

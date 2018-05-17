@@ -301,12 +301,9 @@ namespace seer {
 		};
 
 		struct BufferStats {
-			std::size_t usage_in_bytes;
-			std::size_t total_in_bytes;
-			
-			double percent_used() {
-				return usage_in_bytes / total_in_bytes;
-			}
+			const std::size_t usage_in_bytes;
+			const std::size_t total_in_bytes;
+			const double percent_used;
 		};
 
 		// Allows internal buffer to be streamed by just calling "<< seer::buffer"
@@ -319,9 +316,12 @@ namespace seer {
 			}
 
 			BufferStats usage() {
+				const auto usage_in_bytes = internal::StringStore::i().buffer_used() + internal::EventStore::i().buffer_used();
+				const auto total_in_bytes = internal::StringStore::i().buffer_size() + internal::EventStore::i().buffer_size();
 				return {
-					internal::StringStore::i().buffer_used() + internal::EventStore::i().buffer_used(),
-					internal::StringStore::i().buffer_size() + internal::EventStore::i().buffer_size()
+					usage_in_bytes,
+					total_in_bytes,
+					static_cast<double>(usage_in_bytes / total_in_bytes)
 				};
 			}
 

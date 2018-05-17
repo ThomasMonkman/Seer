@@ -106,7 +106,7 @@ Internally Seer allocates a buffer of memory to write to, this defaults to ~10mb
 	// usage
 	seer::buffer.usage().usage_in_bytes;
 	seer::buffer.usage().total_in_bytes;
-	seer::buffer.usage().percent_used();
+	seer::buffer.usage().percent_used;
 	
 	// resize
 	seer::buffer.resize(1000000000); // resize to 1gb
