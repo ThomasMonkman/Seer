@@ -255,6 +255,7 @@ namespace seer {
 				std::set<std::size_t> flow_events_found;
 				for (const auto& event : _events) {
 					if (event.event_type == EventType::flow_step && flow_events_found.find(event.extra.flow_id) == flow_events_found.end()) {
+						flow_events_found.insert(event.extra.flow_id);
 						// check we have not already once converted this flow event another this buffer was streamed
 						const auto found = std::find_if(_events.begin(), _events.end(), [&event](const Event& e) { 
 							return e.event_type == EventType::flow_start && e.extra.flow_id == event.extra.flow_id;
