@@ -206,12 +206,12 @@ While seer may be header only, these benchmarks use google benchmark and require
 
 Mac and linux:
 ```
-	git clone https://github.com/ThomasMonkman/Seer.git
-	cd ./Seer
-	mkdir build && cd build/
-	cmake -DCMAKE_BUILD_TYPE=Release ../
-	make
-	benchmarks/seer_benchmark
+git clone https://github.com/ThomasMonkman/Seer.git
+cd ./Seer
+mkdir build && cd build/
+cmake -DCMAKE_BUILD_TYPE=Release ../
+make
+benchmarks/seer_benchmark
 ```
 Windows:
 
@@ -223,12 +223,12 @@ While seer may be header only, these tests use catch 2 and require building.
 
 Mac and linux:
 ```c++
-	git clone https://github.com/ThomasMonkman/Seer.git
-	cd ./Seer
-	mkdir build && cd build/
-	cmake -DCMAKE_BUILD_TYPE=Release ../
-	make
-	tests/seer_unit
+git clone https://github.com/ThomasMonkman/Seer.git
+cd ./Seer
+mkdir build && cd build/
+cmake -DCMAKE_BUILD_TYPE=Release ../
+make
+tests/seer_unit
 ```
 Windows:
 
