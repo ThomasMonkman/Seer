@@ -22,7 +22,7 @@ TEST_CASE("ScopeTimer produces correct json", "[ScopeTimer]") {
 	test_helper::reset_seer();
 
 	SECTION("0 event") {
-		REQUIRE(seer::buffer.str() == "[]");
+		REQUIRE(seer::buffer.str() == "[]");		
 	}
 
 	SECTION("1 event") {

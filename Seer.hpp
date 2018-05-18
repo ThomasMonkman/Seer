@@ -261,7 +261,16 @@ namespace seer {
 							return e.event_type == EventType::flow_start && e.extra.flow_id == event.extra.flow_id;
 						});
 						if (found == _events.end()) {
-							auto start_flow_event = std::min_element(_events.begin(), _events.end(), [](const Event& a, const Event& b) { 
+							// change the first flow event for the id, to a start flow
+							const auto first = std::find_if(_events.begin(), _events.end(), [&event](const Event& e) {
+								return e.event_type == EventType::flow_step && e.extra.flow_id == event.extra.flow_id;
+							});
+
+							auto start_flow_event = std::min_element(first, _events.end(), [&event](const Event& a, const Event& b) {
+								if (a.event_type != EventType::flow_step || b.event_type != EventType::flow_step ||
+									a.extra.flow_id != event.extra.flow_id || b.extra.flow_id != event.extra.flow_id) {
+									return false;
+								}
 								return a.time_point < b.time_point;
 							});
 							start_flow_event->event_type = EventType::flow_start;
@@ -427,7 +436,7 @@ namespace seer {
 
 	using InstantEventScope = internal::InstantEventScope;
 
-	static void instant_event(const std::string& name, const InstantEventScope event_type = InstantEventScope::thread) {
+	static void instant_event(const std::string& name, const InstantEventScope event_type = InstantEventScope::process) {
 		internal::EventExtra extra = { nullptr };
 		extra.instant = event_type;
 		internal::EventStore::i().send({

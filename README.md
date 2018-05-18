@@ -8,6 +8,11 @@
 
 A single header performance logger outputting to chrome tracing in C++11 for windows, linux and mac, readable using [chrome://tracing](chrome://tracing)
 
+Example when loaded in [chrome://tracing](chrome://tracing)
+![Image](/doc/full-showcase.jpg?raw=true)
+
+[Example code](#example)
+
 ### Install:
 Drop [Seer.hpp](https://github.com/ThomasMonkman/Seer/blob/master/Seer.hpp) in to your include path and you should be good to go.
 ### Functions:
@@ -102,14 +107,20 @@ Counter can be used for tracking a value over time.
 ![Image](/doc/counter.jpg?raw=true)
 
 #### instant_event: <a id="4"></a>
-Will place an instant event scoped to either thread (default), process, globally.
+Will place an instant event scoped to either process (default), thread, globally.
 ```c++
 {
-	seer::instant_event("test"); // thread
-	seer::instant_event("test", seer::InstantEventScope::process); // process
+	seer::instant_event("test"); // process
+	seer::instant_event("test", seer::InstantEventScope::thread); // process
 	seer::instant_event("test", seer::InstantEventScope::global); // global
 }
 ```
+Thread
+![Image](/doc/instant-event-thread.jpg?raw=true)
+Process
+![Image](/doc/instant-event-process.jpg?raw=true)
+Global
+![Image](/doc/instant-event-global.jpg?raw=true)
 
 #### mark: <a id="5"></a>
 Will produce a mark.
@@ -118,6 +129,7 @@ Will produce a mark.
 	seer::mark("test");
 }
 ```
+![Image](/doc/mark.jpg?raw=true)
 
 #### set_thread_name: <a id="6"></a>
 Will name the current thread or optional with another threads id.
@@ -135,6 +147,8 @@ Will name the current process.
 	seer::set_process_name("my amazing app"); // this can be called at any point in time
 }
 ```
+![Image](/doc/set_process_name.jpg?raw=true)
+
 <hr>
 
 ### Getting output and memory usage:
@@ -183,7 +197,7 @@ When the internal buffer fills up by default it resets and starts a fresh, chuck
 
 ### Speed:
 #### benchmarks: <a id="201"></a>
-While seer maybe header only, the benchmarks use google benchmark, and require building.
+While seer may be header only, these benchmarks use google benchmark and require building.
 
 Mac and linux:
 ```
@@ -197,14 +211,14 @@ Mac and linux:
 }
 ```
 Windows:
-Simply open the repo in visual studio 17, and with its new cmake abilties and you should just be able to run the projects, make sure you use release.
+Simply open the repo in visual studio 17, and with its new cmake features and you should just be able to run the projects, make sure you use release.
 
 ### Test:
 #### test: <a id="301"></a>
-While seer maybe header only, the test use catch 2, and require building
+While seer may be header only, these tests use catch 2 and require building.
 
 Mac and linux:
-```
+```c++
 {
 	git clone https://github.com/ThomasMonkman/Seer.git
 	cd ./Seer
@@ -215,4 +229,42 @@ Mac and linux:
 }
 ```
 Windows:
-Simply open the repo in visual studio 17, and with its new cmake abilties and you should just be able to run the projects.
+Simply open the repo in visual studio 17, and with its new cmake features and you should just be able to run the projects.
+
+### Example code: <a id="example"></a>
+```c++
+{
+{
+	seer::set_process_name("my amazing app");
+	seer::set_thread_name("render");
+	seer::instant_event("frame start", seer::InstantEventScope::process);
+	seer::Counter<int> tempture("tempture", 0);
+	seer::Async async;
+	seer::ScopeTimer frame("frame");
+	std::this_thread::sleep_for(std::chrono::seconds(1));
+	tempture.update(2);
+	{
+		seer::ScopeTimer input("get input");
+		std::this_thread::sleep_for(std::chrono::milliseconds(250));
+		tempture.update(5);
+		seer::instant_event("key press", seer::InstantEventScope::thread);
+		test_helper::get_with_timeout<void>(std::async(std::launch::async, [async, &tempture] {
+			seer::set_thread_name("input");
+			const auto timer = async.create_timer("capture keypress");
+			std::this_thread::sleep_for(std::chrono::seconds(1));
+			tempture.update(1);
+		}));
+		std::this_thread::sleep_for(std::chrono::milliseconds(250));
+		tempture.update(10);
+		const auto timer = async.create_timer("process keypress");
+		std::this_thread::sleep_for(std::chrono::milliseconds(250));
+		seer::mark("done");
+	}
+	tempture.update(4);
+	std::this_thread::sleep_for(std::chrono::milliseconds(250));
+	seer::instant_event("sun outside", seer::InstantEventScope::global);
+
+}
+seer::buffer.dump_to_file("full-showcase.json");
+}
+```
