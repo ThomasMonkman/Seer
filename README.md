@@ -102,7 +102,7 @@ Counter can be used for tracking a value over time.
 ![Image](/doc/counter.jpg?raw=true)
 
 #### instant_event: <a id="4"></a>
-Will place an instant event scoped to either thread (default), process, globally.
+Will place an instant event scoped to either thread (default), process, globally. Useful for things such as frame start, file load, etc...
 ```c++
 {
 	seer::instant_event("test"); // thread
