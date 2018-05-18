@@ -40,12 +40,13 @@ ScopeTimer will measure the time spent in a block/scope.
     std::this_thread::sleep_for(2s);
 }
 ```
+![Image](/doc/scopetimer.jpg?raw=true)
 
 #### Async: <a id="2"></a>
 Async allows you to draw visual connections between scopes timers, this shows up in chrome as arrows joining blocks.
 This is handy for tracking events across threads or separated by time.
 
-Across Threads
+Across Threads:
 ```c++
 
 	seer::Async async;	
@@ -64,8 +65,10 @@ Across Threads
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
 ```
+![Image](/doc/async.jpg?raw=true)
 
-Across time
+
+Across time:
 ```c++
 
 	seer::Async async;	
@@ -84,6 +87,7 @@ Across time
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
 ```
+![Image](/doc/async-same-thread.jpg?raw=true)
 
 #### Counter: <a id="3"></a>
 Counter can be used for tracking a value over time. 
@@ -95,6 +99,7 @@ Counter can be used for tracking a value over time.
     counter.update(2);
 }
 ```
+![Image](/doc/counter.jpg?raw=true)
 
 #### instant_event: <a id="4"></a>
 Will place an instant event scoped to either thread (default), process, globally.
