@@ -5,19 +5,21 @@ target_include_directories(Catch INTERFACE ${PROJECT_SOURCE_DIR}/3rdParty/catch/
 #add tests
 set(SEER_UNIT_TEST_TARGET_NAME "seer_unit")
 add_executable(${SEER_UNIT_TEST_TARGET_NAME}
-	${PROJECT_SOURCE_DIR}/tests/src/CatchMain.cpp
-	${PROJECT_SOURCE_DIR}/tests/src/TestMain.cpp
-	${PROJECT_SOURCE_DIR}/tests/src/Pipe.spec.cpp
-	${PROJECT_SOURCE_DIR}/tests/src/Sink.spec.cpp
-	${PROJECT_SOURCE_DIR}/tests/src/ScopeTimer.spec.cpp
-	${PROJECT_SOURCE_DIR}/tests/src/Timer.spec.cpp)
+	${PROJECT_SOURCE_DIR}/tests/CatchMain.cpp
+	${PROJECT_SOURCE_DIR}/tests/Buffer.cpp
+	${PROJECT_SOURCE_DIR}/tests/ScopeTimer.cpp
+	${PROJECT_SOURCE_DIR}/tests/InstantEvent.cpp
+	${PROJECT_SOURCE_DIR}/tests/Counter.cpp
+	${PROJECT_SOURCE_DIR}/tests/SetThreadName.cpp
+	${PROJECT_SOURCE_DIR}/tests/SetProcessName.cpp
+	${PROJECT_SOURCE_DIR}/tests/Mark.cpp
+	${PROJECT_SOURCE_DIR}/tests/AsyncTimer.cpp)
 
 #enable pthreads for linux
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 	
 target_link_libraries(${SEER_UNIT_TEST_TARGET_NAME}
-	seer
 	Catch
 	Threads::Threads)
 
