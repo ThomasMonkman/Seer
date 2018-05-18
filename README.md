@@ -206,16 +206,15 @@ While seer may be header only, these benchmarks use google benchmark and require
 
 Mac and linux:
 ```
-{
-	git clone https://github.com/ThomasMonkman/Seer.git
-	cd ./Seer
-	mkdir build && cd build/
-	cmake -DCMAKE_BUILD_TYPE=Release ../
-	make
-	benchmarks/seer_benchmark
-}
+git clone https://github.com/ThomasMonkman/Seer.git
+cd ./Seer
+mkdir build && cd build/
+cmake -DCMAKE_BUILD_TYPE=Release ../
+make
+benchmarks/seer_benchmark
 ```
 Windows:
+
 Simply open the repo in visual studio 17, and with its new cmake features and you should just be able to run the projects, make sure you use release.
 
 ### Test:
@@ -224,21 +223,19 @@ While seer may be header only, these tests use catch 2 and require building.
 
 Mac and linux:
 ```c++
-{
-	git clone https://github.com/ThomasMonkman/Seer.git
-	cd ./Seer
-	mkdir build && cd build/
-	cmake -DCMAKE_BUILD_TYPE=Release ../
-	make
-	tests/seer_unit
-}
+git clone https://github.com/ThomasMonkman/Seer.git
+cd ./Seer
+mkdir build && cd build/
+cmake -DCMAKE_BUILD_TYPE=Release ../
+make
+tests/seer_unit
 ```
 Windows:
+
 Simply open the repo in visual studio 17, and with its new cmake features and you should just be able to run the projects.
 
 ### Example code: <a id="example"></a>
 ```c++
-{
 {
 	seer::set_process_name("my amazing app");
 	seer::set_thread_name("render");
@@ -271,5 +268,4 @@ Simply open the repo in visual studio 17, and with its new cmake features and yo
 
 }
 seer::buffer.dump_to_file("full-showcase.json");
-}
 ```
