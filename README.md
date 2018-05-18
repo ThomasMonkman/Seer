@@ -216,6 +216,7 @@ Mac and linux:
 }
 ```
 Windows:
+
 Simply open the repo in visual studio 17, and with its new cmake features and you should just be able to run the projects, make sure you use release.
 
 ### Test:
@@ -234,6 +235,7 @@ Mac and linux:
 }
 ```
 Windows:
+
 Simply open the repo in visual studio 17, and with its new cmake features and you should just be able to run the projects.
 
 ### Example code: <a id="example"></a>
