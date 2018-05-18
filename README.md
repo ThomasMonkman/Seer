@@ -115,11 +115,16 @@ Will place an instant event scoped to either process (default), thread, globally
 	seer::instant_event("test", seer::InstantEventScope::global); // global
 }
 ```
-Thread
+Thread:
+
 ![Image](/doc/instant-event-thread.jpg?raw=true)
-Process
+
+Process:
+
 ![Image](/doc/instant-event-process.jpg?raw=true)
-Global
+
+Global:
+
 ![Image](/doc/instant-event-global.jpg?raw=true)
 
 #### mark: <a id="5"></a>
