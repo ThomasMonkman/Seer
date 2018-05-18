@@ -241,7 +241,6 @@ Simply open the repo in visual studio 17, and with its new cmake features and yo
 ### Example code: <a id="example"></a>
 ```c++
 {
-{
 	seer::set_process_name("my amazing app");
 	seer::set_thread_name("render");
 	seer::instant_event("frame start", seer::InstantEventScope::process);
@@ -273,5 +272,4 @@ Simply open the repo in visual studio 17, and with its new cmake features and yo
 
 }
 seer::buffer.dump_to_file("full-showcase.json");
-}
 ```
