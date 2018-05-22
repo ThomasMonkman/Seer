@@ -46,7 +46,19 @@
 #	include "Windows.h"
 #endif
 
+/*!
+@brief namespace for Seer
+@see https://github.com/ThomasMonkman/Seer
+*/
 namespace seer {
+	/*!
+	@brief Behaviour of buffers when filled.
+
+	reset - the default, the buffer forgets its old data and starts again
+	expand - the buffer will grow on its own with no upper limit
+	discard - the buffer will discard all new events once it fills
+
+	*/
 	enum class BufferOverflowBehaviour {
 		reset,
 		expand,
@@ -342,7 +354,14 @@ namespace seer {
 			const double percent_used;
 		};
 
-		// Allows internal buffer to be streamed by just calling "<< seer::buffer"
+		/*!
+		@brief Allows access to seers buffer for serialisation and modification.
+
+		file << seer::buffer; //by stream
+		seer::buffer.dump_to_file("my profile data.json"); //defaults to "profile.json"
+		std::string json = seer::buffer.str(); //by string
+
+		*/
 		struct Buffer
 		{
 			std::string str() {
@@ -405,6 +424,9 @@ namespace seer {
 
 	static internal::Buffer buffer;
 
+	/*!
+	@brief Times lifetime of its self, there by timing the current scope block.
+	*/
 	class ScopeTimer
 	{
 	public:
@@ -436,6 +458,9 @@ namespace seer {
 
 	using InstantEventScope = internal::InstantEventScope;
 
+	/*!
+	@brief Puts a scopable event at current time, allowing marking of key events across threads.
+	*/
 	static void instant_event(const std::string& name, const InstantEventScope event_type = InstantEventScope::process) {
 		internal::EventExtra extra = { nullptr };
 		extra.instant = event_type;
@@ -448,6 +473,9 @@ namespace seer {
 			});
 	}
 
+	/*!
+	@brief Stores values over time, numbers, boolean, etc...
+	*/
 	template<typename T>
 	class Counter
 	{
@@ -512,6 +540,9 @@ namespace seer {
 		}
 	};
 
+	/*!
+	@brief Sets friendly thread name.
+	*/
 	static void set_thread_name(const std::string& name, std::thread::id thread_id = std::this_thread::get_id()) {
 		internal::EventExtra extra = { nullptr };
 		extra.meta_object = internal::StringStore::i().store("{\"name\":\"" + name + "\"}");
@@ -524,6 +555,9 @@ namespace seer {
 			});
 	}
 
+	/*!
+	@brief Sets friendly process name.
+	*/
 	static void set_process_name(const std::string& name) {
 		internal::EventExtra extra = { nullptr };
 		extra.meta_object = internal::StringStore::i().store("{\"name\":\"" + name + "\"}");
@@ -536,6 +570,9 @@ namespace seer {
 			});
 	}
 
+	/*!
+	@brief Puts a very small instant marker at current time.
+	*/
 	static void mark(const std::string& name) {
 		internal::EventExtra extra = { nullptr };
 		internal::EventStore::i().send({
@@ -547,6 +584,9 @@ namespace seer {
 			});
 	}
 
+	/*!
+	@brief Allows linking timings across threads and time, e.g. a network request, download, and processing of data.
+	*/
 	class Async
 	{
 	public:
