@@ -240,29 +240,29 @@ Simply open the repo in visual studio 17, and with its new cmake features and yo
 	seer::set_process_name("my amazing app");
 	seer::set_thread_name("render");
 	seer::instant_event("frame start", seer::InstantEventScope::process);
-	seer::Counter<int> tempture("tempture", 0);
+	seer::Counter<int> temperature("tempture", 0);
 	seer::Async async;
 	seer::ScopeTimer frame("frame");
 	std::this_thread::sleep_for(std::chrono::seconds(1));
-	tempture.update(2);
+	temperature.update(2);
 	{
 		seer::ScopeTimer input("get input");
 		std::this_thread::sleep_for(std::chrono::milliseconds(250));
-		tempture.update(5);
+		temperature.update(5);
 		seer::instant_event("key press", seer::InstantEventScope::thread);
-		test_helper::get_with_timeout<void>(std::async(std::launch::async, [async, &tempture] {
+		test_helper::get_with_timeout<void>(std::async(std::launch::async, [async, &temperature] {
 			seer::set_thread_name("input");
 			const auto timer = async.create_timer("capture keypress");
 			std::this_thread::sleep_for(std::chrono::seconds(1));
-			tempture.update(1);
+			temperature.update(1);
 		}));
 		std::this_thread::sleep_for(std::chrono::milliseconds(250));
-		tempture.update(10);
+		temperature.update(10);
 		const auto timer = async.create_timer("process keypress");
 		std::this_thread::sleep_for(std::chrono::milliseconds(250));
 		seer::mark("done");
 	}
-	tempture.update(4);
+	temperature.update(4);
 	std::this_thread::sleep_for(std::chrono::milliseconds(250));
 	seer::instant_event("sun outside", seer::InstantEventScope::global);
 
