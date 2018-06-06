@@ -240,7 +240,7 @@ Simply open the repo in visual studio 17, and with its new cmake features and yo
 	seer::set_process_name("my amazing app");
 	seer::set_thread_name("render");
 	seer::instant_event("frame start", seer::InstantEventScope::process);
-	seer::Counter<int> temperature("tempture", 0);
+	seer::Counter<int> temperature("temperature", 0);
 	seer::Async async;
 	seer::ScopeTimer frame("frame");
 	std::this_thread::sleep_for(std::chrono::seconds(1));
