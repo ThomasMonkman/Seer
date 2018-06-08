@@ -184,15 +184,15 @@ namespace seer {
 			std::size_t flow_id;
 		};
 
-		struct Event // 40 bytes
+		struct Event
 		{
 			// common to everything
-			StringLookup name; //8 bytes
-			EventType event_type; // 1 bytes
-			std::thread::id thread_id; // 4 bytes
-			const std::chrono::steady_clock::time_point time_point; // 4 bytes
-																	// extra
-			EventExtra extra; // 8 bytes;
+			StringLookup name;
+			EventType event_type;
+			std::thread::id thread_id;
+			const std::chrono::steady_clock::time_point time_point;
+			// extra
+			EventExtra extra;
 		};
 
 		inline std::ostream& operator<<(std::ostream& out_stream, const StringLookup& string_store)
@@ -214,7 +214,7 @@ namespace seer {
 #endif
 				<< ",\"tid\":\"" << event.thread_id
 				<< "\",\"ts\":" << std::chrono::duration_cast<std::chrono::microseconds>(event.time_point.time_since_epoch()).count();
-			// Add in optional extra depending on the data type
+			// Add in optional extra depending on the event type
 			switch (event.event_type)
 			{
 			case EventType::complete:
@@ -370,7 +370,7 @@ namespace seer {
 				return ss.str();
 			}
 
-			BufferStats usage() {
+			BufferStats usage() const {
 				const auto usage_in_bytes = internal::StringStore::i().buffer_used() + internal::EventStore::i().buffer_used();
 				const auto total_in_bytes = internal::StringStore::i().buffer_size() + internal::EventStore::i().buffer_size();
 				return {
@@ -386,8 +386,7 @@ namespace seer {
 				file << std::flush;
 			}
 
-			void resize(std::size_t size_in_bytes)
-			{
+			void resize(std::size_t size_in_bytes) {
 				internal::StringStore::i().set_buffer_size(size_in_bytes / 2);
 				internal::EventStore::i().set_buffer_size(size_in_bytes / 2);
 			}
@@ -498,9 +497,11 @@ namespace seer {
 		Counter(Counter&&) = delete;
 		Counter& operator=(Counter&&) = delete;
 
-		template<class Q = T>
-		typename std::enable_if<std::is_arithmetic<Q>::value, std::string>::type
-			stringify(const Q value)
+		template<
+			class Q = T,
+			class = std::enable_if<std::is_arithmetic<Q>::value>::type
+		>		
+		std::string	stringify(const Q value)
 		{
 			std::stringstream ss;
 			ss << value;
@@ -508,9 +509,11 @@ namespace seer {
 		}
 
 		// anything else should be a string, so we add quotes
-		template<class Q = T>
-		typename std::enable_if<!std::is_arithmetic<Q>::value, std::string>::type
-			stringify(const Q& value)
+		template<
+			class Q = T,
+			class = std::enable_if<!std::is_arithmetic<Q>::value>::type
+		>
+		std::string stringify(const Q& value)
 		{
 			std::stringstream ss;
 			ss << "\"" << value << "\"";
@@ -519,8 +522,7 @@ namespace seer {
 
 		// boolean should be "true"|"false"
 		template<class Q = T>
-		std::string
-			stringify(const bool value)
+		std::string stringify(const bool value)
 		{
 			std::stringstream ss;
 			ss << std::boolalpha << value;

@@ -204,6 +204,9 @@ When the internal buffer fills up by default it resets and starts a fresh, chuck
 #### benchmarks: <a id="201"></a>
 While seer may be header only, these benchmarks use google benchmark and require building.
 
+##### Dependencies (included in the repo):
+- [Google Benchmark](https://github.com/google/benchmark)
+
 Mac and linux:
 ```
 git clone https://github.com/ThomasMonkman/Seer.git
@@ -220,6 +223,10 @@ Simply open the repo in visual studio 17, and with its new cmake features and yo
 ### Test:
 #### test: <a id="301"></a>
 While seer may be header only, these tests use catch 2 and require building.
+
+##### Dependencies (included in the repo):
+- [Catch 2](https://github.com/catchorg/Catch2)
+- [Nlohmann Json](https://github.com/nlohmann/json)
 
 Mac and linux:
 ```c++
