@@ -499,7 +499,7 @@ namespace seer {
 
 		template<
 			class Q = T,
-			typename std::enable_if<std::is_arithmetic<Q>::value>::type
+			typename = std::enable_if<std::is_arithmetic<Q>::value>::type
 		>		
 		std::string	stringify(const Q value)
 		{
@@ -511,7 +511,7 @@ namespace seer {
 		// anything else should be a string, so we add quotes
 		template<
 			class Q = T,
-			typename std::enable_if<!std::is_arithmetic<Q>::value>::type
+			typename = std::enable_if<!std::is_arithmetic<Q>::value>::type
 		>
 		std::string stringify(const Q& value)
 		{
@@ -521,7 +521,7 @@ namespace seer {
 		}
 
 		// boolean should be "true"|"false"
-		template<class Q = T>
+		template<class Q = T, typename = void>
 		std::string stringify(const bool value)
 		{
 			std::stringstream ss;
