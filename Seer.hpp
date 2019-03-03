@@ -184,15 +184,15 @@ namespace seer {
 			std::size_t flow_id;
 		};
 
-		struct Event // 40 bytes
+		struct Event
 		{
 			// common to everything
-			StringLookup name; //8 bytes
-			EventType event_type; // 1 bytes
-			std::thread::id thread_id; // 4 bytes
-			const std::chrono::steady_clock::time_point time_point; // 4 bytes
-																	// extra
-			EventExtra extra; // 8 bytes;
+			StringLookup name;
+			EventType event_type;
+			std::thread::id thread_id;
+			const std::chrono::steady_clock::time_point time_point;
+			// extra
+			EventExtra extra;
 		};
 
 		inline std::ostream& operator<<(std::ostream& out_stream, const StringLookup& string_store)
@@ -214,7 +214,7 @@ namespace seer {
 #endif
 				<< ",\"tid\":\"" << event.thread_id
 				<< "\",\"ts\":" << std::chrono::duration_cast<std::chrono::microseconds>(event.time_point.time_since_epoch()).count();
-			// Add in optional extra depending on the data type
+			// Add in optional extra depending on the event type
 			switch (event.event_type)
 			{
 			case EventType::complete:
@@ -269,7 +269,7 @@ namespace seer {
 					if (event.event_type == EventType::flow_step && flow_events_found.find(event.extra.flow_id) == flow_events_found.end()) {
 						flow_events_found.insert(event.extra.flow_id);
 						// check we have not already once converted this flow event another this buffer was streamed
-						const auto found = std::find_if(_events.begin(), _events.end(), [&event](const Event& e) { 
+						const auto found = std::find_if(_events.begin(), _events.end(), [&event](const Event& e) {
 							return e.event_type == EventType::flow_start && e.extra.flow_id == event.extra.flow_id;
 						});
 						if (found == _events.end()) {
@@ -289,7 +289,7 @@ namespace seer {
 						}
 					}
 				}
-								
+
 				auto separator = '[';
 				if (_events.size() == 0) {
 					stream << separator;
@@ -370,7 +370,7 @@ namespace seer {
 				return ss.str();
 			}
 
-			BufferStats usage() {
+			BufferStats usage() const {
 				const auto usage_in_bytes = internal::StringStore::i().buffer_used() + internal::EventStore::i().buffer_used();
 				const auto total_in_bytes = internal::StringStore::i().buffer_size() + internal::EventStore::i().buffer_size();
 				return {
@@ -386,8 +386,7 @@ namespace seer {
 				file << std::flush;
 			}
 
-			void resize(std::size_t size_in_bytes)
-			{
+			void resize(std::size_t size_in_bytes) {
 				internal::StringStore::i().set_buffer_size(size_in_bytes / 2);
 				internal::EventStore::i().set_buffer_size(size_in_bytes / 2);
 			}
@@ -416,7 +415,7 @@ namespace seer {
 			Coordinator(Coordinator&&) = delete;
 			Coordinator& operator=(Coordinator&&) = delete;
 
-			std::atomic<std::size_t> async_id{0};
+			std::atomic<std::size_t> async_id{ 0 };
 		};
 
 		static Coordinator coordinator;
@@ -492,7 +491,6 @@ namespace seer {
 	private:
 		const internal::StringLookup _name;
 
-
 		Counter(const Counter&) = delete;
 		Counter& operator=(const Counter&) = delete;
 		Counter(Counter&&) = delete;
@@ -500,7 +498,7 @@ namespace seer {
 
 		template<class Q = T>
 		typename std::enable_if<std::is_arithmetic<Q>::value, std::string>::type
-			stringify(const Q value)
+			stringify(const Q value) const
 		{
 			std::stringstream ss;
 			ss << value;
@@ -510,7 +508,7 @@ namespace seer {
 		// anything else should be a string, so we add quotes
 		template<class Q = T>
 		typename std::enable_if<!std::is_arithmetic<Q>::value, std::string>::type
-			stringify(const Q& value)
+			stringify(const Q& value) const
 		{
 			std::stringstream ss;
 			ss << "\"" << value << "\"";
@@ -520,7 +518,7 @@ namespace seer {
 		// boolean should be "true"|"false"
 		template<class Q = T>
 		std::string
-			stringify(const bool value)
+			stringify(const bool value) const
 		{
 			std::stringstream ss;
 			ss << std::boolalpha << value;
@@ -608,7 +606,7 @@ namespace seer {
 					std::this_thread::get_id(),
 					_creation,
 					extra_flow
-				});
+					});
 
 				internal::EventExtra extra = { nullptr };
 				extra.end_time = end_time;
@@ -618,7 +616,7 @@ namespace seer {
 					std::this_thread::get_id(),
 					_creation,
 					extra
-				});
+					});
 			}
 			Timer(const Timer&) = delete;
 			Timer& operator=(const Timer& other) = delete;
@@ -642,7 +640,7 @@ namespace seer {
 		Async& operator=(const Async& other) = default;
 		Async(Async&&) = default;
 		Async& operator=(Async&& other) = default;
-	private:	
+	private:
 		const std::size_t id;
 	};
 }
