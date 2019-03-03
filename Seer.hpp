@@ -269,7 +269,7 @@ namespace seer {
 					if (event.event_type == EventType::flow_step && flow_events_found.find(event.extra.flow_id) == flow_events_found.end()) {
 						flow_events_found.insert(event.extra.flow_id);
 						// check we have not already once converted this flow event another this buffer was streamed
-						const auto found = std::find_if(_events.begin(), _events.end(), [&event](const Event& e) { 
+						const auto found = std::find_if(_events.begin(), _events.end(), [&event](const Event& e) {
 							return e.event_type == EventType::flow_start && e.extra.flow_id == event.extra.flow_id;
 						});
 						if (found == _events.end()) {
@@ -289,7 +289,7 @@ namespace seer {
 						}
 					}
 				}
-								
+
 				auto separator = '[';
 				if (_events.size() == 0) {
 					stream << separator;
@@ -415,7 +415,7 @@ namespace seer {
 			Coordinator(Coordinator&&) = delete;
 			Coordinator& operator=(Coordinator&&) = delete;
 
-			std::atomic<std::size_t> async_id{0};
+			std::atomic<std::size_t> async_id{ 0 };
 		};
 
 		static Coordinator coordinator;
@@ -491,17 +491,14 @@ namespace seer {
 	private:
 		const internal::StringLookup _name;
 
-
 		Counter(const Counter&) = delete;
 		Counter& operator=(const Counter&) = delete;
 		Counter(Counter&&) = delete;
 		Counter& operator=(Counter&&) = delete;
 
-		template<
-			class Q = T,
-			typename = std::enable_if<std::is_arithmetic<Q>::value>::type
-		>		
-		std::string	stringify(const Q value)
+		template<class Q = T>
+		typename std::enable_if<std::is_arithmetic<Q>::value, std::string>::type
+			stringify(const Q value) const
 		{
 			std::stringstream ss;
 			ss << value;
@@ -509,11 +506,9 @@ namespace seer {
 		}
 
 		// anything else should be a string, so we add quotes
-		template<
-			class Q = T,
-			typename = std::enable_if<!std::is_arithmetic<Q>::value>::type
-		>
-		std::string stringify(const Q& value)
+		template<class Q = T>
+		typename std::enable_if<!std::is_arithmetic<Q>::value, std::string>::type
+			stringify(const Q& value) const
 		{
 			std::stringstream ss;
 			ss << "\"" << value << "\"";
@@ -521,8 +516,9 @@ namespace seer {
 		}
 
 		// boolean should be "true"|"false"
-		template<class Q = T, typename = void>
-		std::string stringify(const bool value)
+		template<class Q = T>
+		std::string
+			stringify(const bool value) const
 		{
 			std::stringstream ss;
 			ss << std::boolalpha << value;
@@ -610,7 +606,7 @@ namespace seer {
 					std::this_thread::get_id(),
 					_creation,
 					extra_flow
-				});
+					});
 
 				internal::EventExtra extra = { nullptr };
 				extra.end_time = end_time;
@@ -620,7 +616,7 @@ namespace seer {
 					std::this_thread::get_id(),
 					_creation,
 					extra
-				});
+					});
 			}
 			Timer(const Timer&) = delete;
 			Timer& operator=(const Timer& other) = delete;
@@ -644,7 +640,7 @@ namespace seer {
 		Async& operator=(const Async& other) = default;
 		Async(Async&&) = default;
 		Async& operator=(Async&& other) = default;
-	private:	
+	private:
 		const std::size_t id;
 	};
 }
