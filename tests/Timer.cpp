@@ -1,4 +1,4 @@
-#include "catch/catch.hpp"
+﻿#include "catch/catch.hpp"
 
 #include "../Seer.hpp"
 
@@ -8,19 +8,10 @@
 
 #include <iostream>
 
-void is_complete_event(const nlohmann::json& event, const std::string& name) {
-	REQUIRE(event["name"] == name);
-	REQUIRE(event["ph"] == "X");
-	REQUIRE(event["ts"].type() == nlohmann::json::value_t::number_unsigned);
-	REQUIRE(event["dur"].type() == nlohmann::json::value_t::number_unsigned);
-	REQUIRE(event["pid"].type() == nlohmann::json::value_t::number_unsigned);
-	REQUIRE(event["tid"].type() == nlohmann::json::value_t::string);
-}
-
 TEST_CASE("ScopeTimer produces correct json", "[ScopeTimer]") {
 
 	test_helper::reset_seer();
-	
+
 	SECTION("1 event") {
 		{
 			seer::Timer test("Test");
@@ -28,7 +19,7 @@ TEST_CASE("ScopeTimer produces correct json", "[ScopeTimer]") {
 		}
 		const auto json = nlohmann::json::parse(seer::buffer.str());
 		REQUIRE(json.size() == 1);
-		is_complete_event(json[0], "Test");
+		test_helper::is_complete_event(json[0], "Test");
 	}
 
 	SECTION("2 events") {
@@ -40,7 +31,7 @@ TEST_CASE("ScopeTimer produces correct json", "[ScopeTimer]") {
 		}
 		const auto json = nlohmann::json::parse(seer::buffer.str());
 		REQUIRE(json.size() == 2);
-		is_complete_event(json[0], "Test2");
-		is_complete_event(json[1], "Test");
+		test_helper::is_complete_event(json[0], "Test2");
+		test_helper::is_complete_event(json[1], "Test");
 	}
 }
