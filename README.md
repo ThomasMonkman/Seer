@@ -17,6 +17,7 @@ Example when loaded in [chrome://tracing](chrome://tracing)
 Drop [Seer.hpp](https://github.com/ThomasMonkman/Seer/blob/master/Seer.hpp) in to your include path and you should be good to go.
 ### Functions:
 - [ScopeTimer](#1)
+- [Timer](#1.1)
 - [Async](#2)
 - [Counter](#3)
 - [instant_event](#4)
@@ -38,7 +39,7 @@ Drop [Seer.hpp](https://github.com/ThomasMonkman/Seer/blob/master/Seer.hpp) in t
 
 ### Functions:
 #### ScopeTimer: <a id="1"></a>
-ScopeTimer will measure the time spent in a block/scope.
+`ScopeTimer` will measure the time spent in a block/scope.
 ```c++
 {
     seer::ScopeTimer("test"); // This will measure 2 seconds.
@@ -47,55 +48,64 @@ ScopeTimer will measure the time spent in a block/scope.
 ```
 ![Image](/doc/scopetimer.jpg?raw=true)
 
+#### Timer: <a id="1.1"></a>
+If ScopeTimer can not be used, or more manual control over the end time is required `Timer` will measure the time from object creation to end member call.
+```c++
+{
+	seer::Timer test("test");
+	std::this_thread::sleep_for(2s);
+	test.end();
+}
+```
+![Image](/doc/scopetimer.jpg?raw=true)
+
 #### Async: <a id="2"></a>
-Async allows you to draw visual connections between scopes timers, this shows up in chrome as arrows joining blocks.
+`Async` allows you to draw visual connections between scopes timers, this shows up in chrome as arrows joining blocks.
 This is handy for tracking events across threads or separated by time.
 
 Across Threads:
 ```c++
-
-	seer::Async async;	
-	{
-		const auto timer = async.create_timer("Step 1");
-		std::this_thread::sleep_for(std::chrono::seconds(1));
-	}
+seer::Async async;	
+{
+	const auto timer = async.create_timer("Step 1");
+	std::this_thread::sleep_for(std::chrono::seconds(1));
+}
 	
-	std::async(std::launch::async, [async] {
-		const auto timer2 = async.create_timer("Step 2");
-		std::this_thread::sleep_for(std::chrono::seconds(1));
-	}).get();
+std::async(std::launch::async, [async] {
+	const auto timer2 = async.create_timer("Step 2");
+	std::this_thread::sleep_for(std::chrono::seconds(1));
+}).get();
 	
-	{
-		const auto timer3 = async.create_timer("Step 3");
-		std::this_thread::sleep_for(std::chrono::seconds(1));
-	}
+{
+	const auto timer3 = async.create_timer("Step 3");
+	std::this_thread::sleep_for(std::chrono::seconds(1));
+}
 ```
 ![Image](/doc/async.jpg?raw=true)
 
 
 Across time:
 ```c++
-
-	seer::Async async;	
-	{
-		const auto timer = async.create_timer("Step 1");
-		std::this_thread::sleep_for(std::chrono::seconds(1));
-	}
-		// some other work
-	{
-		const auto timer2 = async.create_timer("Step 2");
-		std::this_thread::sleep_for(std::chrono::seconds(1));	
-	}
-		// some more work
-	{
-		const auto timer3 = async.create_timer("Step 3");
-		std::this_thread::sleep_for(std::chrono::seconds(1));
-	}
+seer::Async async;	
+{
+	const auto timer = async.create_timer("Step 1");
+	std::this_thread::sleep_for(std::chrono::seconds(1));
+}
+	// some other work
+{
+	const auto timer2 = async.create_timer("Step 2");
+	std::this_thread::sleep_for(std::chrono::seconds(1));	
+}
+	// some more work
+{
+	const auto timer3 = async.create_timer("Step 3");
+	std::this_thread::sleep_for(std::chrono::seconds(1));
+}
 ```
 ![Image](/doc/async-same-thread.jpg?raw=true)
 
 #### Counter: <a id="3"></a>
-Counter can be used for tracking a value over time. 
+`Counter` can be used for tracking a value over time. 
 > Note: multiple counters sharing the same name will appear in the same chrome trace.
 ```c++
 {
@@ -204,6 +214,9 @@ When the internal buffer fills up by default it resets and starts a fresh, chuck
 #### benchmarks: <a id="201"></a>
 While seer may be header only, these benchmarks use google benchmark and require building.
 
+##### Dependencies (included in the repo):
+- [Google Benchmark](https://github.com/google/benchmark)
+
 Mac and linux:
 ```
 git clone https://github.com/ThomasMonkman/Seer.git
@@ -220,6 +233,10 @@ Simply open the repo in visual studio 17, and with its new cmake features and yo
 ### Test:
 #### test: <a id="301"></a>
 While seer may be header only, these tests use catch 2 and require building.
+
+##### Dependencies (included in the repo):
+- [Catch 2](https://github.com/catchorg/Catch2)
+- [Nlohmann Json](https://github.com/nlohmann/json)
 
 Mac and linux:
 ```c++
