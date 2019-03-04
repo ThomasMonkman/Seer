@@ -17,6 +17,7 @@ Example when loaded in [chrome://tracing](chrome://tracing)
 Drop [Seer.hpp](https://github.com/ThomasMonkman/Seer/blob/master/Seer.hpp) in to your include path and you should be good to go.
 ### Functions:
 - [ScopeTimer](#1)
+- [Timer](#1.1)
 - [Async](#2)
 - [Counter](#3)
 - [instant_event](#4)
@@ -43,6 +44,17 @@ ScopeTimer will measure the time spent in a block/scope.
 {
     seer::ScopeTimer("test"); // This will measure 2 seconds.
     std::this_thread::sleep_for(2s);
+}
+```
+![Image](/doc/scopetimer.jpg?raw=true)
+
+#### Timer: <a id="1.1"></a>
+If ScopeTimer can not be used, or more manual control over the end time is required `Timer` will measure the time from object creation to end member call.
+```c++
+{
+	seer::Timer test("test");
+    std::this_thread::sleep_for(2s);
+	test.end();
 }
 ```
 ![Image](/doc/scopetimer.jpg?raw=true)

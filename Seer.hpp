@@ -455,6 +455,40 @@ namespace seer {
 		const internal::StringLookup _name;
 	};
 
+	/*!
+	@brief Times creation of object to member function "end" call.
+	*/
+	class Timer
+	{
+	public:
+		Timer(const std::string& name) :
+			_creation(std::chrono::steady_clock::now()),
+			_name(internal::StringStore::i().store(name))
+		{}
+
+		void end() {
+
+			//send end time to network
+			internal::EventExtra extra = { nullptr };
+			extra.end_time = std::chrono::steady_clock::now();
+			internal::EventStore::i().send({
+				_name,
+				internal::EventType::complete,
+				std::this_thread::get_id(),
+				_creation,
+				extra
+				});
+
+		}
+		Timer(const Timer&) = delete;
+		Timer& operator=(const Timer& other) = delete;
+		Timer(Timer&&) = delete;
+		Timer& operator=(Timer&& other) = delete;
+	private:
+		const std::chrono::steady_clock::time_point _creation;
+		const internal::StringLookup _name;
+	};
+
 	using InstantEventScope = internal::InstantEventScope;
 
 	/*!
@@ -644,6 +678,9 @@ namespace seer {
 		const std::size_t id;
 	};
 }
+
+#define SEER_TIME_FUNCTION seer::ScopeTimer seer_##__func__(__func__);   
+
 ////Duration 
 //{
 //	"name": "",
