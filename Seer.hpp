@@ -480,6 +480,7 @@ namespace seer {
 				});
 
 		}
+		~Timer() = default;
 		Timer(const Timer&) = delete;
 		Timer& operator=(const Timer& other) = delete;
 		Timer(Timer&&) = delete;
