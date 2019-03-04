@@ -42,7 +42,7 @@ TEST_CASE("ScopeTimer produces correct json", "[ScopeTimer]") {
 
 	SECTION("large amount") {
 		const auto events_to_create = 50000;
-		for (auto i = 0; i <= events_to_create; i++)
+		for (auto i = 0; i < events_to_create; i++)
 		{
 			seer::ScopeTimer test("Test");
 
