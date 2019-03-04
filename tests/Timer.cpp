@@ -8,7 +8,7 @@
 
 #include <iostream>
 
-TEST_CASE("ScopeTimer produces correct json", "[ScopeTimer]") {
+TEST_CASE("Timer produces correct json", "[Timer]") {
 
 	test_helper::reset_seer();
 
