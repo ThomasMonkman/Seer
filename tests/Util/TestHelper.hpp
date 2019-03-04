@@ -1,4 +1,4 @@
-#ifndef TESTHELPER_HPP
+﻿#ifndef TESTHELPER_HPP
 #define TESTHELPER_HPP
 #include "../catch/catch.hpp"
 #include <chrono>
@@ -15,7 +15,7 @@ namespace test_helper {
 	}
 	template<typename T>
 	static T get_with_timeout(std::future<T>&& future_to_wait_for)
-	{		
+	{
 		const auto status = future_to_wait_for.wait_for(test_helper::Config::test_timeout(1));
 		REQUIRE(status != std::future_status::deferred);
 		REQUIRE(status != std::future_status::timeout);
@@ -30,6 +30,15 @@ namespace test_helper {
 		seer::buffer.clear();
 		seer::buffer.resize(200000 * sizeof(seer::internal::Event));
 		seer::buffer_overflow_behaviour = seer::BufferOverflowBehaviour::reset;
+	}
+
+	static void is_complete_event(const nlohmann::json& event, const std::string& name) {
+		REQUIRE(event["name"] == name);
+		REQUIRE(event["ph"] == "X");
+		REQUIRE(event["ts"].type() == nlohmann::json::value_t::number_unsigned);
+		REQUIRE(event["dur"].type() == nlohmann::json::value_t::number_unsigned);
+		REQUIRE(event["pid"].type() == nlohmann::json::value_t::number_unsigned);
+		REQUIRE(event["tid"].type() == nlohmann::json::value_t::string);
 	}
 }
 #endif
