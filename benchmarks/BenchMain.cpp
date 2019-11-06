@@ -17,7 +17,7 @@ static void scope_timer(benchmark::State& state) {
 		// seer::buffer.dump_to_file();
 	}
 }
-//BENCHMARK(scope_timer)->ThreadRange(1, std::thread::hardware_concurrency());
+BENCHMARK(scope_timer)->ThreadRange(1, std::thread::hardware_concurrency());
 
 std::mutex mutex;
 class SpinLock {
@@ -44,7 +44,7 @@ static void spin_lock(benchmark::State& state) {
 		// seer::buffer.dump_to_file();
 	}
 }
-//BENCHMARK(spin_lock)->ThreadRange(1, std::thread::hardware_concurrency());
+BENCHMARK(spin_lock)->ThreadRange(1, std::thread::hardware_concurrency());
 
 
 #include <string>

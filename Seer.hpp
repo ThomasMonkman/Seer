@@ -178,8 +178,8 @@ namespace seer {
 		union EventExtra {
 			void* not_used;
 			InstantEventScope instant;
-			StringLookup counter_value;
-			StringLookup meta_object;
+			std::string_view counter_value;
+			std::string_view meta_object;
 			std::chrono::steady_clock::time_point end_time;
 			std::size_t flow_id;
 		};
@@ -187,7 +187,7 @@ namespace seer {
 		struct Event
 		{
 			// common to everything
-			StringLookup name;
+			std::string_view name;
 			EventType event_type;
 			std::thread::id thread_id;
 			const std::chrono::steady_clock::time_point time_point;
